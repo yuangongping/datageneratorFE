@@ -43,7 +43,7 @@ export class Generator{
       if (el.options.__display) {
         jsonTemplate[el.fieldName] = null;
       }
-    })
+    });
     return jsonTemplate;
   }
 
