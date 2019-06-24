@@ -127,7 +127,7 @@ export class Generator{
             const relateFieldNames = el.dataType.relation.fieldNames.split(',');
             relateFieldNames.forEach(relateField => {
               // 合并与之关联的options与自己的options用于生成 新的options和data
-              if (genOneObj[relateField]) {
+              if (genOneObj[relateField] != undefined) {
                 Object.assign(options, genOneObj[relateField].options);
               } else {
                 throw new Error(`无法获取 ${el.fieldName} 的关联字段 ${relateField}，请检查关联的字段名称！`);

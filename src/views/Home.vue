@@ -101,7 +101,7 @@ export default {
 
     addRow() {
       const { dataTypeToAdd, dataTypeConfigs } = this;
-      const component = dataTypeToAdd.toLowerCase() + '-config'
+      const component = dataTypeToAdd + 'Config'
 
       dataTypeConfigs.push({
         component: component,
