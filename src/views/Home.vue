@@ -85,7 +85,6 @@ export default {
       return dataTypeConfigs;
     },
     generate() {
-      console.log(this.parseDataTypeConfigs())
       const generator = new Generator(this.parseDataTypeConfigs(), this.nrows);
       
       try {
