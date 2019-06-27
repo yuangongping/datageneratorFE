@@ -32,14 +32,8 @@ export default (options, relation) => {
 
     if (relation.type == RELATION_ENUM.NUM_EXPRESS.EN) {
       let expression = relation.expression;
-<<<<<<< HEAD
-      expression = expression.replace('${RELATE}', relVal);
-      expression = expression.replace('${DATA}', __result);
-      
-=======
       expression = expression.replace(/\${RELATE}/g, relVal);
       expression = expression.replace(/\${DATA}/g, __result);
->>>>>>> upstream/master
       try {
         __result = evaluate(expression);
       } catch (e) {
