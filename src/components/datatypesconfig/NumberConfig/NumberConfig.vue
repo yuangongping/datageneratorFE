@@ -12,6 +12,7 @@
     </el-col>
     <el-col :span="3">
       <span class="option-title">最小值</span>
+      <span class="option-title">最小随机值</span>
       <InputNumber
         v-model="optionsValue.min"
         @on-change="chgOptions"
@@ -19,6 +20,7 @@
     </el-col>
     <el-col :span="3">
       <span class="option-title">最大值</span>
+      <span class="option-title">最大随机值</span>
       <InputNumber
         v-model="optionsValue.max"
         @on-change="chgOptions"

@@ -17,7 +17,7 @@
             :key="relation"
             :label="RELATION_ENUM[relation].CN"
             :value="relation"
-          > 
+          >
           </el-option>
         </el-select>
       </el-col>

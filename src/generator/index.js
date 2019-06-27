@@ -28,7 +28,6 @@ export class Generator{
     this.dataFilter = {}; // 数据过滤器，用于唯一性校验
     this.configArr = configArr;
     this.jsonTemplate = this.getJsonTemplate();
-    this.sortedDataTypes = this.getSortedDataTypes();
     this.nrows = nrows;
   }
   
@@ -44,8 +43,64 @@ export class Generator{
       if (el.options.__display) {
         jsonTemplate[el.fieldName] = null;
       }
-    })
+    });
     return jsonTemplate;
+  }
+
+  /**
+   * 处理每一个字段名，将其按关联顺序存放在排序后的字段里面
+   * @param {Array} sortedFields 
+   * @param {string} fieldName 
+   */
+  handleField(sortedFields, fieldName){
+    let hasField = false;
+    for (let config of this.configArr) { 
+      if (fieldName == config.fieldName) {
+        hasField = true;
+        
+        if (config.relation && config.relation.type != RELATION_ENUM.INDEPEND.EN) {
+          if (config.relation.fieldNames.trim() == '') {
+            throw new Error(`字段 ${config.fieldName} 存在空的关联关系！请添加正确的关联关系或改为独立字段！`)
+          }
+          const relateFieldNames = config.relation.fieldNames.split(',')
+          // 遍历关联字段
+          for (let relateField of relateFieldNames) {
+            // 如果关联字段不在排序数组里面，继续递归处理关联字段
+            if (sortedFields.indexOf(relateField) < 0) {
+              try {
+                this.handleField(sortedFields, relateField)
+              } catch (e) {
+                throw new Error(`处理关联字段：${relateField} 出错！请仔细检查关联关系！是否存在循环引用或不相关的字段？`)
+              }
+            } else {
+              // 如果关联字段在排序数组里面, 将本字段放入排序数组
+              if (sortedFields.indexOf(fieldName) < 0) {
+                sortedFields.push(fieldName)
+              }
+            }
+            // 对字段的关联字段 及 关联字段的关联字段进行递归处理之后
+            // 别忘了对字段本身再做一次处理
+            if (sortedFields.indexOf(fieldName) < 0) {
+              try {
+                this.handleField(sortedFields, fieldName);
+              } catch (e) {
+                throw new Error(`处理字段：${fieldName} 出错！请仔细检查关联关系！`)
+              }
+            }
+          }
+        } else {
+          // 如果没有关联字段, 直接放在排序数组的最前方
+          if (sortedFields.indexOf(fieldName) < 0) {
+            sortedFields.unshift(config.fieldName)
+          }
+        }
+        break;
+      }
+    }
+
+    if (!hasField) {
+      throw new Error(`不存在的字段名：${fieldName}`)
+    }
   }
 
   /**
@@ -58,31 +113,39 @@ export class Generator{
    */
   getSortedDataTypes() {
     const { configArr, dataFilter } = this;
-    const unsortDataTypes = []
-    configArr.forEach(el => {
-      const tempDataType = {
-        fieldName: el.fieldName,
-        dataType: deepcopy(DATA_TYPES[el.dataType])
-      };
-      // 赋值__fieldName
-      el.options.__fieldName = el.fieldName;
-      // 合并默认的options、relation与自定义的options、relation
-      Object.assign(tempDataType.dataType.options, el.options);
-      if (tempDataType.dataType.relation != undefined) {
-        Object.assign(tempDataType.dataType.relation, el.relation)
-      }
-      // 如果字段是唯一的，创建数据过滤器
-      if (tempDataType.dataType.options.__unique) {
-        dataFilter[el.fieldName] = [];
-      }
-      unsortDataTypes.push(tempDataType);
-    });
-
-    const sortedDataTypes = unsortDataTypes.sort((a, b) => {
-      return a.dataType.priority - b.dataType.priority;
-    });
-    return sortedDataTypes;
+    let sortedFields = []
+    
+    for (const config of configArr) {
+      this.handleField(sortedFields, config.fieldName);
+    }
+    
+    const sortedConfigArr = [];
+    for (const field of sortedFields) {
+      for (const config of configArr) {
+        if (config.fieldName == field) {
+          const tempDataType = {
+            fieldName: field,
+            dataType: deepcopy(DATA_TYPES[config.dataType])
+          };
+          // 赋值__fieldName
+          config.options.__fieldName = field;
+          // 合并默认的options、relation与自定义的options、relation
+          Object.assign(tempDataType.dataType.options, config.options);
+          if (tempDataType.dataType.relation != undefined) {
+            Object.assign(tempDataType.dataType.relation, config.relation)
+          }
+          // 如果字段是唯一的，创建数据过滤器
+          if (tempDataType.dataType.options.__unique) {
+            dataFilter[field] = [];
+          }
+          sortedConfigArr.push(tempDataType);
+          break;
+        }
+      } 
+    }
+    return sortedConfigArr;
   }
+
 
   /**
    * 
@@ -115,10 +178,11 @@ export class Generator{
   }
 
   generate() {
-    const { jsonTemplate, nrows, sortedDataTypes } = this;
+    const { jsonTemplate, nrows } = this;
     const data = [];
-
     // 依据需要生成的数据量进行循环
+    const sortedDataTypes = this.getSortedDataTypes();
+
     for (let i = 0; i < nrows; i++) {
       // 生成单个数据变量
       const genOneObj = {};
@@ -127,6 +191,8 @@ export class Generator{
         // 放入计数器
         options.__counter = i; 
         // 判断数据是否存在关联字段，有些组件有，有些组件没有
+        // 放入计数器
+        options.__counter = i; 
         if (el.dataType.relation) {
           // 判断字段是否相关，不等于独立字段RELATION_ENUM.INDEPEND.EN，即相关
           if (el.dataType.relation.type != RELATION_ENUM.INDEPEND.EN) {
@@ -135,12 +201,10 @@ export class Generator{
             // 遍历关联字段
             relateFieldNames.forEach(relateField => {
               // 合并与之关联的options与自己的options用于生成 新的options和data
-              if (genOneObj[relateField]) {
-                // options 示例： {sex:random , __unique: false, __display: true, __filename:name , __counter:0}
-                // genOneObj[relateField].options 示例： {__$$sex:女，sex: woman}
+              if (genOneObj[relateField] != undefined) {
                 Object.assign(options, genOneObj[relateField].options);
               } else {
-                throw new Error(`无法获取 ${el.fieldName} 的关联字段 ${relateField}，请检查关联的字段名称！`);
+                throw new Error(`处理字段 ${el.fieldName} 的关联字段 ${relateField}出错，请仔细检查关联关系！是否存在循环引用或不相关的字段？`);
               }
             });
           }
