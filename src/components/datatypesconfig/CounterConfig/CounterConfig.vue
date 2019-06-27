@@ -1,61 +1,96 @@
 <template>
-  <Row :gutter="16">
-    <Col :span="2">
+  <!-- 修改组件独立的样式时注意修改组件class -->
+  <div class="counter-config">
+    <!-- 【 通用区域 】字段类型、字段名 -->
+    <div class="field-type">
       <Tag color="primary">{{ dataTypeAlias }}</Tag>
-    </Col>
-    <Col :span="4">
-      <span class="option-title">字段名</span>
-      <Input type="text"
-       v-model="fieldNameValue"
-       @on-change="chgFieldName"
-       />
-    </Col>
+    </div>
 
-    <Col :span="4">
-      <span class="option-title">开始值</span>
-      <Input type="text"
-       v-model="optionsValue.startNum"
-       @on-change="chgOptions"
-       />
-    </Col>
+    <div class="field-name">
+      <label>
+        <Input type="text"
+          v-model="fieldNameValue"
+          @on-change="chgFieldName"
+          placeholder=" "
+        />
+        <span class="config-title">字段名</span>
+      </label>
+    </div>
+    <!-------------------->
+    
+    <div class="field-config">
+      <div class="config-item number">
+        <label>
+          <Input type="text"
+            v-model="optionsValue.startNum"
+            @on-change="chgOptions"
+          />
+          <span class="config-title">起始值</span>
+        </label>
+      </div>
 
-    <Col :span="4">
-      <span class="option-title">步长</span>
-      <Input type="text"
-       v-model="optionsValue.division"
-       @on-change="chgOptions"
-       />
-    </Col>
+      <div class="config-item number">
+        <label>
+          <Input type="text"
+            v-model="optionsValue.division"
+            @on-change="chgOptions"
+          />
+          <span class="config-title">步长</span>
+        </label>
+      </div>
 
-    <Col :span="4">
-      <span class="option-title">累加模板</span>
-      <Input type="text"
-       v-model="optionsValue.template"
-       @on-change="chgOptions"
-       placeholder="index_${DATA}"
-       />
-    </Col>
+      <div class="config-item">
+        <label>
+          <Input type="text"
+             v-model="optionsValue.template"
+            @on-change="chgOptions"
+            placeholder="index_${DATA}"
+          />
+          <span class="config-title">累加模板</span>
+        </label>
+      </div>
+    </div>
 
-    <Col :span="3">
-      <span class="option-title">结果是否包含该字段</span>
-      <i-switch
-        size="small"
-        v-model="optionsValue.__display"
-        @on-change="chgOptions"
-      >
-      </i-switch>
-    </Col>
+    <!-- 【 通用区域 】唯一性和字段显示设置、关闭槽 -->
+    <div class="switch-config">
+      <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
+        <i-switch
+          size="large"
+          v-model="optionsValue.__unique"
+          @on-change="chgOptions"
+        >
+          <span slot="open">唯一</span>
+          <span slot="close">唯一</span>
+        </i-switch>
+      </Tooltip>
+    </div>
 
-    <Col :span="2">
+    <div class="switch-config">
+      <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
+        <i-switch
+          size="large"
+          v-model="optionsValue.__display"
+          @on-change="chgOptions"
+        >
+          <span slot="open">显示</span>
+          <span slot="close">显示</span>
+        </i-switch>
+      </Tooltip>
+    </div>
+
+    <div class="close-slot">
       <slot></slot>
-    </Col>
-  </Row>
+    </div>
+  </div>
+  <!-------------------->
+  
 </template>
 
 <style lang="scss">
-.option-title {
-  width: 150px;
-  line-height: 20px;
+.counter-config {
+  .number {
+    width: 60px;
+  }
 }
 </style>
 
@@ -63,7 +98,7 @@
 <script>
 import deepcopy from 'deepcopy';
 import { DATA_TYPES } from '@/datatypes/index.js'; 
-import { Row, Col, Input, Select, Option, Tag, Switch} from "iview";
+import { Row, Col, Input, Select, Option, Tag, Switch, Tooltip} from "iview";
 
 // console.log(DATA_TYPES.Name.relation)
 
@@ -89,6 +124,7 @@ export default {
     Option,
     Input,
     Tag,
+    Tooltip,
     'i-switch': Switch,
   },
   methods: {
