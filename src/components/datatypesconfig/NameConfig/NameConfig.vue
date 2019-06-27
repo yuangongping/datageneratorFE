@@ -10,8 +10,34 @@
        @on-change="chgFieldName"
        />
     </Col>
+    <Col :span="3">
+      <span class="option-title">最小随机值</span>
+      <InputNumber
+        v-model="optionsValue.min"
+        @on-change="chgOptions"
+      />
+    </Col>
+    <Col :span="3">
+      <span class="option-title">最大随机值</span>
+      <InputNumber
+        v-model="optionsValue.max"
+        @on-change="chgOptions"
+      />
+    </Col>
 
-    <Col :span="10">
+    <Col :span="3">
+      <span class="option-title">保留几位小数位</span>
+      <InputNumber
+        :max="5"
+        :min="0"
+        v-model="optionsValue.decimal"
+        @on-change="chgOptions"
+      />
+    </Col>
+
+    
+
+    <Col :span="3">
       <Select
         v-model="relationValue.type" 
         style="width:200px"
@@ -31,6 +57,15 @@
        v-model="relationValue.fieldNames"
        @on-change="chgRelation"
       />
+    </Col>
+
+    <Col :span="6" v-if="relationValue.type === RELATION_ENUM.NUM_EXPRESS.EN">
+      <span class="option-title">数字表达式</span>
+      <Input type="text"
+       v-model="relationValue.expression"
+       @on-change="chgRelation"
+       placeholder="${DATA} * ${REALTE}"
+       />
     </Col>
 
     <Col :span="3">
@@ -71,9 +106,7 @@
 import deepcopy from 'deepcopy';
 import { DATA_TYPES } from '@/datatypes/index.js'; 
 import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
-import { Row, Col, Input, Select, Option, Tag, Switch} from "iview";
-
-
+import { Row, Col, Input, InputNumber, Select, Option, Tag, Switch } from "iview";
 export default {
   data() {
     return {
@@ -89,7 +122,7 @@ export default {
     fieldName: String,
     dataType: String,
     options: String,
-    relation: String
+    relation: String,
   },
   components: {
     Row,
@@ -97,6 +130,7 @@ export default {
     Select,
     Option,
     Input,
+    InputNumber,
     Tag,
     'i-switch': Switch,
   },
