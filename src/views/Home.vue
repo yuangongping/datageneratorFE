@@ -1,20 +1,6 @@
 <template>
   <!-- TODO: 解释、例子、预览 -->
-  <div class="home">
-    
-
-    <Exporter v-if="rawdata.length > 0" filename="result" filetype="json" :rawdata="rawdata" />
-    <Input v-model="nrows" />
-    <Button @click="generate"> 生成 </Button>
-    
-
-    <ul>
-      <li v-for="(datarow, k) in dataGened" :key="k">
-        {{ datarow }}
-      </li>
-    </ul>
-
-    
+  <div class="home"> 
     <div 
       :is="dataTypeConfig.component" 
       :dataType="dataTypeConfig.dataType"
@@ -33,6 +19,18 @@
     <Button type="primary" @click="addRow()">添加字段</Button>
 
     <Button @click="checkData"> 检查数据 </Button>
+    
+    <Exporter v-if="rawdata.length > 0" filename="result" filetype="json" :rawdata="rawdata" />
+    <Input v-model="nrows" />
+    <Button @click="generate"> 生成 </Button>
+    
+
+    <ul>
+      <li v-for="(datarow, k) in dataGened" :key="k">
+        {{ datarow }}
+      </li>
+    </ul>
+
   </div>
 </template>
 
@@ -43,7 +41,7 @@ import deepcopy from 'deepcopy';
 import { Progress, Button, Input, Select, Option } from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
 import { Generator } from '@/generator/index';
-import { SexConfig, NameConfig, CounterConfig, NumberConfig } from '@/components/datatypesconfig/index.js';
+import { SexConfig, NameConfig, CounterConfig, NumberConfig, PhoneConfig, RandomChoiceConfig } from '@/components/datatypesconfig/index.js';
 import { DATA_TYPES } from '@/datatypes/index.js';
 
 export default {
@@ -71,7 +69,9 @@ export default {
     SexConfig,
     NameConfig,
     CounterConfig,
-    NumberConfig
+    NumberConfig,
+    PhoneConfig,
+    RandomChoiceConfig
   },
   mounted() {
   },
@@ -85,7 +85,7 @@ export default {
       return dataTypeConfigs;
     },
     generate() {
-      console.log(this.parseDataTypeConfigs())
+      console.log("%%%%%%%%%%%%%%%", this.parseDataTypeConfigs())
       const generator = new Generator(this.parseDataTypeConfigs(), this.nrows);
       
       try {
@@ -101,7 +101,8 @@ export default {
 
     addRow() {
       const { dataTypeToAdd, dataTypeConfigs } = this;
-      const component = dataTypeToAdd.toLowerCase() + '-config'
+      // const component = dataTypeToAdd.toLowerCase() + '-config'
+      const component = dataTypeToAdd + 'Config'
 
       dataTypeConfigs.push({
         component: component,

@@ -2,6 +2,8 @@ import SexGenFunc from '@/datatypes/Sex/Sex';
 import NameGenFunc from '@/datatypes/Name/Name';
 import CounterGenFunc from '@/datatypes/Counter/Counter';
 import NumberGenFunc from '@/datatypes/Number/Number';
+import PhoneGenFunc from '@/datatypes/Phone/Phone';
+import RandomChoiceGenFunc from '@/datatypes/RandomChoice/RandomChoice';
 import { RELATION_ENUM } from './CONST';
 
 export const DATA_TYPES = {
@@ -67,5 +69,28 @@ export const DATA_TYPES = {
       expresion: '',
       allowTypes: ["Counter", "Number"],
     },
-  }
+  },
+  Phone: {
+    alias: "电话号码",
+    priority: 0,
+    genFunc: PhoneGenFunc,
+    options: {
+      __unique: false, // 生成结果是否是唯一值
+      __display: true, // 生成结果是否包含该字段
+      __fieldName: ""  // 用于为options添加 __$$fieldname: gendata 为其关联的字段传入生成值
+    },
+    relation: null
+  },
+  RandomChoice: {
+    alias: "随机选择",
+    priority: 0,
+    genFunc: RandomChoiceGenFunc,
+    options: {
+      RandomString: "",
+      __unique: false, // 生成结果是否是唯一值
+      __display: true, // 生成结果是否包含该字段
+      __fieldName: ""  // 用于为options添加 __$$fieldname: gendata 为其关联的字段传入生成值
+    },
+    relation: null
+  },
 };
