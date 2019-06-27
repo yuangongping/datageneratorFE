@@ -1,31 +1,31 @@
 <template>
-  <Row :gutter="16">
-    <Col :span="2">
+  <el-row :gutter="16">
+    <el-col :span="2">
       <Tag color="primary">{{ dataTypeAlias }}</Tag>
-    </Col>
-    <Col :span="4">
+    </el-col>
+    <el-col :span="4">
       <span class="option-title">字段名</span>
       <Input type="text"
        v-model="fieldNameValue"
        @on-change="chgFieldName"
        />
-    </Col>
-    <Col :span="3">
+    </el-col>
+    <el-col :span="3">
       <span class="option-title">最小值</span>
       <InputNumber
         v-model="optionsValue.min"
         @on-change="chgOptions"
       />
-    </Col>
-    <Col :span="3">
+    </el-col>
+    <el-col :span="3">
       <span class="option-title">最大值</span>
       <InputNumber
         v-model="optionsValue.max"
         @on-change="chgOptions"
       />
-    </Col>
+    </el-col>
 
-    <Col :span="3">
+    <el-col :span="3">
       <span class="option-title">保留几位小数位</span>
       <InputNumber
         :max="5"
@@ -33,11 +33,9 @@
         v-model="optionsValue.decimal"
         @on-change="chgOptions"
       />
-    </Col>
+    </el-col>
 
-    
-
-    <Col :span="3">
+    <el-col :span="3">
       <Select
         v-model="relationValue.type" 
         style="width:200px"
@@ -57,18 +55,17 @@
        v-model="relationValue.fieldNames"
        @on-change="chgRelation"
       />
-    </Col>
+    </el-col>
 
-    <Col :span="6" v-if="relationValue.type === RELATION_ENUM.NUM_EXPRESS.EN">
+    <el-col :span="6" v-if="relationValue.type === RELATION_ENUM.NUM_EXPRESS.EN">
       <span class="option-title">数字表达式</span>
       <Input type="text"
        v-model="relationValue.expression"
        @on-change="chgRelation"
        placeholder="${DATA} * ${REALTE}"
        />
-    </Col>
-
-    <Col :span="3">
+    </el-col>
+    <el-col :span="3">
       <span class="option-title">没有重复值</span>
       <i-switch
         size="small"
@@ -76,9 +73,8 @@
         @on-change="chgOptions"
       >
       </i-switch>
-    </Col>
-    
-    <Col :span="3">
+    </el-col>
+    <el-col :span="3">
       <span class="option-title">结果是否包含该字段</span>
       <i-switch
         size="small"
@@ -86,12 +82,12 @@
         @on-change="chgOptions"
       >
       </i-switch>
-    </Col>
+    </el-col>
 
-    <Col :span="2">
+    <el-col :span="2">
       <slot></slot>
-    </Col>
-  </Row>
+    </el-col>
+  </el-row>
 </template>
 
 <style lang="scss">
@@ -101,12 +97,10 @@
 }
 </style>
 
-
 <script>
-import deepcopy from 'deepcopy';
 import { DATA_TYPES } from '@/datatypes/index.js'; 
 import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
-import { Row, Col, Input, InputNumber, Select, Option, Tag, Switch } from "iview";
+import { Input, InputNumber, Select, Option, Tag, Switch } from "iview";
 
 export default {
   data() {
@@ -126,8 +120,6 @@ export default {
     relation: String,
   },
   components: {
-    Row,
-    Col,
     Select,
     Option,
     Input,

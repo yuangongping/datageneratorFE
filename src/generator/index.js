@@ -1,6 +1,7 @@
 import { DATA_TYPES } from '@/datatypes/index.js';
 import deepcopy from 'deepcopy';
 import { RELATION_ENUM } from '../datatypes/CONST';
+// import { randomBytes } from 'crypto';
 
 export class Generator{
   /**
@@ -95,7 +96,9 @@ export class Generator{
       // 尝试10万次生成，用于重复校验
       let failStat = true;
       for (let i = 0; i < 100000; i++) {
+        // 得到生成结果
         genResult = genFunc(options, relation);
+        // 判断生成的值是否已经存在，不存在则
         if (dataFilter[fieldName].indexOf(genResult.data) < 0) {
           dataFilter[fieldName].push(genResult.data);
           failStat = false;
@@ -115,19 +118,26 @@ export class Generator{
     const { jsonTemplate, nrows, sortedDataTypes } = this;
     const data = [];
 
+    // 依据需要生成的数据量进行循环
     for (let i = 0; i < nrows; i++) {
+      // 生成单个数据变量
       const genOneObj = {};
       sortedDataTypes.forEach(el => {
         let options = el.dataType.options;
-        options.__counter = i; // 放入计数器
-        
+        // 放入计数器
+        options.__counter = i; 
+        // 判断数据是否存在关联字段，有些组件有，有些组件没有
         if (el.dataType.relation) {
-          // 如果存在关联的数据类型
+          // 判断字段是否相关，不等于独立字段RELATION_ENUM.INDEPEND.EN，即相关
           if (el.dataType.relation.type != RELATION_ENUM.INDEPEND.EN) {
+            // 获取关联字段名，多个关联字段以 ， 分割
             const relateFieldNames = el.dataType.relation.fieldNames.split(',');
+            // 遍历关联字段
             relateFieldNames.forEach(relateField => {
               // 合并与之关联的options与自己的options用于生成 新的options和data
               if (genOneObj[relateField]) {
+                // options 示例： {sex:random , __unique: false, __display: true, __filename:name , __counter:0}
+                // genOneObj[relateField].options 示例： {__$$sex:女，sex: woman}
                 Object.assign(options, genOneObj[relateField].options);
               } else {
                 throw new Error(`无法获取 ${el.fieldName} 的关联字段 ${relateField}，请检查关联的字段名称！`);
@@ -135,6 +145,7 @@ export class Generator{
             });
           }
         }
+        // 获取各个字段的值
         genOneObj[el.fieldName] = this.getValue(el.dataType.genFunc, el.fieldName, options, el.dataType.relation);
       });
 

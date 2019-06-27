@@ -2,6 +2,12 @@ import SexGenFunc from '@/datatypes/Sex/Sex';
 import NameGenFunc from '@/datatypes/Name/Name';
 import CounterGenFunc from '@/datatypes/Counter/Counter';
 import NumberGenFunc from '@/datatypes/Number/Number';
+import IdentificationNumberGenFunc from '@/datatypes/IdentificationNumber/IdentificationNumber';
+import Str2NumberGenFunc from '@/datatypes/Str2Number/Str2Number'
+import StrSpliceGenFunc from  '@/datatypes/StrSplice/StrSplice'
+import StrSegmenteGenFunc from '@/datatypes/StringSegmente/StringSegmente'
+
+
 import { RELATION_ENUM } from './CONST';
 
 export const DATA_TYPES = {
@@ -67,5 +73,77 @@ export const DATA_TYPES = {
       expresion: '',
       allowTypes: ["Counter", "Number"],
     },
+  },
+  IdentificationNumber: {
+    alias: "身份证号码",
+    priority: 100,
+    genFunc: IdentificationNumberGenFunc,
+    options: {
+      min: 0,
+      max: 10,
+      decimal: 0,
+      __unique: false,
+      __display: true,
+      __fieldName: ""
+    },
+    relation: {
+      fieldNames: "",
+      type: RELATION_ENUM.INDEPEND.EN,
+      expresion: '',
+      allowTypes: ["Counter", "Number"],
+    },
+  },
+
+  Str2Number: {
+    alias: "字符串转数字",
+    priority: 200,
+    genFunc: Str2NumberGenFunc,
+    options: {
+      __unique: false,
+      __display: true,
+      __fieldName: ""
+    },
+    relation: {
+      fieldNames: "",
+      type: RELATION_ENUM.INDEPEND.EN,
+      expresion: '',
+      allowTypes: ["Counter", "Number"],
+    },
+  },
+  StrSplice: {
+    alias: "字符串拼接",
+    priority: 200,
+    genFunc: StrSpliceGenFunc,
+    options: {
+      __unique: false,
+      __display: true,
+      __fieldName: ""
+    },
+    relation: {
+      fieldNames: "",
+      type: RELATION_ENUM.INDEPEND.EN,
+      expresion: '',
+      allowTypes: ["Counter", "Number"],
+    },
+  },
+
+  StringSegmente: {
+    alias: "字符串分割",
+    priority: 200,
+    genFunc: StrSegmenteGenFunc,
+    options: {
+      start: 0,
+      end: 0,
+      __unique: false,
+      __display: true,
+      __fieldName: ""
+    },
+    relation: {
+      fieldNames: "",
+      type: RELATION_ENUM.INDEPEND.EN,
+      expresion: '',
+      allowTypes: ["Counter", "Number"],
+    },
   }
+
 };

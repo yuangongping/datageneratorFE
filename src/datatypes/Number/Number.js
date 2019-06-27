@@ -34,8 +34,7 @@ export default (options, relation) => {
       let expression = relation.expression;
       expression = expression.replace('${RELATE}', relVal);
       expression = expression.replace('${DATA}', __result);
-
-      console.log('-----', expression)
+      
       try {
         __result = evaluate(expression);
       } catch (e) {
