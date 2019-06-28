@@ -4,6 +4,7 @@ import CounterConfig from '@/components/datatypesconfig/CounterConfig/CounterCon
 import NumberConfig from '@/components/datatypesconfig/NumberConfig/NumberConfig.vue';
 import PhoneConfig from '@/components/datatypesconfig/PhoneConfig/PhoneConfig.vue';
 import RandomChoiceConfig from '@/components/datatypesconfig/RandomChoiceConfig/RandomChoiceConfig.vue';
+import TextConfig from '@/components/datatypesconfig/TextConfig/TextConfig.vue';
 
 export {
   SexConfig,
@@ -11,5 +12,6 @@ export {
   CounterConfig,
   NumberConfig,
   PhoneConfig,
-  RandomChoiceConfig
+  RandomChoiceConfig,
+  TextConfig
 }

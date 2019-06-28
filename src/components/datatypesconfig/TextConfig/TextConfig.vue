@@ -1,6 +1,8 @@
 <template>
+
   <!-- 修改组件独立的样式时注意修改组件class -->
-  <div class="counter-config">
+  <div class="text-config">
+
     <!-- 【 通用区域 】字段类型、字段名 -->
     <div class="field-type">
       <Tag color="primary">{{ dataTypeAlias }}</Tag>
@@ -16,37 +18,74 @@
         <span class="config-title">字段名</span>
       </label>
     </div>
-    <!-------------------->
     
+    <!-------------------->
     <div class="field-config">
-      <div class="config-item number">
+      <div class="config-item " >
         <label>
-          <Input type="text"
-            v-model="optionsValue.startNum"
+            <Select
+            v-model="optionsValue.compose_type" 
             @on-change="chgOptions"
-          />
-          <span class="config-title">起始值</span>
+            multiple style="width:220px"
+            >
+              <Option 
+                v-for="choice in Text_Type_EN.text_type_arr"
+                :value="choice"
+                :key="choice"
+              >
+              {{ Text_ENUM[choice].CN}}
+              </Option>
+            </Select>
+            <span class="config-title">随机组合类型</span>
         </label>
       </div>
 
-      <div class="config-item number">
-        <label>
-          <Input type="text"
-            v-model="optionsValue.division"
-            @on-change="chgOptions"
-          />
-          <span class="config-title">步长</span>
-        </label>
+      <div class="config-item relation-config">
+        <Select
+          v-model="optionsValue.lenth_type" 
+          @on-change="chgOptions"
+        >
+          <Option 
+            v-for="choice in Text_Type_EN.text_lenth_arr"
+            :value="choice"
+            :key="choice"
+          >
+          {{ Text_ENUM[choice].CN}}
+          </Option>
+        </Select>
+      </div>
+    
+      <div class="config-item" v-if="optionsValue.lenth_type=='RANDOM_LENGTH'">
+        <div class="config-item" >
+            <label>
+            <InputNumber
+                v-model="optionsValue.min"
+                @on-change="chgOptions"
+                :max="optionsValue.max"
+            />
+            <span class="config-title">最小长度</span>
+            </label>
+        </div>
+
+        <div class="config-item" >
+            <label>
+            <InputNumber
+                v-model="optionsValue.max"
+                @on-change="chgOptions"
+                :min="optionsValue.min"
+            />
+            <span class="config-title">最大长度</span>
+            </label>
+        </div>
       </div>
 
-      <div class="config-item">
+      <div class="config-item" v-if="optionsValue.lenth_type=='FIXED_LENGTH'">
         <label>
-          <Input type="text"
-             v-model="optionsValue.template"
-            @on-change="chgOptions"
-            placeholder="index_${DATA}"
-          />
-          <span class="config-title">累加模板</span>
+            <InputNumber
+                v-model="optionsValue.fixed"
+                @on-change="chgOptions"
+            />
+            <span class="config-title">固定长度</span>
         </label>
       </div>
     </div>
@@ -83,13 +122,14 @@
     </div>
   </div>
   <!-------------------->
-  
 </template>
 
 <style lang="scss">
-.counter-config {
-  .number {
-    width: 60px;
+.number-config {
+  .decimal {
+    .ivu-input-number {
+      width: 95px;
+    }
   }
 }
 </style>
@@ -98,9 +138,8 @@
 <script>
 import deepcopy from 'deepcopy';
 import { DATA_TYPES } from '@/datatypes/index.js'; 
-import { Row, Col, Input, Select, Option, Tag, Switch, Tooltip} from "iview";
-
-// console.log(DATA_TYPES.Name.relation)
+import { RELATION_ENUM, ALLOW_RELATIONS, Text_ENUM,  Text_Type_EN} from '@/datatypes/CONST.js';
+import { Row, Col, Input, InputNumber, Select, Option, Tag, Switch, Tooltip } from "iview";
 
 export default {
   data() {
@@ -109,13 +148,17 @@ export default {
       fieldNameValue: this.fieldName,
       optionsValue: JSON.parse(this.options),
       relationValue: JSON.parse(this.relation),
+      RELATION_ENUM: RELATION_ENUM,
+      allowRelations: ALLOW_RELATIONS[this.dataType],
+      Text_ENUM: Text_ENUM,
+      Text_Type_EN: Text_Type_EN
     };
   },
   props: {
     fieldName: String,
     dataType: String,
     options: String,
-    relation: String
+    relation: String,
   },
   components: {
     Row,
@@ -123,6 +166,7 @@ export default {
     Select,
     Option,
     Input,
+    InputNumber,
     Tag,
     Tooltip,
     'i-switch': Switch,

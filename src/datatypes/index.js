@@ -2,7 +2,7 @@ import SexGenFunc from '@/datatypes/Sex/Sex';
 import NameGenFunc from '@/datatypes/Name/Name';
 import CounterGenFunc from '@/datatypes/Counter/Counter';
 import NumberGenFunc from '@/datatypes/Number/Number';
-import PhoneGenFunc from '@/datatypes/Phone/Phone';
+import TextGenFunc from '@/datatypes/Text/Text';
 import RandomChoiceGenFunc from '@/datatypes/RandomChoice/RandomChoice';
 import { RELATION_ENUM } from './CONST';
 
@@ -70,11 +70,16 @@ export const DATA_TYPES = {
       allowTypes: ["Counter", "Number"],
     },
   },
-  Phone: {
-    alias: "电话号码",
+  Text: {
+    alias: "文本",
     priority: 0,
-    genFunc: PhoneGenFunc,
+    genFunc: TextGenFunc,
     options: {
+      compose_type: ['NUMBER_TYPE', 'ENGLISH_YTPE', 'CHINESE_TYPE'],
+      min: 0,
+      max: 10,
+      fixed: 10,
+      lenth_type: 'FIXED_LENGTH',
       __unique: false, // 生成结果是否是唯一值
       __display: true, // 生成结果是否包含该字段
       __fieldName: ""  // 用于为options添加 __$$fieldname: gendata 为其关联的字段传入生成值
