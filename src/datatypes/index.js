@@ -70,12 +70,11 @@ export const DATA_TYPES = {
     priority: 105,
     genFunc: TimeGenFunc,
     options: {
-      __unique: false,
-      __display: true,
-      __fieldName: "",
-      __timeCategory:"",
-      __accumulate:0
+      __accumulate:0,
+      __lastTimeValue:0
     },
+    __unique: false,
+    __display: true,
     relation: {
       fieldNames: "",
       minInterval:0,

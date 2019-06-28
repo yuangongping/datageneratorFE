@@ -84,7 +84,7 @@
       
 
     <Select v-model="dataTypeToAdd">
-      <Option :value="dataType" v-for="dataType in Object.keys(DATA_TYPES)"> {{ DATA_TYPES[dataType].alias }} </Option>
+      <Option :value="dataType" v-for="dataType in Object.keys(DATA_TYPES)" :key=dataType> {{ DATA_TYPES[dataType].alias }} </Option>
     </Select>
     <Button type="primary" @click="addRow()">添加字段</Button>
 
@@ -94,7 +94,6 @@
 
 <script>
 // @ is an alias to /src
-import Vue from 'vue';
 import deepcopy from 'deepcopy';
 import draggable from 'vuedraggable';
 import { Progress, Button, Input, Select, Option, Icon, Tag, Switch, Tooltip } from 'iview';
