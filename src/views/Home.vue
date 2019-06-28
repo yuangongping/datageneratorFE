@@ -47,7 +47,7 @@ import draggable from 'vuedraggable';
 import { Progress, Button, Input, Select, Option, Icon } from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
 import { Generator } from '@/generator/index';
-import { SexConfig, NameConfig, CounterConfig, NumberConfig } from '@/components/datatypesconfig/index.js';
+import { SexConfig, NameConfig, CounterConfig, NumberConfig ,TimeConfig} from '@/components/datatypesconfig/index.js';
 import { DATA_TYPES } from '@/datatypes/index.js';
 
 export default {
@@ -79,7 +79,8 @@ export default {
     SexConfig,
     NameConfig,
     CounterConfig,
-    NumberConfig
+    NumberConfig,
+    TimeConfig
   },
   mounted() {
   },
