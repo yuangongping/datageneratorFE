@@ -30,14 +30,7 @@
     <Select v-model="dataTypeToAdd">
       <Option :value="dataType" v-for="dataType in Object.keys(DATA_TYPES)" :key="dataType"> {{ DATA_TYPES[dataType].alias }} </Option>
     </Select>
-<<<<<<< HEAD
-
-    <!-- 添加组价 -->
-    <Button type="primary" @click="addRow()">添加组件</Button>
-=======
     <Button type="primary" @click="addRow()">添加字段</Button>
->>>>>>> upstream/master
-
     <Button @click="checkData"> 检查数据 </Button>
   </div>
 </template>
