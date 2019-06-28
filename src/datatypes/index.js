@@ -2,6 +2,10 @@ import SexGenFunc from '@/datatypes/Sex/Sex';
 import NameGenFunc from '@/datatypes/Name/Name';
 import CounterGenFunc from '@/datatypes/Counter/Counter';
 import NumberGenFunc from '@/datatypes/Number/Number';
+import ProvinceGenFunc from '@/datatypes/Province/Province';
+import CityGenFunc from '@/datatypes/City/City';
+import DistrictGenFunc from '@/datatypes/District/District';
+import DistrictCodeGenFunc from '@/datatypes/DistrictCode/DistrictCode';
 import { RELATION_ENUM } from './CONST';
 
 export const DATA_TYPES = {
@@ -62,6 +66,62 @@ export const DATA_TYPES = {
       type: RELATION_ENUM.INDEPEND.EN,
       expresion: '',
       allowTypes: ["Counter", "Number"],
+    },
+  },
+  Province: {
+    alias: "省份",
+    priority: 10,
+    genFunc: ProvinceGenFunc,
+    options: {
+      province: [],
+    },
+    __unique: false,
+    __display: true,
+    relation: null
+  },
+  City: {
+    alias: "城市",
+    priority: 100,
+    genFunc: CityGenFunc,
+    options: {
+      provinceChoice: "random",
+    },
+    __unique: false,
+    __display: true,
+    relation: {
+      fieldNames: "",
+      type: RELATION_ENUM.INDEPEND.EN,
+      allowTypes: ["Province"],
+    },
+  },
+  District: {
+    alias: "区县",
+    priority: 1000,
+    genFunc: DistrictGenFunc,
+    options: {
+      cityChoice: 'random',
+    },
+    __unique: false,
+    __display: true,
+    relation: {
+      fieldNames: "",
+      type: RELATION_ENUM.INDEPEND.EN,
+      allowTypes: ["City"],
+    },
+  },
+  DistrictCode: {
+    alias: "区县码",
+    priority: 10000,
+    genFunc: DistrictCodeGenFunc,
+    options: {
+      district_no: 'random',
+    },
+    __unique: false,
+    __display: true,
+    relation: {
+      fieldNames: "",
+      type: RELATION_ENUM.INDEPEND.EN,
+      allowTypes: ["District"],
     },
   }
 };

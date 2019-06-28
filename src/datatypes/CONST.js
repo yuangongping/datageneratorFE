@@ -27,7 +27,10 @@ export const RELATION_ENUM = {
 
 export const ALLOW_RELATIONS = {
   Name: ['INDEPEND', 'COR_RELATION'],
-  Number: ['INDEPEND', 'GREATER', 'LITTER', 'NUM_EXPRESS']
+  Number: ['INDEPEND', 'GREATER', 'LITTER', 'NUM_EXPRESS'],
+  City: ['INDEPEND', 'COR_RELATION'],
+  District: ['INDEPEND', 'COR_RELATION'],
+  DistrictCode: ['INDEPEND', 'COR_RELATION']
 }
 
 
