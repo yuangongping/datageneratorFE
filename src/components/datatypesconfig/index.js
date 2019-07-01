@@ -7,7 +7,6 @@ import Str2NumberConfig from '@/components/datatypesconfig/Str2NumberConfig/Str2
 import StrSpliceConfig from '@/components/datatypesconfig/StrSpliceConfig/StrSpliceConfig.vue';
 import StringSegmenteConfig from '@/components/datatypesconfig/StringSegmenteConfig/StringSegmenteConfig.vue';
 
-
 export {
   SexConfig,
   NameConfig,

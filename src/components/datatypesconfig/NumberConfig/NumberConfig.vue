@@ -1,109 +1,143 @@
 <template>
-  <el-row :gutter="16">
-    <el-col :span="2">
+  <!-- 修改组件独立的样式时注意修改组件class -->
+  <div class="number-config">
+
+    <!-- 【 通用区域 】字段类型、字段名 -->
+    <div class="field-type">
       <Tag color="primary">{{ dataTypeAlias }}</Tag>
-    </el-col>
-    <el-col :span="4">
-      <span class="option-title">字段名</span>
-      <Input type="text"
-       v-model="fieldNameValue"
-       @on-change="chgFieldName"
-       />
-    </el-col>
-    <el-col :span="3">
-      <span class="option-title">最小值</span>
-      <span class="option-title">最小随机值</span>
-      <InputNumber
-        v-model="optionsValue.min"
-        @on-change="chgOptions"
-      />
-    </el-col>
-    <el-col :span="3">
-      <span class="option-title">最大值</span>
-      <span class="option-title">最大随机值</span>
-      <InputNumber
-        v-model="optionsValue.max"
-        @on-change="chgOptions"
-      />
-    </el-col>
+    </div>
 
-    <el-col :span="3">
-      <span class="option-title">保留几位小数位</span>
-      <InputNumber
-        :max="5"
-        :min="0"
-        v-model="optionsValue.decimal"
-        @on-change="chgOptions"
-      />
-    </el-col>
+    <div class="field-name">
+      <label>
+        <Input type="text"
+          v-model="fieldNameValue"
+          @on-change="chgFieldName"
+          placeholder=" "
+        />
+        <span class="config-title">字段名</span>
+      </label>
+    </div>
+    
+    <div class="field-config">
+      <div class="config-item">
+        <label>
+          <InputNumber
+            v-model="optionsValue.min"
+            @on-change="chgOptions"
+            :max="optionsValue.max"
+          />
+          <span class="config-title">最小随机值</span>
+        </label>
+      </div>
 
-    <el-col :span="3">
-      <Select
-        v-model="relationValue.type" 
-        style="width:200px"
-        @on-change="chgRelation"
-      >
-        <Option 
-          v-for="relation in allowRelations"
-          :value="relation"
-          :key="relation"
+      <div class="config-item">
+        <label>
+          <InputNumber
+            v-model="optionsValue.max"
+            @on-change="chgOptions"
+            :min="optionsValue.min"
+          />
+          <span class="config-title">最大随机值</span>
+        </label>
+      </div>
+
+      <div class="config-item decimal">
+        <label>
+          <InputNumber
+            v-model="optionsValue.decimal"
+            @on-change="chgOptions"
+            :min="0"
+          />
+          <span class="config-title">保留几位小数位</span>
+        </label>
+      </div>
+
+      <div class="config-item relation-config">
+        <Select
+          v-model="relationValue.type" 
+          @on-change="chgRelation"
         >
-        {{ RELATION_ENUM[relation].CN }}
-        </Option>
-      </Select>
+          <Option 
+            v-for="relation in allowRelations"
+            :value="relation"
+            :key="relation"
+          >
+          {{ RELATION_ENUM[relation].CN }}
+          </Option>
+        </Select>
+      </div>
 
-      <span class="option-title">关联字段</span>
-      <Input type="text"
-       v-model="relationValue.fieldNames"
-       @on-change="chgRelation"
-      />
-    </el-col>
 
-    <el-col :span="6" v-if="relationValue.type === RELATION_ENUM.NUM_EXPRESS.EN">
-      <span class="option-title">数字表达式</span>
-      <Input type="text"
-       v-model="relationValue.expression"
-       @on-change="chgRelation"
-       placeholder="${DATA} * ${REALTE}"
-       />
-    </el-col>
-    <el-col :span="3">
-      <span class="option-title">没有重复值</span>
-      <i-switch
-        size="small"
-        v-model="optionsValue.__unique"
-        @on-change="chgOptions"
-      >
-      </i-switch>
-    </el-col>
-    <el-col :span="3">
-      <span class="option-title">结果是否包含该字段</span>
-      <i-switch
-        size="small"
-        v-model="optionsValue.__display"
-        @on-change="chgOptions"
-      >
-      </i-switch>
-    </el-col>
+      <div class="config-item">
+        <label>
+          <Input type="text"
+             v-model="relationValue.fieldNames"
+              @on-change="chgRelation"
+          />
+          <span class="config-title">关联字段</span>
+        </label>
+      </div>
+      
+      <div class="config-item">
+        <label>
+          <Input type="text"
+            v-model="relationValue.expression"
+            @on-change="chgRelation"
+            placeholder="${DATA} * ${REALTE}"
+          />
+          <span class="config-title">数字表达式</span>
+        </label>
+      </div>
 
-    <el-col :span="2">
+    </div>
+
+    <!-- 【 通用区域 】唯一性和字段显示设置、关闭槽 -->
+    <div class="switch-config">
+      <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
+        <i-switch
+          size="large"
+          v-model="optionsValue.__unique"
+          @on-change="chgOptions"
+        >
+          <span slot="open">唯一</span>
+          <span slot="close">唯一</span>
+        </i-switch>
+      </Tooltip>
+    </div>
+
+    <div class="switch-config">
+      <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
+        <i-switch
+          size="large"
+          v-model="optionsValue.__display"
+          @on-change="chgOptions"
+        >
+          <span slot="open">显示</span>
+          <span slot="close">显示</span>
+        </i-switch>
+      </Tooltip>
+    </div>
+
+    <div class="close-slot">
       <slot></slot>
-    </el-col>
-  </el-row>
+    </div>
+  </div>
 </template>
 
 <style lang="scss">
-.option-title {
-  width: 150px;
-  line-height: 20px;
+.number-config {
+  .decimal {
+    .ivu-input-number {
+      width: 95px;
+    }
+  }
 }
 </style>
 
 <script>
 import { DATA_TYPES } from '@/datatypes/index.js'; 
 import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
-import { Input, InputNumber, Select, Option, Tag, Switch } from "iview";
-
+import { Input, InputNumber, Select, Option, Tag, Switch, Tooltip } from "iview";
 export default {
   data() {
     return {
@@ -127,6 +161,7 @@ export default {
     Input,
     InputNumber,
     Tag,
+    Tooltip,
     'i-switch': Switch,
   },
   methods: {

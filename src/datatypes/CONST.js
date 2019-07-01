@@ -28,6 +28,7 @@ export const RELATION_ENUM = {
 export const ALLOW_RELATIONS = {
   Name: ['INDEPEND', 'COR_RELATION'],
   Number: ['INDEPEND', 'GREATER', 'LITTER', 'NUM_EXPRESS'],
+  IdentificationNumber: ['INDEPEND', 'COR_RELATION'],
   Str2Number: ['INDEPEND', 'COR_RELATION'],
   StrSplice: ['INDEPEND', 'COR_RELATION'],
   StringSegmente:  ['COR_RELATION'],

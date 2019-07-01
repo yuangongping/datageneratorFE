@@ -75,22 +75,21 @@ export const DATA_TYPES = {
     },
   },
   IdentificationNumber: {
-    alias: "身份证号码",
+    alias: "身份证",
     priority: 100,
     genFunc: IdentificationNumberGenFunc,
     options: {
-      min: 0,
-      max: 10,
-      decimal: 0,
       __unique: false,
       __display: true,
       __fieldName: ""
     },
     relation: {
       fieldNames: "",
+      address: "",
+      date: "",
+      sex: "",
       type: RELATION_ENUM.INDEPEND.EN,
-      expresion: '',
-      allowTypes: ["Counter", "Number"],
+      allowTypes: ["Sex", "Number"],
     },
   },
 

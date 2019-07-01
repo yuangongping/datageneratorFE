@@ -1,40 +1,82 @@
 <template>
-  <div class="container">
-    <el-row>
-      <el-col :span=1>
-        <el-tag size="small" effect="dark">{{ dataTypeAlias }}</el-tag>
-      </el-col>
-      <el-col :span=1>
-        字段名
-      </el-col>
-      <el-col :span=3>
-        <el-input v-model="fieldNameValue" placeholder="请输入内容" @change="chgFieldName"></el-input>
-      </el-col>
-      <el-col :span=3>
-        <el-select v-model="relationValue.type" placeholder="请选择" @change="chgRelation">
-          <el-option
-            v-for="relation in allowRelations"
-            :key="relation"
-            :label="RELATION_ENUM[relation].CN"
-            :value="relation"
-          > 
-          </el-option>
-        </el-select>
-      </el-col>
-      <el-col :span=1>关联字段</el-col>
-      <el-col :span=3>
-        <el-input v-model="relationValue.fieldNames" placeholder="请输入内容" @change="chgRelation"></el-input>
-      </el-col>
-      <el-col :span=2> <span class="option-title">结果是否包含该字段</span></el-col>
-      <el-col :span=1>
-        <el-switch v-model="optionsValue.__display" size="small" @change="chgOptions">
-        </el-switch>
-      </el-col>
-      <el-col :span=1>
-        <slot></slot>
-      </el-col>
+  <div class="StrSplice-config">
+    <!-- 【 通用区域 】字段类型、字段名 -->
+    <div class="field-type">
+      <Tag color="primary">{{ dataTypeAlias }}</Tag>
+    </div>
 
-    </el-row>
+    <div class="field-name">
+      <label>
+        <Input type="text"
+          v-model="fieldNameValue"
+          @on-change="chgFieldName"
+          placeholder=" "
+        />
+        <span class="config-title">字段名</span>
+      </label>
+    </div>
+    
+     <div class="field-config">
+      <div class="config-item relation-config">
+        <Select
+          v-model="relationValue.type" 
+          @on-change="chgRelation"
+        >
+          <Option 
+            v-for="relation in allowRelations"
+            :value="relation"
+            :key="relation"
+          >
+          {{ RELATION_ENUM[relation].CN }}
+          </Option>
+        </Select>
+      </div>
+
+
+      <div class="config-item">
+        <label>
+          <Input type="text"
+             v-model="relationValue.fieldNames"
+              @on-change="chgRelation"
+          />
+          <span class="config-title">关联字段</span>
+        </label>
+      </div>
+
+
+    </div>
+
+    <!-- 【 通用区域 】唯一性和字段显示设置、关闭槽 -->
+    <div class="switch-config">
+      <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
+        <i-switch
+          size="large"
+          v-model="optionsValue.__unique"
+          @on-change="chgOptions"
+        >
+          <span slot="open">唯一</span>
+          <span slot="close">唯一</span>
+        </i-switch>
+      </Tooltip>
+    </div>
+
+    <div class="switch-config">
+      <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
+        <i-switch
+          size="large"
+          v-model="optionsValue.__display"
+          @on-change="chgOptions"
+        >
+          <span slot="open">显示</span>
+          <span slot="close">显示</span>
+        </i-switch>
+      </Tooltip>
+    </div>
+
+    <div class="close-slot">
+      <slot></slot>
+    </div>
+
   </div>
     
 </template>
@@ -47,7 +89,7 @@
 <script>
 import { DATA_TYPES } from '@/datatypes/index.js'; 
 import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
-
+import { Input, Select, Option, Tag, Switch, Tooltip } from "iview";
 export default {
   data() {
     return {
@@ -58,6 +100,14 @@ export default {
       RELATION_ENUM: RELATION_ENUM,
       allowRelations: ALLOW_RELATIONS[this.dataType],
     }
+  },
+  components: {
+    Select,
+    Option,
+    Input,
+    Tag,
+    Tooltip,
+    'i-switch': Switch,
   },
   props: {
     fieldName: String,
