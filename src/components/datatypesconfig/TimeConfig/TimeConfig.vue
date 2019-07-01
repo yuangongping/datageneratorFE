@@ -8,7 +8,7 @@
           @on-change="chgOptions" 
           v-model="optionsValue.initialTime"
           placeholder="请输入起止时间"
-          :disabled="relationValue.type==='After'?true:false"
+          :disabled="relationValue.type==='GREATER'?true:false"
         >
         </DatePicker>
         <span class="config-title">生成时间范围</span>
@@ -40,7 +40,7 @@
           v-model="optionsValue.timeStep"
           @on-change="chgOptions"
           placeholder="(分钟)"
-          :disabled="relationValue.type==='After'?true:false"
+          :disabled="relationValue.type==='GREATER'?true:false"
         />
         <span class="config-title">步长</span>
       </label>
@@ -54,7 +54,7 @@
           v-model="optionsValue.minStep"
           @on-change="chgOptions"
           placeholder="(分钟)"
-          :disabled="relationValue.type==='After'?true:false"
+          :disabled="relationValue.type==='GREATER'?true:false"
           />
         <span class="config-title">最小步长</span>
       </label>
@@ -64,7 +64,7 @@
           v-model="optionsValue.maxStep"
           @on-change="chgOptions"
           placeholder="(分钟)"
-          :disabled="relationValue.type==='After'?true:false"
+          :disabled="relationValue.type==='GREATER'?true:false"
         />
         <span class="config-title">最大步长</span>
       </label>
@@ -98,7 +98,7 @@
     </div>
 
     <!-- 关联其他字段取值时需提供最大、最小间隔值 -->
-    <div class="config-item" v-if="relationValue.type === RELATION_ENUM.After.EN">
+    <div class="config-item" v-if="relationValue.type === RELATION_ENUM.GREATER.EN">
       <label>
         <InputNumber type="text"
           v-model="relationValue.minInterval"
@@ -125,11 +125,11 @@
           placeholder="选择生成时间格式"
           @on-change="chgOptions"
         >
-          <Option value="format_1" >yyyy-MM-dd HH:mm:ss</Option>
-          <Option value="format_2" >yyyy-mm-dd</Option>
-          <Option value="format_3" >年/月/日</Option>
-          <Option value="format_4" >年/月/日/时/分</Option>
-          <Option value="format_5" >yyyymmdd</Option>
+          <Option value="FORMAT_1" >yyyy-MM-dd HH:mm:ss</Option>
+          <Option value="FORMAT_2" >yyyy-mm-dd</Option>
+          <Option value="FORMAT_3" >年/月/日</Option>
+          <Option value="FORMAT_4" >年/月/日/时/分</Option>
+          <Option value="FORMAT_5" >yyyymmdd</Option>
         </Select>
         <span class="config-title">时间格式</span>
       </label>

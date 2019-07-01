@@ -22,17 +22,13 @@ export const RELATION_ENUM = {
   STRING_EXPRESS: {
     EN: "STRING_EXPRESS",
     CN: "字符串表达式"
-  },
-  After:{
-    EN:"After",
-    CN:"大于关联值"
   }
 }
 
 export const ALLOW_RELATIONS = {
   Name: ['INDEPEND', 'COR_RELATION'],
   Number: ['INDEPEND', 'GREATER', 'LITTER', 'NUM_EXPRESS'],
-  Time: ['INDEPEND', 'After']
+  Time: ['INDEPEND', 'GREATER']
 }
 
 

@@ -19,7 +19,7 @@ export default (options,relation) => {
     }
     const relVal = parseFloat(options[FIELD_PRE + relation.fieldNames]);//从关联字段取值
     const relationCategory = options['relationCategory'];//所关联字段的时间类型
-    if (relation.type == RELATION_ENUM.After.EN){//选择大于关联值情况时
+    if (relation.type == RELATION_ENUM.GREATER.EN){//选择大于关联值情况时
       const minInterval = relation.minInterval*60;//输入最大最小间隔，单位为分钟，转换为秒
       const maxInterval = relation.maxInterval*60;
       if(minInterval>maxInterval){
@@ -108,16 +108,16 @@ export default (options,relation) => {
       timelist[i] = '0'+timelist[i];
     }
   }
-  if(timeFormat == 'format_1'){
+  if(timeFormat == 'FORMAT_1'){
     resultTIme = resultTIme.toLocaleDateString().replace(/\//g, "-") + " " + resultTIme.toTimeString().substr(0, 8);
   }
-  else if(timeFormat=='format_2'){
+  else if(timeFormat=='FORMAT_2'){
     resultTIme = timelist[0]+'-'+timelist[1]+'-'+timelist[2];
   }
-  else if(timeFormat=='format_3'){
+  else if(timeFormat=='FORMAT_3'){
     resultTIme = timelist[0]+'年'+timelist[1]+'月'+timelist[2]+'日';
   }
-  else if(timeFormat=='format_5'){
+  else if(timeFormat=='FORMAT_5'){
     resultTIme =timelist[0]+timelist[1]+timelist[2];
   }
   else{
