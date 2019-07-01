@@ -4,7 +4,7 @@ import CounterGenFunc from '@/datatypes/Counter/Counter';
 import NumberGenFunc from '@/datatypes/Number/Number';
 import TextGenFunc from '@/datatypes/Text/Text';
 import RandomChoiceGenFunc from '@/datatypes/RandomChoice/RandomChoice';
-import { RELATION_ENUM } from './CONST';
+import { RELATION_ENUM, OPTIONS_ENUM } from './CONST';
 
 export const DATA_TYPES = {
   Sex: {
@@ -15,10 +15,9 @@ export const DATA_TYPES = {
       manAlias: "男",
       womanAlias: "女",
       sex: "random",
-      __unique: false, // 生成结果是否是唯一值
-      __display: true, // 生成结果是否包含该字段
-      __fieldName: ""  // 用于为options添加 __$$fieldname: gendata 为其关联的字段传入生成值
     },
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
     relation: null
   },
   Name: {
@@ -27,10 +26,9 @@ export const DATA_TYPES = {
     genFunc: NameGenFunc,
     options: {
       sex: "random",
-      __unique: false,
-      __display: true,
-      __fieldName: ""
     },
+    __unique: false,
+    __display: true,
     relation: {
       fieldNames: "",
       type: RELATION_ENUM.INDEPEND.EN,
@@ -45,10 +43,9 @@ export const DATA_TYPES = {
       startNum: 0,
       division: 1,
       template: '',
-      __unique: false,
-      __display: true,
-      __fieldName: ""
     },
+    __unique: false,
+    __display: true,
     relation: null
   },
   Number: {
@@ -59,10 +56,9 @@ export const DATA_TYPES = {
       min: 0,
       max: 10,
       decimal: 0,
-      __unique: false,
-      __display: true,
-      __fieldName: ""
     },
+    __unique: false,
+    __display: true,
     relation: {
       fieldNames: "",
       type: RELATION_ENUM.INDEPEND.EN,
@@ -75,15 +71,14 @@ export const DATA_TYPES = {
     priority: 0,
     genFunc: TextGenFunc,
     options: {
-      compose_type: ['NUMBER_TYPE', 'ENGLISH_YTPE', 'CHINESE_TYPE'],
+      textTypes: Object.keys(OPTIONS_ENUM.Text.TEXT_TYPE),
       min: 0,
       max: 10,
-      fixed: 10,
-      lenth_type: 'FIXED_LENGTH',
-      __unique: false, // 生成结果是否是唯一值
-      __display: true, // 生成结果是否包含该字段
-      __fieldName: ""  // 用于为options添加 __$$fieldname: gendata 为其关联的字段传入生成值
-    },
+      fix: 10,
+      lenType: OPTIONS_ENUM.Text.LEN_TYPE.FIX.EN,
+     },
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
     relation: null
   },
   RandomChoice: {
@@ -92,10 +87,9 @@ export const DATA_TYPES = {
     genFunc: RandomChoiceGenFunc,
     options: {
       RandomString: "",
-      __unique: false, // 生成结果是否是唯一值
-      __display: true, // 生成结果是否包含该字段
-      __fieldName: ""  // 用于为options添加 __$$fieldname: gendata 为其关联的字段传入生成值
     },
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
     relation: null
   },
 };

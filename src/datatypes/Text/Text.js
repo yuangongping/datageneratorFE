@@ -1,21 +1,23 @@
 import { random, floor } from 'mathjs';
-import { FIELD_PRE } from '@/datatypes/CONST.js';
+import { FIELD_PRE, OPTIONS_ENUM } from '@/datatypes/CONST.js';
 import textData from '@/datatypes/Text/textData';
 import { randomChoice } from '@/utils/functions';
 
 export default (options, relation) => {
-  let compose_type = options.compose_type;
-  let lenth_type = options.lenth_type;
-  let max = options.max;
-  let min = options.min;
-  let fixed = options.fixed;
+  const textTypes = options.textTypes;
+  const lenType = options.lenType;
+  const max = options.max;
+  const min = options.min;
+  const fix = options.fix;
   let _result = '';
 
-  let range = lenth_type == 'RANDOM_LENGTH' ? Math.round(Math.random() * (max-min)) + min : fixed;
-  for (let i=0; i<range; i++){
-    let choice_compose_type = randomChoice(compose_type)
-    let datatypeChoice = textData[choice_compose_type]
-    _result = _result + randomChoice(datatypeChoice)
+  let length = lenType == OPTIONS_ENUM.Text.LEN_TYPE.RANDOM.EN 
+    ? Math.round(Math.random() * (max-min)) + min 
+    : fix;
+
+  for (let i = 0; i < length; i++){
+    let textType = randomChoice(textTypes)
+    _result = _result + randomChoice(textData[textType])
   }
 
   // 将生成结果传递下去
