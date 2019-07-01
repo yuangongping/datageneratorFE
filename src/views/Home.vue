@@ -98,7 +98,6 @@
 
     <Button @click="checkData"> 检查数据 </Button>
   </div>
-  
 </template>
 
 <script>
@@ -179,6 +178,7 @@ export default {
     addRow() {
       const { dataTypeToAdd, dataTypeConfigs } = this;
       const component = dataTypeToAdd + 'Config'
+
       dataTypeConfigs.push({
         component: component,
         id: new Date().getTime().toString(), // 使用时间戳添加一个唯一标识，可用于排序动画等
@@ -232,25 +232,30 @@ export default {
   &:nth-child(2n) {
     background-color: #fafafa;
   }
+
   .field-type {
     width: 70px;
     margin-right: 10px;
   }
+
   .field-name {
     width: 160px;
     margin-right: 10px;
   }
+
   .relation-config {
     width:120px;
     .ivu-select-selection {
       width:120px;
     }
   }
+
   .field-config {
     flex: 1;
     display: flex;
     justify-content: flex-start; // 主轴排列方式
     align-items: center; // 交叉轴对齐方式
+
     .config-item {
       margin-right: 10px;
       display: flex;
@@ -258,6 +263,7 @@ export default {
       align-items: center; // 交叉轴对齐方式
     }
   }
+
   .switch-config {
     width: 70px;
   }
@@ -273,6 +279,7 @@ export default {
     flex-direction: column;
     cursor: pointer;
   }
+
   .question {
     color: #66cccc; margin-left: 2px; cursor: pointer; font-size: 12px;
   }
@@ -280,6 +287,7 @@ export default {
 label {
   position:relative;
   display:inline-block;
+
   .config-title {
     padding: 4px;
     pointer-events: none;
@@ -290,4 +298,5 @@ label {
     font-size: 12px;
   }
 }
+
 </style>
