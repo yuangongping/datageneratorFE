@@ -2,14 +2,10 @@ import SexGenFunc from '@/datatypes/Sex/Sex';
 import NameGenFunc from '@/datatypes/Name/Name';
 import CounterGenFunc from '@/datatypes/Counter/Counter';
 import NumberGenFunc from '@/datatypes/Number/Number';
-<<<<<<< HEAD
 import TextGenFunc from '@/datatypes/Text/Text';
 import RandomChoiceGenFunc from '@/datatypes/RandomChoice/RandomChoice';
 import { RELATION_ENUM, OPTIONS_ENUM } from './CONST';
-=======
 import TimeGenFunc from '@/datatypes/Time/Time';
-import { RELATION_ENUM } from './CONST';
->>>>>>> 6083455b2c82aa680797843f3a53ad3cd35bff43
 
 export const DATA_TYPES = {
   Sex: {
@@ -71,7 +67,6 @@ export const DATA_TYPES = {
       allowTypes: ["Counter", "Number"],
     },
   },
-<<<<<<< HEAD
   Text: {
     alias: "文本",
     priority: 0,
@@ -98,7 +93,6 @@ export const DATA_TYPES = {
     __display: true, // 生成结果是否包含该字段
     relation: null
   },
-=======
   Time: {
     alias: "时间",
     priority: 105,
@@ -118,5 +112,4 @@ export const DATA_TYPES = {
       allowTypes: ["Time"],
     }
   }
->>>>>>> 6083455b2c82aa680797843f3a53ad3cd35bff43
 };
