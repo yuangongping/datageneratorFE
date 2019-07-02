@@ -92,7 +92,7 @@
       
 
     <Select v-model="dataTypeToAdd">
-      <Option :value="dataType" v-for="dataType in Object.keys(DATA_TYPES)"> {{ DATA_TYPES[dataType].alias }} </Option>
+      <Option :value="dataType" v-for="dataType in Object.keys(DATA_TYPES)" :key=dataType> {{ DATA_TYPES[dataType].alias }} </Option>
     </Select>
     <Button type="primary" @click="addRow()">添加字段</Button>
 
@@ -102,13 +102,16 @@
 
 <script>
 // @ is an alias to /src
-import Vue from 'vue';
 import deepcopy from 'deepcopy';
 import draggable from 'vuedraggable';
 import { Progress, Button, Input, Select, Option, Icon, Tag, Switch, Tooltip } from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
 import { Generator } from '@/generator/index';
+<<<<<<< HEAD
 import { SexConfig, NameConfig, CounterConfig, NumberConfig, RandomChoiceConfig, TextConfig } from '@/components/datatypesconfig/index.js';
+=======
+import { SexConfig, NameConfig, CounterConfig, NumberConfig ,TimeConfig} from '@/components/datatypesconfig/index.js';
+>>>>>>> 6083455b2c82aa680797843f3a53ad3cd35bff43
 import { DATA_TYPES } from '@/datatypes/index.js';
 export default {
   name: 'home',
@@ -143,8 +146,12 @@ export default {
     NameConfig,
     CounterConfig,
     NumberConfig,
+<<<<<<< HEAD
     RandomChoiceConfig,
     TextConfig
+=======
+    TimeConfig
+>>>>>>> 6083455b2c82aa680797843f3a53ad3cd35bff43
   },
   mounted() {
   },
