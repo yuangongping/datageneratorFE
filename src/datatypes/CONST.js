@@ -28,11 +28,37 @@ export const RELATION_ENUM = {
 export const ALLOW_RELATIONS = {
   Name: ['INDEPEND', 'COR_RELATION'],
   Number: ['INDEPEND', 'GREATER', 'LITTER', 'NUM_EXPRESS'],
+  City: ['INDEPEND', 'COR_RELATION'],
+  District: ['INDEPEND', 'COR_RELATION'],
+  DistrictCode: ['INDEPEND', 'COR_RELATION'],
   IdentificationNumber: ['INDEPEND', 'COR_RELATION'],
   Str2Number: ['INDEPEND', 'COR_RELATION'],
   StrSplice: ['INDEPEND', 'COR_RELATION'],
   StringSegmente:  ['COR_RELATION'],
   Time: ['INDEPEND', 'GREATER']
+}
+
+export const SELECT_MODE_ENUM ={
+  City: {
+    CITY_RANDOM: {
+      EN: "CITY_RANDOM",
+      CN: "随机城市"
+    },
+    CITY_SELECTABLE: {
+      EN: "CITY_SELECTABLE",
+      CN: "自选城市"
+    }
+  },
+  District: {
+    DISTRICT_RANDOM: {
+      EN: "DISTRICT_RANDOM",
+      CN: "随机区县"
+    },
+    DISTRICT_SELECTABLE: {
+      EN: "DISTRICT_SELECTABLE",
+      CN: "自选区县"
+    }
+  }
 }
 
 export const OPTIONS_ENUM = {
