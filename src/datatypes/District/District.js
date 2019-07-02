@@ -40,8 +40,8 @@ export default (options, relation) => {
       });
     }
   }
-    districtChioce = randomChoice(districts)  
-  // // 将生成结果传递下去
+  districtChioce = randomChoice(districts)  
+  // 将生成结果传递下去
   const deliver_options = {};
   deliver_options[FIELD_PRE + options.__fieldName] = districtChioce;
   // 传递区号

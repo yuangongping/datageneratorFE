@@ -1,18 +1,19 @@
 import { randomChoice } from '@/utils/functions';
 import { FIELD_PRE } from '@/datatypes/CONST.js';
-// import OriginalData from '@/datatypes/COMMON_DATA/OriginalData';
 
 export default (options, relation) => {
   let provinces = [];
   let provinceChoice;
-
-  provinces = options.provinces; //获取多选框选中的省份数组
+  if (relation){
+    console.log(relation);
+  }
+  provinces = options.provinces; // 获取多选框选中的省份数组
   
   if(provinces.length === 0){
-    throw new Error("请选择省份!"); //数组为空抛出异常
+    throw new Error("请选择省份!"); // 数组为空抛出异常
   }
   else{
-     provinceChoice = randomChoice(provinces); //否则从备选省份数组中随机选取省份
+     provinceChoice = randomChoice(provinces); // 从备选省份数组中随机选取省份
   }
   // 将生成结果传递下去
   const deliver_options = {};

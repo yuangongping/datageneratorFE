@@ -30,7 +30,12 @@ export const ALLOW_RELATIONS = {
   Number: ['INDEPEND', 'GREATER', 'LITTER', 'NUM_EXPRESS'],
   City: ['INDEPEND', 'COR_RELATION'],
   District: ['INDEPEND', 'COR_RELATION'],
-  DistrictCode: ['INDEPEND', 'COR_RELATION']
+  DistrictCode: ['INDEPEND', 'COR_RELATION'],
+  IdentificationNumber: ['INDEPEND', 'COR_RELATION'],
+  Str2Number: ['INDEPEND', 'COR_RELATION'],
+  StrSplice: ['INDEPEND', 'COR_RELATION'],
+  StringSegmente:  ['COR_RELATION'],
+  Time: ['INDEPEND', 'GREATER']
 }
 
 export const SELECT_MODE_ENUM ={
@@ -52,6 +57,35 @@ export const SELECT_MODE_ENUM ={
     DISTRICT_SELECTABLE: {
       EN: "DISTRICT_SELECTABLE",
       CN: "自选区县"
+    }
+  }
+}
+
+export const OPTIONS_ENUM = {
+  Text: {
+    LEN_TYPE: {
+      FIX: {
+        EN: "FIX",
+        CN: "固定长度"
+      },
+      RANDOM: {
+        EN: "RANDOM",
+        CN: "随机长度"
+      },
+    },
+    TEXT_TYPE: {
+      CHINESE:{
+        EN: "CHINESE",
+        CN: "中文"
+      },
+      ENGLISH:{
+        EN: "ENGLISH",
+        CN: "字母"
+      },
+      NUMBER:{
+        EN: "NUMBER",
+        CN: "数字"
+      },
     }
   }
 }
