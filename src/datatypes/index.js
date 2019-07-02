@@ -6,14 +6,13 @@ import ProvinceGenFunc from '@/datatypes/Province/Province';
 import CityGenFunc from '@/datatypes/City/City';
 import DistrictGenFunc from '@/datatypes/District/District';
 import DistrictCodeGenFunc from '@/datatypes/DistrictCode/DistrictCode';
-import { RELATION_ENUM, SELECT_MODE_ENUM } from './CONST';
+import { RELATION_ENUM, SELECT_MODE_ENUM, OPTIONS_ENUM  } from './CONST';
 import IdentificationNumberGenFunc from '@/datatypes/IdentificationNumber/IdentificationNumber';
 import Str2NumberGenFunc from '@/datatypes/Str2Number/Str2Number'
 import StrSpliceGenFunc from  '@/datatypes/StrSplice/StrSplice'
 import StrSegmenteGenFunc from '@/datatypes/StringSegmente/StringSegmente'
 import TextGenFunc from '@/datatypes/Text/Text';
 import RandomChoiceGenFunc from '@/datatypes/RandomChoice/RandomChoice';
-import { RELATION_ENUM, OPTIONS_ENUM } from './CONST';
 import TimeGenFunc from '@/datatypes/Time/Time';
 
 export const DATA_TYPES = {
