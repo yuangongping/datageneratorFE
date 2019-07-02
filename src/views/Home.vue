@@ -1,8 +1,6 @@
 <template>
   <!-- TODO: 解释、例子、预览 -->
   <div class="home">
-    
-
     <Exporter v-if="rawdata.length > 0" filename="result" filetype="json" :rawdata="rawdata" />
     <Input v-model="nrows" />
     <Button @click="generate"> 生成 </Button>
@@ -14,16 +12,69 @@
       </li>
     </ul>
     <div 
-      :is="dataTypeConfig.component" 
-      :dataType="dataTypeConfig.dataType"
-      :fieldName.sync="dataTypeConfig.fieldName" 
-      :options.sync="dataTypeConfig.options"
-      :relation.sync="dataTypeConfig.relation"
       v-for="(dataTypeConfig, k) in dataTypeConfigs"
       :key="k"
       class="config-row"
     >
-      <Icon type="md-close" @click="delRow(k)"/>
+      <!-- 【 通用区域 】字段类型、字段名 -->
+      <div class="field-type">
+        <Tag color="primary">
+          <!-- {{ dataTypeConfig.dataType }} -->
+          {{ DATA_TYPES[dataTypeConfig.dataType].alias }}
+        </Tag>
+      </div>
+
+      <div class="field-name">
+        <label>
+          <Input type="text"
+            v-model="dataTypeConfig.fieldName"
+          />
+          <span class="config-title">字段名</span>
+        </label>
+      </div>
+      <!-------------------->
+
+      <!-- 字段配置组件区域 -->
+      <div
+        class="field-config"
+        :is="dataTypeConfig.component"
+        :dataType="dataTypeConfig.dataType"
+        :options.sync="dataTypeConfig.options"
+        :relation.sync="dataTypeConfig.relation"
+      ></div>
+      <!-------------------->
+      
+
+      <!-- 【 通用区域 】唯一性和字段显示设置、关闭按钮 -->
+      <div class="switch-config">
+        <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
+          <i-switch
+            size="large"
+            v-model="dataTypeConfig.__unique"
+          >
+            <span slot="open">唯一</span>
+            <span slot="close">唯一</span>
+          </i-switch>
+        </Tooltip>
+      </div>
+
+      <div class="switch-config">
+        <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
+          <i-switch
+            size="large"
+            v-model="dataTypeConfig.__display"
+          >
+            <span slot="open">显示</span>
+            <span slot="close">显示</span>
+          </i-switch>
+        </Tooltip>
+      </div>
+
+      <div class="delrow">
+        <Icon type="md-close" @click="delRow(k)"/>
+      </div>
+      <!-------------------->
+
     </div>
       
     <Select v-model="dataTypeToAdd">
@@ -38,7 +89,7 @@
 // @ is an alias to /src
 import deepcopy from 'deepcopy';
 import draggable from 'vuedraggable';
-import { Progress, Button, Input, Select, Option, Icon } from 'iview';
+import { Progress, Button, Input, Select, Option, Icon, Tag, Switch, Tooltip } from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
 import { Generator } from '@/generator/index';
 import { SexConfig, NameConfig, CounterConfig,
@@ -70,6 +121,9 @@ export default {
     Select,
     Option,
     Icon,
+    Tag,
+    Tooltip,
+    'i-switch': Switch,
     // vue draggable
     draggable,
     
@@ -93,6 +147,10 @@ export default {
       // 遍历dataTypeConfigs数组，功能是将options，relation由字符串转变为数据对象，如字典或列表，因为传入的参数时转变为了字符串
       dataTypeConfigs.forEach(el => {
         el.options = JSON.parse(el.options);
+        el.options.__unique = el.__unique;
+        el.options.__display = el.__display;
+        // 用于为options添加 __$$fieldname: gendata 为其关联的字段传入生成值
+        el.options.__fieldName = el.fieldName;
         el.relation = JSON.parse(el.relation);
       });
       // 返回格式化后的数据
@@ -102,7 +160,6 @@ export default {
     // 生产数据函数
     generate() {
       const generator = new Generator(this.parseDataTypeConfigs(), this.nrows);
-      
       try {
         this.dataGened = generator.generate();
       } catch (e) {
@@ -125,7 +182,9 @@ export default {
         fieldName: "",
         dataType: dataTypeToAdd,
         options: JSON.stringify(DATA_TYPES[dataTypeToAdd].options),
-        relation: JSON.stringify(DATA_TYPES[dataTypeToAdd].relation)
+        relation: JSON.stringify(DATA_TYPES[dataTypeToAdd].relation),
+        __unique: DATA_TYPES[dataTypeToAdd].__unique,
+        __display: DATA_TYPES[dataTypeToAdd].__display,
       })
     },
     
@@ -193,7 +252,7 @@ export default {
     width: 70px;
   }
   
-  .close-slot {
+  .delrow {
     width: 30px;
     cursor: pointer;
     font-size: 16px;

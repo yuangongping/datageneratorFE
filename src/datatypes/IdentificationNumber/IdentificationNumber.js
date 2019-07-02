@@ -133,8 +133,7 @@ export default (options, relation) => {
   // 定义结果变量
   var __result = ''
   // 判断是否相关， 如果不是独立字段，即相关
-  if (relation.type != RELATION_ENUM.INDEPEND.EN) {
-    console.log('111111111', relation)
+  if (relation.type !== RELATION_ENUM.INDEPEND.EN) {
     // 字符串分割得到关联字段列表 
     let relationFieldNamesList = relation.fieldNames.split(',')
     // 定义区域，时间前14位临时变量

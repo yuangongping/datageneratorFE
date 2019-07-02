@@ -19,10 +19,9 @@ export const DATA_TYPES = {
       manAlias: "男",
       womanAlias: "女",
       sex: "random",
-      __unique: false, // 生成结果是否是唯一值
-      __display: true, // 生成结果是否包含该字段
-      __fieldName: ""  // 用于为options添加 __$$fieldname: gendata 为其关联的字段传入生成值
     },
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
     relation: null
   },
   Name: {
@@ -31,10 +30,9 @@ export const DATA_TYPES = {
     genFunc: NameGenFunc,
     options: {
       sex: "random",
-      __unique: false,
-      __display: true,
-      __fieldName: ""
     },
+    __unique: false,
+    __display: true,
     relation: {
       fieldNames: "",
       type: RELATION_ENUM.INDEPEND.EN,
@@ -49,10 +47,9 @@ export const DATA_TYPES = {
       startNum: 0,
       division: 1,
       template: '',
-      __unique: false,
-      __display: true,
-      __fieldName: ""
     },
+    __unique: false,
+    __display: true,
     relation: null
   },
   Number: {
@@ -63,10 +60,9 @@ export const DATA_TYPES = {
       min: 0,
       max: 10,
       decimal: 0,
-      __unique: false,
-      __display: true,
-      __fieldName: ""
     },
+    __unique: false,
+    __display: true,
     relation: {
       fieldNames: "",
       type: RELATION_ENUM.INDEPEND.EN,
@@ -78,16 +74,13 @@ export const DATA_TYPES = {
     alias: "身份证",
     priority: 100,
     genFunc: IdentificationNumberGenFunc,
+    __unique: false,
+    __display: true,
     options: {
-      __unique: false,
-      __display: true,
       __fieldName: ""
     },
     relation: {
       fieldNames: "",
-      address: "",
-      date: "",
-      sex: "",
       type: RELATION_ENUM.INDEPEND.EN,
       allowTypes: ["Sex", "Number"],
     },
@@ -97,9 +90,9 @@ export const DATA_TYPES = {
     alias: "字符串转数字",
     priority: 200,
     genFunc: Str2NumberGenFunc,
+    __unique: false,
+    __display: true,
     options: {
-      __unique: false,
-      __display: true,
       __fieldName: ""
     },
     relation: {
@@ -113,9 +106,9 @@ export const DATA_TYPES = {
     alias: "字符串拼接",
     priority: 200,
     genFunc: StrSpliceGenFunc,
+    __unique: false,
+    __display: true,
     options: {
-      __unique: false,
-      __display: true,
       __fieldName: ""
     },
     relation: {
@@ -130,17 +123,16 @@ export const DATA_TYPES = {
     alias: "字符串分割",
     priority: 200,
     genFunc: StrSegmenteGenFunc,
+    __unique: false,
+    __display: true,
     options: {
       start: 0,
       end: 0,
-      __unique: false,
-      __display: true,
       __fieldName: ""
     },
     relation: {
       fieldNames: "",
       type: RELATION_ENUM.INDEPEND.EN,
-      expresion: '',
       allowTypes: ["Counter", "Number"],
     },
   }

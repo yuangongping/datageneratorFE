@@ -127,8 +127,6 @@ export class Generator{
             fieldName: field,
             dataType: deepcopy(DATA_TYPES[config.dataType])
           };
-          // 赋值__fieldName
-          config.options.__fieldName = field;
           // 合并默认的options、relation与自定义的options、relation
           Object.assign(tempDataType.dataType.options, config.options);
           if (tempDataType.dataType.relation != undefined) {
