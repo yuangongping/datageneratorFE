@@ -6,9 +6,10 @@ import IdentificationNumberGenFunc from '@/datatypes/IdentificationNumber/Identi
 import Str2NumberGenFunc from '@/datatypes/Str2Number/Str2Number'
 import StrSpliceGenFunc from  '@/datatypes/StrSplice/StrSplice'
 import StrSegmenteGenFunc from '@/datatypes/StringSegmente/StringSegmente'
-
-
-import { RELATION_ENUM } from './CONST';
+import TextGenFunc from '@/datatypes/Text/Text';
+import RandomChoiceGenFunc from '@/datatypes/RandomChoice/RandomChoice';
+import { RELATION_ENUM, OPTIONS_ENUM } from './CONST';
+import TimeGenFunc from '@/datatypes/Time/Time';
 
 export const DATA_TYPES = {
   Sex: {
@@ -85,7 +86,6 @@ export const DATA_TYPES = {
       allowTypes: ["Sex", "Number"],
     },
   },
-
   Str2Number: {
     alias: "字符串转数字",
     priority: 200,
@@ -118,7 +118,6 @@ export const DATA_TYPES = {
       allowTypes: ["Counter", "Number"],
     },
   },
-
   StringSegmente: {
     alias: "字符串分割",
     priority: 200,
@@ -134,7 +133,51 @@ export const DATA_TYPES = {
       fieldNames: "",
       type: RELATION_ENUM.INDEPEND.EN,
       allowTypes: ["Counter", "Number"],
+    }
+  },
+  Text: {
+    alias: "文本",
+    priority: 0,
+    genFunc: TextGenFunc,
+    options: {
+      textTypes: Object.keys(OPTIONS_ENUM.Text.TEXT_TYPE),
+      min: 0,
+      max: 10,
+      fix: 10,
+      lenType: OPTIONS_ENUM.Text.LEN_TYPE.FIX.EN,
+     },
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
+    relation: null
+  },
+  RandomChoice: {
+    alias: "随机选择",
+    priority: 0,
+    genFunc: RandomChoiceGenFunc,
+    options: {
+      RandomString: "",
     },
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
+    relation: null
+  },
+  Time: {
+    alias: "时间",
+    priority: 105,
+    genFunc: TimeGenFunc,
+    options: {
+      __lastTimeValue:0,
+      minStep:0,
+      maxStep:1
+    },
+    __unique: false,
+    __display: true,
+    relation: {
+      fieldNames: "",
+      minInterval:0,
+      maxInterval:1,
+      type: RELATION_ENUM.INDEPEND.EN,
+      allowTypes: ["Time"],
+    }
   }
-
 };

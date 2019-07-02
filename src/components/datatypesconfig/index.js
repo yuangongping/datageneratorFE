@@ -7,6 +7,9 @@ import Str2NumberConfig from '@/components/datatypesconfig/Str2NumberConfig/Str2
 import StrSpliceConfig from '@/components/datatypesconfig/StrSpliceConfig/StrSpliceConfig.vue';
 import StringSegmenteConfig from '@/components/datatypesconfig/StringSegmenteConfig/StringSegmenteConfig.vue';
 
+import RandomChoiceConfig from '@/components/datatypesconfig/RandomChoiceConfig/RandomChoiceConfig.vue';
+import TextConfig from '@/components/datatypesconfig/TextConfig/TextConfig.vue';
+import TimeConfig from '@/components/datatypesconfig/TimeConfig/TimeConfig.vue';
 export {
   SexConfig,
   NameConfig,
@@ -15,5 +18,8 @@ export {
   IdentificationNumberConfig,
   Str2NumberConfig,
   StrSpliceConfig,
-  StringSegmenteConfig
+  StringSegmenteConfig,
+  RandomChoiceConfig,
+  TextConfig,
+  TimeConfig
 }
