@@ -33,5 +33,27 @@ export const ALLOW_RELATIONS = {
   DistrictCode: ['INDEPEND', 'COR_RELATION']
 }
 
+export const SELECT_MODE_ENUM ={
+  City: {
+    CITY_RANDOM: {
+      EN: "CITY_RANDOM",
+      CN: "随机城市"
+    },
+    CITY_SELECTABLE: {
+      EN: "CITY_SELECTABLE",
+      CN: "自选城市"
+    }
+  },
+  District: {
+    DISTRICT_RANDOM: {
+      EN: "DISTRICT_RANDOM",
+      CN: "随机区县"
+    },
+    DISTRICT_SELECTABLE: {
+      EN: "DISTRICT_SELECTABLE",
+      CN: "自选区县"
+    }
+  }
+}
 
 export const FIELD_PRE = '__$$'; // 用于为options添加 __$$fieldname: gendata 为其关联的字段传入生成值

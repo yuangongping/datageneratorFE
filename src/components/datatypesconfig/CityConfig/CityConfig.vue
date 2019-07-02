@@ -3,59 +3,99 @@
   <div class="city-config">
 		<div class="config-item relation-config">
 		  <Select
-			v-model="relationValue.type" 
-			style="width:200px"
-			@on-change="chgRelation"
+        v-model="relationValue.type" 
+        style="width:200px"
+        @on-change="chgRelation"
 		  >
-			<Option 
-			  v-for="relation in allowRelations"
-			  :value="relation"
-			  :key="relation"
-			>
-			{{ RELATION_ENUM[relation].CN }}
-			</Option>
+        <Option 
+          v-for="relation in allowRelations"
+          :value="relation"
+          :key="relation"
+        >
+        {{ RELATION_ENUM[relation].CN }}
+        </Option>
 		  </Select>
 		</div>
 
-		<div class="config-item">
+		<div class="config-item" v-if="relationValue.type === RELATION_ENUM.COR_RELATION.EN">
 			<label>
-			<span class="config-title">关联字段</span>
-			<Input type="text"
-			v-model="relationValue.fieldNames"
-			@on-change="chgRelation"
-			/>
+        <span class="config-title">关联字段</span>
+        <Input type="text"
+          v-model="relationValue.fieldNames"
+          @on-change="chgRelation"
+        />
 			</label>
 		</div>
-    </div>
+
+    <div class="config-item" v-if="relationValue.type === RELATION_ENUM.INDEPEND.EN ">
+        <div class="config-item">
+          <RadioGroup v-model="optionsValue.Select_city_mode" @on-change="chgRadio" type="button" size="small">
+            <Radio label="随机城市" ></Radio>
+            <Radio label="自选城市"></Radio>
+          </RadioGroup>
+        </div>
+      
+        <div class="config-item" v-if="optionsValue.Select_city_mode == SELECT_MODE_ENUM.City.CITY_SELECTABLE.CN" style="width: 300px">
+          <label>
+            <span class="config-title">省份选择</span>
+            <Select
+              v-model="optionsValue.provinceChoice" 
+              @on-change="chgProvinces"
+              multiple
+              collapse-tags
+            >
+              <Option 
+                v-for="province in allProvinces"
+                :value="province"
+                :key="province"
+              >
+              {{ province }}
+              </Option>
+            </Select>
+          </label>
+        </div>
+
+        <div class="config-item" v-if="optionsValue.Select_city_mode == SELECT_MODE_ENUM.City.CITY_SELECTABLE.CN" style="width: 550px">
+          <label>
+            <span class="config-title">城市选择</span>
+            <Select
+              v-model="optionsValue.cities" 
+              @on-change="chgcities"
+              multiple
+            >
+              <Option 
+                v-for="city in this.cities"
+                :value="city"
+                :key="city"
+              >
+              {{ city }}
+              </Option>
+            </Select>
+          </label>
+        </div>
+      </div>
+  </div>
 </template>
-
-<style lang="scss">
-.city-config {
-  .alias {
-    width: 100px;
-  }
-}
-</style>
-
 
 <script>
 import deepcopy from 'deepcopy';
 import { DATA_TYPES } from '@/datatypes/index.js'; 
-import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
-import { Input, Select, Option, Tag, Switch, Icon, Button, Tooltip } from "iview";
+import { RELATION_ENUM, ALLOW_RELATIONS, SELECT_MODE_ENUM } from '@/datatypes/CONST.js';
+import { Input, Select, Option, Tag, Switch, Icon, Button, Tooltip, Radio, RadioGroup } from "iview";
+import OriginalData from '@/datatypes/COMMON_DATA/OriginalData_dict.js';
 export default {
   data() {
     return {
-      dataTypeAlias: DATA_TYPES[this.dataType].alias,
-      fieldNameValue: this.fieldName,
       optionsValue: JSON.parse(this.options),
       relationValue: JSON.parse(this.relation),
       RELATION_ENUM: RELATION_ENUM,
-      allowRelations: ALLOW_RELATIONS[this.dataType]
+      SELECT_MODE_ENUM: SELECT_MODE_ENUM,
+      allowRelations: ALLOW_RELATIONS[this.dataType],
+      allProvinces: Object.keys(OriginalData),
+      cities: []
     };
   },
   props: {
-    fieldName: String,
     dataType: String,
     options: String,
     relation: String,
@@ -68,16 +108,43 @@ export default {
     Button,
     Icon,
     Tooltip,
+    Radio, 
+    RadioGroup ,
     'i-switch': Switch,
   },
   methods: {
-    chgFieldName() {
-      this.$emit('update:fieldName', this.fieldNameValue);
+    chgProvinces() {  // 选择省份时，将所选省份下属所有城市加入城市选择下拉框options里面
+      this.cities  = [];
+      this.optionsValue.provinceChoice.forEach(el => {
+        if(el in {'北京市':"", '上海市':"", '重庆市':"", '天津市':""}){
+          this.cities= this.cities.concat(el);
+        }else{
+          this.cities= this.cities.concat(Object.keys(OriginalData[el]));
+          let index =  this.cities.indexOf("省直辖县级行政单位")
+          if(index > -1){
+            this.cities.splice(index, 1);
+          }
+        }
+      });
+      this.$emit('update:options', JSON.stringify(this.optionsValue));
     },
-    chgOptions() {
+    chgcities() {
+      this.$emit('update:options', JSON.stringify(this.optionsValue));
+    },
+    chgRadio() {
+      if(this.optionsValue.Select_city_mode == SELECT_MODE_ENUM.City.CITY_RANDOM.CN){
+        this.optionsValue.cities = [];
+        this.cities = [];
+        this.optionsValue.provinceChoice = [];
+      }
       this.$emit('update:options', JSON.stringify(this.optionsValue));
     },
     chgRelation() {
+      if(this.relationValue.type == RELATION_ENUM.COR_RELATION.EN){ 
+        this.cities = [];
+        this.optionsValue.provinceChoice = [];
+        this.optionsValue.Select_city_mode = SELECT_MODE_ENUM.City.CITY_RANDOM.CN;
+      }
       this.$emit('update:relation', JSON.stringify(this.relationValue));
     }
   }

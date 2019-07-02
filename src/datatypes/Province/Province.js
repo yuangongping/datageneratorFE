@@ -3,18 +3,16 @@ import { FIELD_PRE } from '@/datatypes/CONST.js';
 // import OriginalData from '@/datatypes/COMMON_DATA/OriginalData';
 
 export default (options, relation) => {
-
-  // const province = randomChoice(Object.keys(ProvinceData['China']));
-  let province = [];
+  let provinces = [];
   let provinceChoice;
 
-  province = options.province;
-
-  if(province.length === 0){
-    throw new Error("请选择省份!");
+  provinces = options.provinces; //获取多选框选中的省份数组
+  
+  if(provinces.length === 0){
+    throw new Error("请选择省份!"); //数组为空抛出异常
   }
   else{
-     provinceChoice = randomChoice(province);
+     provinceChoice = randomChoice(provinces); //否则从备选省份数组中随机选取省份
   }
   // 将生成结果传递下去
   const deliver_options = {};

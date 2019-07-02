@@ -100,7 +100,6 @@ import draggable from 'vuedraggable';
 import { Progress, Button, Input, Select, Option, Icon, Tag, Switch, Tooltip } from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
 import { Generator } from '@/generator/index';
-
 import { SexConfig, NameConfig, CounterConfig, NumberConfig, ProvinceConfig, CityConfig, DistrictConfig, DistrictCodeConfig } from '@/components/datatypesconfig/index.js';
 import { DATA_TYPES } from '@/datatypes/index.js';
 

@@ -7,56 +7,36 @@
             :indeterminate="indeterminate"
             :value="checkAll"
             @click.prevent.native="handleCheckAll">全选</Checkbox>
-          </span>
+      </span>
 		</div>
 
 		<div class="config-item">
 			<div style="width: 700px; border: 2px solid #c9c9e9; border-radius:15px; height: 70px; padding：2px; overflow-y: scroll">
-			<Checkbox-group v-model="checkAllGroup" @on-change="checkAllGroupChange">
-			  <Checkbox :label="province['label']" v-for="province in this.allProvinces"></Checkbox>
-			</Checkbox-group>
+        <Checkbox-group v-model="optionsValue.provinces" @on-change="checkAllGroupChange">
+          <Checkbox :label="province" v-for="province in this.allProvinces"></Checkbox>
+        </Checkbox-group>
 			</div>
 		</div>
   </div>
 </template>
-
-<style lang="scss">
-.province-config {
-  .alias {
-    width: 100px;
-  }
-  .checkbox {
-    width: 450px; 
-    border: 1px solid #e9e9e9; 
-    // padding: 2px; 
-    height: 70px; 
-    overflow-y: scroll
-  }
-}
-</style>
-
 
 <script>
 import deepcopy from 'deepcopy';
 import { DATA_TYPES } from '@/datatypes/index.js'; 
 import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
 import { Input, Select, Option, Tag, Switch, Icon, Button, Tooltip, Checkbox, CheckboxGroup } from "iview";
-import OriginalData from '@/datatypes/COMMON_DATA/OriginalData';
+import OriginalData from '@/datatypes/COMMON_DATA/OriginalData_dict.js';
 export default {
   data() {
     return {
-      dataTypeAlias: DATA_TYPES[this.dataType].alias,
-      fieldNameValue: this.fieldName,
       optionsValue: JSON.parse(this.options),
       relationValue: JSON.parse(this.relation),
       indeterminate: false,
       checkAll: false,
-      checkAllGroup: [],
-      allProvinces: OriginalData
+      allProvinces: Object.keys(OriginalData) //字典的key值组成一个所有省份组的数组
     };
   },
   props: {
-    fieldName: String,
     dataType: String,
     options: String,
     relation: String,
@@ -74,46 +54,36 @@ export default {
     CheckboxGroup,
   },
   methods: {
-    handleCheckAll () {
-                if (this.indeterminate) {
-                    this.checkAll = false;
-                } else {
-                    this.checkAll = !this.checkAll;
-                }
-                this.indeterminate = false;
+    handleCheckAll () {  // 全选逻辑实现
+      if (this.indeterminate) {
+          this.checkAll = false;
+      } else {
+          this.checkAll = !this.checkAll;
+      }
+      
+      this.indeterminate = false;
 
-                if (this.checkAll) {
-                    this.checkAllGroup = [];
-                    OriginalData.forEach(el => {
-                      this.checkAllGroup.push(el['label'])
-                    });
-                } else {
-                    this.checkAllGroup = [];
-                }
-                
-                this.optionsValue.province = this.checkAllGroup;
-                this.$emit('update:options', JSON.stringify(this.optionsValue));
-            },
-    checkAllGroupChange (data) {  
-                this.optionsValue.province = this.checkAllGroup;
-                this.$emit('update:options', JSON.stringify(this.optionsValue));
-                if (data.length === 34) {
-                    this.indeterminate = false;
-                    this.checkAll = true;
-                } else if (data.length > 0) {
-                    this.indeterminate = true;
-                    this.checkAll = false;
-                } else {
-                    this.indeterminate = false;
-                    this.checkAll = false;
-                }
-                },
-    chgFieldName() {
-      this.$emit('update:fieldName', this.fieldNameValue);
-    },
-    chgOptions() {
+      if (this.checkAll) {
+          this.optionsValue.provinces = this.allProvinces;
+      } else {
+          this.optionsValue.provinces = [];
+      }
+      
       this.$emit('update:options', JSON.stringify(this.optionsValue));
-    }
+    },
+    checkAllGroupChange (data) {  // 选择省份时数据同步
+      if (data.length === 30) {
+          this.indeterminate = false;
+          this.checkAll = true;
+      } else if (data.length > 0) {
+          this.indeterminate = true;
+          this.checkAll = false;
+      } else {
+          this.indeterminate = false;
+          this.checkAll = false;
+      }
+      this.$emit('update:options', JSON.stringify(this.optionsValue));
+    },
   }
 };
 </script>

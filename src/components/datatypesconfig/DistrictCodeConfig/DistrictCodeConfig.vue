@@ -1,8 +1,8 @@
 <template>
   <!-- 修改组件独立的样式时注意修改组件class -->
   <div class="districtCode-config">
-      <div class="config-item relation-config">
-        <Select
+    <div class="config-item relation-config">
+      <Select
         v-model="relationValue.type" 
         @on-change="chgRelation"
       >
@@ -14,28 +14,19 @@
         {{ RELATION_ENUM[relation].CN }}
         </Option>
       </Select>
-      </div>
+    </div>
 
-      <div class="config-item">
-        <label>
+    <div class="config-item" v-if="relationValue.type === 'COR_RELATION'">
+      <label>
         <span class="config-title">关联字段</span>
         <Input type="text"
-        v-model="relationValue.fieldNames"
-        @on-change="chgRelation"
+            v-model="relationValue.fieldNames"
+            @on-change="chgRelation"
         />
-        </label>
-      </div>
+      </label>
+    </div>
   </div>
 </template>
-
-<style lang="scss">
-.districtCode-config {
-  .alias {
-    width: 100px;
-  }
-}
-</style>
-
 
 <script>
 import deepcopy from 'deepcopy';
@@ -45,8 +36,6 @@ import { Input, Select, Option, Tag, Switch, Icon, Button, Tooltip } from "iview
 export default {
   data() {
     return {
-      dataTypeAlias: DATA_TYPES[this.dataType].alias,
-      fieldNameValue: this.fieldName,
       optionsValue: JSON.parse(this.options),
       relationValue: JSON.parse(this.relation),
       RELATION_ENUM: RELATION_ENUM,
@@ -54,7 +43,6 @@ export default {
     };
   },
   props: {
-    fieldName: String,
     dataType: String,
     options: String,
     relation: String,
@@ -70,9 +58,6 @@ export default {
     'i-switch': Switch,
   },
   methods: {
-    chgFieldName() {
-      this.$emit('update:fieldName', this.fieldNameValue);
-    },
     chgOptions() {
       this.$emit('update:options', JSON.stringify(this.optionsValue));
     },
