@@ -166,7 +166,8 @@ export const DATA_TYPES = {
     priority: 105,
     genFunc: TimeGenFunc,
     options: {
-      __lastTimeValue:0,
+      timeStamp: 0,
+      __lastTimeValue: 0,
       minStep:0,
       maxStep:1
     },

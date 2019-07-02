@@ -11,7 +11,7 @@ export default (options, relation) => {
   var transResult, resultTIme, randomStepStamp, randomInterval;  // 后续所用到的变量值
   //有关联关系
   if(relation.type !== RELATION_ENUM.INDEPEND.EN) {
-    const relVal = parseFloat(options[FIELD_PRE + relation.fieldNames]);  // 从关联字段取值
+    const relVal = parseFloat(options.timeStamp);  // 从关联字段取值
     const relationCategory = options['relationCategory'];  // 所关联字段的时间类型
     if(!timeCategory ){
       throw new Error(`请选择生成时间类型`);
@@ -125,10 +125,11 @@ export default (options, relation) => {
   }
 
   const deliver_options = {};
-  deliver_options[FIELD_PRE + options.__fieldName] = transResult;
+  deliver_options[FIELD_PRE + options.__fieldName] = resultTIme; 
   deliver_options['relationCategory'] = timeCategory;
+  deliver_options.timeStamp = transResult;
   return{
     options: deliver_options,
-    data:resultTIme
+    data: resultTIme
   };
 };

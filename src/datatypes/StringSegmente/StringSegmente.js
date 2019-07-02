@@ -6,14 +6,17 @@ export default (options, relation) => {
   let start = options.start;
   // 终止值下标
   let end = options.end;
-  console.log(end, start, typeof(end))
   // 定义临时变量
   var __result = ''
   // 必须选取关联类型选项
   if (relation.type != RELATION_ENUM.INDEPEND.EN) {
     // 校验起始值与终止值的正确性，终止值必须 > 起始值
     if (end > start) {
-      __result = options[FIELD_PRE +  relation.fieldNames].substring(start, end);  
+      var value  = options[FIELD_PRE +  relation.fieldNames];
+      if (typeof(value) !== "string"){
+        value = value.toString()
+      }
+      __result = value.substring(start, end);  
     } else {
       throw new Error('起始位与终止位设置不合理， 请重置！');
     }
