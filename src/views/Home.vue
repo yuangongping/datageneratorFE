@@ -105,7 +105,8 @@ import { Generator } from '@/generator/index';
 import { SexConfig, NameConfig, CounterConfig,
          NumberConfig, IdentificationNumberConfig, Str2NumberConfig,
          StrSpliceConfig, StringSegmenteConfig ,RandomChoiceConfig,
-         TextConfig, TimeConfig } from '@/components/datatypesconfig/index.js';
+         TextConfig, TimeConfig,  ProvinceConfig, 
+         CityConfig, DistrictConfig, DistrictCodeConfig } from '@/components/datatypesconfig/index.js';
 import { DATA_TYPES } from '@/datatypes/index.js';
 export default {
   name: 'home',
@@ -141,6 +142,10 @@ export default {
     NameConfig,
     CounterConfig,
     NumberConfig,
+    ProvinceConfig,
+    CityConfig,
+    DistrictConfig,
+    DistrictCodeConfig,
     IdentificationNumberConfig,
     Str2NumberConfig,
     StrSpliceConfig,
