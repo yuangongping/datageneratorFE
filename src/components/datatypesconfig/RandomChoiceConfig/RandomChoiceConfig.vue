@@ -27,9 +27,7 @@
 
 
 <script>
-import deepcopy from 'deepcopy';
-import { DATA_TYPES } from '@/datatypes/index.js'; 
-import { Row, Col, Input, InputNumber, Select, Option, Tag, Switch, Tooltip } from "iview";
+import { Input } from "iview";
 
 export default {
   data() {
@@ -45,15 +43,7 @@ export default {
     relation: String,
   },
   components: {
-    Row,
-    Col,
-    Select,
-    Option,
-    Input,
-    InputNumber,
-    Tag,
-    Tooltip,
-    'i-switch': Switch,
+    Input
   },
   methods: {
     chgFieldName() {
