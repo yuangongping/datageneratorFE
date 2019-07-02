@@ -1,5 +1,4 @@
 <template>
-
   <!-- 修改组件独立的样式时注意修改组件class -->
   <div class="number-config">
     <div class="config-item">
@@ -12,7 +11,6 @@
         <span class="config-title">最小随机值</span>
       </label>
     </div>
-
     <div class="config-item">
       <label>
         <InputNumber
@@ -85,13 +83,10 @@
 }
 </style>
 
-
 <script>
-import deepcopy from 'deepcopy';
 import { DATA_TYPES } from '@/datatypes/index.js'; 
 import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
-import { Row, Col, Input, InputNumber, Select, Option, Tag, Switch, Tooltip } from "iview";
-
+import { Input, InputNumber, Select, Option } from "iview";
 export default {
   data() {
     return {
@@ -110,15 +105,10 @@ export default {
     relation: String,
   },
   components: {
-    Row,
-    Col,
     Select,
     Option,
     Input,
     InputNumber,
-    Tag,
-    Tooltip,
-    'i-switch': Switch,
   },
   methods: {
     chgFieldName() {
