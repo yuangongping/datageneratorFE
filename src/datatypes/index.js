@@ -2,6 +2,7 @@ import SexGenFunc from '@/datatypes/Sex/Sex';
 import NameGenFunc from '@/datatypes/Name/Name';
 import CounterGenFunc from '@/datatypes/Counter/Counter';
 import NumberGenFunc from '@/datatypes/Number/Number';
+import TimeGenFunc from '@/datatypes/Time/Time';
 import { RELATION_ENUM } from './CONST';
 
 export const DATA_TYPES = {
@@ -63,5 +64,24 @@ export const DATA_TYPES = {
       expresion: '',
       allowTypes: ["Counter", "Number"],
     },
+  },
+  Time: {
+    alias: "时间",
+    priority: 105,
+    genFunc: TimeGenFunc,
+    options: {
+      __lastTimeValue:0,
+      minStep:0,
+      maxStep:1
+    },
+    __unique: false,
+    __display: true,
+    relation: {
+      fieldNames: "",
+      minInterval:0,
+      maxInterval:1,
+      type: RELATION_ENUM.INDEPEND.EN,
+      allowTypes: ["Time"],
+    }
   }
 };
