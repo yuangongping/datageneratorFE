@@ -2,8 +2,10 @@ import SexGenFunc from '@/datatypes/Sex/Sex';
 import NameGenFunc from '@/datatypes/Name/Name';
 import CounterGenFunc from '@/datatypes/Counter/Counter';
 import NumberGenFunc from '@/datatypes/Number/Number';
+import TextGenFunc from '@/datatypes/Text/Text';
+import RandomChoiceGenFunc from '@/datatypes/RandomChoice/RandomChoice';
+import { RELATION_ENUM, OPTIONS_ENUM } from './CONST';
 import TimeGenFunc from '@/datatypes/Time/Time';
-import { RELATION_ENUM } from './CONST';
 
 export const DATA_TYPES = {
   Sex: {
@@ -64,6 +66,32 @@ export const DATA_TYPES = {
       expresion: '',
       allowTypes: ["Counter", "Number"],
     },
+  },
+  Text: {
+    alias: "文本",
+    priority: 0,
+    genFunc: TextGenFunc,
+    options: {
+      textTypes: Object.keys(OPTIONS_ENUM.Text.TEXT_TYPE),
+      min: 0,
+      max: 10,
+      fix: 10,
+      lenType: OPTIONS_ENUM.Text.LEN_TYPE.FIX.EN,
+     },
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
+    relation: null
+  },
+  RandomChoice: {
+    alias: "随机选择",
+    priority: 0,
+    genFunc: RandomChoiceGenFunc,
+    options: {
+      RandomString: "",
+    },
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
+    relation: null
   },
   Time: {
     alias: "时间",

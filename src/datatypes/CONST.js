@@ -31,5 +31,33 @@ export const ALLOW_RELATIONS = {
   Time: ['INDEPEND', 'GREATER']
 }
 
+export const OPTIONS_ENUM = {
+  Text: {
+    LEN_TYPE: {
+      FIX: {
+        EN: "FIX",
+        CN: "固定长度"
+      },
+      RANDOM: {
+        EN: "RANDOM",
+        CN: "随机长度"
+      },
+    },
+    TEXT_TYPE: {
+      CHINESE:{
+        EN: "CHINESE",
+        CN: "中文"
+      },
+      ENGLISH:{
+        EN: "ENGLISH",
+        CN: "字母"
+      },
+      NUMBER:{
+        EN: "NUMBER",
+        CN: "数字"
+      },
+    }
+  }
+}
 
 export const FIELD_PRE = '__$$'; // 用于为options添加 __$$fieldname: gendata 为其关联的字段传入生成值
