@@ -149,7 +149,6 @@
 
 
 <script>
-import { DATA_TYPES } from '@/datatypes/index.js'; 
 import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
 import {  Input,InputNumber, Select, Option ,DatePicker} from "iview";
 
