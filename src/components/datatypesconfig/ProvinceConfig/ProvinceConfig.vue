@@ -1,19 +1,21 @@
 <template>
   <!-- 修改组件独立的样式时注意修改组件class -->
   <div class="province-config">
-		<div class="config-item" style="width: 50px">
-		  <span class="option-title">
-          <Checkbox
-            :indeterminate="indeterminate"
-            :value="checkAll"
-            @click.prevent.native="handleCheckAll">全选</Checkbox>
+    <div class="config-item" style="width: 50px">
+      <span class="option-title">
+        <Checkbox
+          :indeterminate="indeterminate"
+          :value="checkAll"
+          @click.prevent.native="handleCheckAll">
+          全选
+        </Checkbox>
       </span>
 		</div>
 
 		<div class="config-item">
-			<div style="width: 700px; border: 2px solid #c9c9e9; border-radius:15px; height: 70px; padding：2px; overflow-y: scroll">
+			<div style="width: 700px; border: 2px solid #c9c9e9; border-radius:15px; height: 70px; padding：2px; overflow-y:scroll">
         <Checkbox-group v-model="optionsValue.provinces" @on-change="checkAllGroupChange">
-          <Checkbox :label="province" v-for="province in this.allProvinces"></Checkbox>
+          <Checkbox :label="province" v-for="province in this.allProvinces" :key="province"></Checkbox>
         </Checkbox-group>
 			</div>
 		</div>
@@ -21,10 +23,7 @@
 </template>
 
 <script>
-import deepcopy from 'deepcopy';
-import { DATA_TYPES } from '@/datatypes/index.js'; 
-import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
-import { Input, Select, Option, Tag, Switch, Icon, Button, Tooltip, Checkbox, CheckboxGroup } from "iview";
+import { Checkbox, CheckboxGroup } from "iview";
 import OriginalData from '@/datatypes/COMMON_DATA/OriginalData_dict.js';
 export default {
   data() {
@@ -42,14 +41,6 @@ export default {
     relation: String,
   },
   components: {
-    Select,
-    Option,
-    Input,
-    Tag,
-    Button,
-    Icon,
-    Tooltip,
-    'i-switch': Switch,
     Checkbox,
     CheckboxGroup,
   },

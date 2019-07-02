@@ -43,7 +43,7 @@
     width: 1.7%;
   }
   a {
-    margin-right: 3%;
+    margin-right: 2.5%;
     font-weight: bold;
     color: #2c3e50;
     &.router-link-exact-active {

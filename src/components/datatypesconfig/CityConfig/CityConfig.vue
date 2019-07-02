@@ -2,11 +2,11 @@
   <!-- 修改组件独立的样式时注意修改组件class -->
   <div class="city-config">
 		<div class="config-item relation-config">
-		  <Select
+      <Select
         v-model="relationValue.type" 
         style="width:200px"
         @on-change="chgRelation"
-		  >
+      >
         <Option 
           v-for="relation in allowRelations"
           :value="relation"
@@ -14,7 +14,7 @@
         >
         {{ RELATION_ENUM[relation].CN }}
         </Option>
-		  </Select>
+      </Select>
 		</div>
 
 		<div class="config-item" v-if="relationValue.type === RELATION_ENUM.COR_RELATION.EN">
@@ -78,10 +78,8 @@
 </template>
 
 <script>
-import deepcopy from 'deepcopy';
-import { DATA_TYPES } from '@/datatypes/index.js'; 
 import { RELATION_ENUM, ALLOW_RELATIONS, SELECT_MODE_ENUM } from '@/datatypes/CONST.js';
-import { Input, Select, Option, Tag, Switch, Icon, Button, Tooltip, Radio, RadioGroup } from "iview";
+import { Input, Select, Option, Radio, RadioGroup } from "iview";
 import OriginalData from '@/datatypes/COMMON_DATA/OriginalData_dict.js';
 export default {
   data() {
@@ -104,13 +102,8 @@ export default {
     Select,
     Option,
     Input,
-    Tag,
-    Button,
-    Icon,
-    Tooltip,
     Radio, 
-    RadioGroup ,
-    'i-switch': Switch,
+    RadioGroup
   },
   methods: {
     chgProvinces() {  // 选择省份时，将所选省份下属所有城市加入城市选择下拉框options里面
