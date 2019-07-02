@@ -11,6 +11,7 @@
         {{ datarow }}
       </li>
     </ul>
+
     <transition-group name="flip-list">
       <div 
         v-for="(dataTypeConfig, k) in dataTypeConfigs"
@@ -76,7 +77,6 @@
             <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
             <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
         </div>
-
 
         <div class="delrow">
           <Icon type="md-close" @click="delRow(k)"/>
@@ -187,7 +187,6 @@ export default {
     addRow() {
       // 依据选择器中选择选项确定组件类型与数据参数配置
       const { dataTypeToAdd, dataTypeConfigs } = this;
-      // const component = 'SexConfig' //dataTypeToAdd.toLowerCase() + '-config'
       const component = dataTypeToAdd + 'Config'
       dataTypeConfigs.push({
         component: component,
