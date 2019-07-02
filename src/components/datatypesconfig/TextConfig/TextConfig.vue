@@ -63,11 +63,8 @@
 
 
 <script>
-import deepcopy from "deepcopy";
-import { DATA_TYPES } from "@/datatypes/index.js";
 import { OPTIONS_ENUM } from '@/datatypes/CONST.js';
-import {Row, Col, Input, InputNumber, Select, Option, Tag, Switch, Tooltip, Checkbox, 
-CheckboxGroup } from "iview";
+import { InputNumber, Select, Option, Checkbox, CheckboxGroup } from "iview";
 
 export default {
   data() {
@@ -83,17 +80,11 @@ export default {
     relation: String
   },
   components: {
-    Row,
-    Col,
     Select,
     Option,
-    Input,
     InputNumber,
-    Tag,
-    Tooltip,
     Checkbox,
     CheckboxGroup,
-    "i-switch": Switch
   },
   methods: {
     chgFieldName() {

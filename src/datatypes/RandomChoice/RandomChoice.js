@@ -2,9 +2,10 @@ import { FIELD_PRE } from '@/datatypes/CONST.js';
 import { randomChoice } from '@/utils/functions';
 
 export default (options, relation) => {
+  // 获取候选带分隔的字符串
   const RandomString = options.RandomString;
   let resultstring = ''
-  if (RandomString) {
+  if (RandomString) { 
     if (RandomString.indexOf(",") != -1) {
       const RandomList = RandomString.split(',');
       resultstring = randomChoice(RandomList);
