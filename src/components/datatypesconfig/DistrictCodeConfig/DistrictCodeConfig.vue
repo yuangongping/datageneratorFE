@@ -29,10 +29,8 @@
 </template>
 
 <script>
-import deepcopy from 'deepcopy';
-import { DATA_TYPES } from '@/datatypes/index.js'; 
 import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
-import { Input, Select, Option, Tag, Switch, Icon, Button, Tooltip } from "iview";
+import { Input, Select, Option } from "iview";
 export default {
   data() {
     return {
@@ -50,12 +48,7 @@ export default {
   components: {
     Select,
     Option,
-    Input,
-    Tag,
-    Button,
-    Icon,
-    Tooltip,
-    'i-switch': Switch,
+    Input
   },
   methods: {
     chgOptions() {
