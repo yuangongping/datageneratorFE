@@ -20,81 +20,83 @@
         {{ datarow }}
       </li>
     </ul>
-    <div class="fieldlist">
-      <div class="title">配置项</div>
-      <transition-group name="flip-list" >
-        <div 
-          v-for="(dataTypeConfig, k) in dataTypeConfigs"
-          :key="dataTypeConfig.id"
-          class="config-row"
-        >
-          <!-- 【 通用区域 】字段类型、字段名 -->
-          <div class="field-type">
-            <Tag color="primary">
-              <!-- {{ dataTypeConfig.dataType }} -->
-              {{ DATA_TYPES[dataTypeConfig.dataType].alias }}
-            </Tag>
+    <div class="field-list">
+      <div class="field-title">配置项</div>
+      <Scroll  v-if="dataTypeConfigs.length > 0">
+        <transition-group name="flip-list" >
+          <div 
+            v-for="(dataTypeConfig, k) in dataTypeConfigs"
+            :key="dataTypeConfig.id"
+            class="config-row"
+          >
+            <!-- 【 通用区域 】字段类型、字段名 -->
+            <div class="field-type">
+              <Tag color="primary">
+                <!-- {{ dataTypeConfig.dataType }} -->
+                {{ DATA_TYPES[dataTypeConfig.dataType].alias }}
+              </Tag>
+            </div>
+
+            <div class="field-name">
+              <label>
+                <Input type="text"
+                  v-model="dataTypeConfig.fieldName"
+                />
+                <span class="config-title">字段名</span>
+              </label>
+            </div>
+            <!-------------------->
+
+            <!-- 字段配置组件区域 -->
+            <div
+              class="field-config"
+              :is="dataTypeConfig.component"
+              :dataType="dataTypeConfig.dataType"
+              :options.sync="dataTypeConfig.options"
+              :relation.sync="dataTypeConfig.relation"
+            ></div>
+            <!-------------------->
+            
+
+            <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
+
+            <div class="switch-config">
+              <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
+                <i-switch
+                  size="large"
+                  v-model="dataTypeConfig.__unique"
+                >
+                  <span slot="open">唯一</span>
+                  <span slot="close">唯一</span>
+                </i-switch>
+              </Tooltip>
+            </div>
+
+            <div class="switch-config">
+              <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
+                <i-switch
+                  size="large"
+                  v-model="dataTypeConfig.__display"
+                >
+                  <span slot="open">显示</span>
+                  <span slot="close">显示</span>
+                </i-switch>
+              </Tooltip>
+            </div>
+
+            <div class="up-down" >
+                <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
+                <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
+            </div>
+
+            <div class="delrow">
+              <Icon type="md-close" @click="delRow(k)"/>
+            </div>
+            <!-------------------->
+
           </div>
-
-          <div class="field-name">
-            <label>
-              <Input type="text"
-                v-model="dataTypeConfig.fieldName"
-              />
-              <span class="config-title">字段名</span>
-            </label>
-          </div>
-          <!-------------------->
-
-          <!-- 字段配置组件区域 -->
-          <div
-            class="field-config"
-            :is="dataTypeConfig.component"
-            :dataType="dataTypeConfig.dataType"
-            :options.sync="dataTypeConfig.options"
-            :relation.sync="dataTypeConfig.relation"
-          ></div>
-          <!-------------------->
-          
-
-          <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
-
-          <div class="switch-config">
-            <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
-              <i-switch
-                size="large"
-                v-model="dataTypeConfig.__unique"
-              >
-                <span slot="open">唯一</span>
-                <span slot="close">唯一</span>
-              </i-switch>
-            </Tooltip>
-          </div>
-
-          <div class="switch-config">
-            <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
-              <i-switch
-                size="large"
-                v-model="dataTypeConfig.__display"
-              >
-                <span slot="open">显示</span>
-                <span slot="close">显示</span>
-              </i-switch>
-            </Tooltip>
-          </div>
-
-          <div class="up-down" >
-              <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
-              <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
-          </div>
-
-          <div class="delrow">
-            <Icon type="md-close" @click="delRow(k)"/>
-          </div>
-          <!-------------------->
-
-        </div>
-      </transition-group>
+        </transition-group>
+      </Scroll>
     </div>
       
     <!-- <Select v-model="dataTypeToAdd">
@@ -111,7 +113,7 @@
 import Vue from 'vue'
 import deepcopy from 'deepcopy';
 import draggable from 'vuedraggable';
-import { Progress, Button, Input, Select, Option, Icon, Tag, Switch, Tooltip } from 'iview';
+import { Progress, Button, Input, Select, Option, Icon, Tag, Switch, Tooltip, Scroll } from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
 import FastConfig from '@/components/FastConfig/FastConfig.vue';
 import BasicConfig from '@/components/BasicConfig/BasicConfig.vue';
@@ -147,6 +149,7 @@ export default {
     Icon,
     Tag,
     Tooltip,
+    Scroll,
     'i-switch': Switch,
     // vue draggable
     draggable,
@@ -272,12 +275,13 @@ export default {
 .flip-list-move {
   transition: transform 1s;
 }
-.fieldlist {
+.field-list {
   margin-top: 15px;
   box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
   background-color: #ffffff;
   padding: 10px 10px;
-  .title {
+}
+.field-title {
     height: 20px;
     line-height: 20px;
     margin-bottom: 10px;
@@ -288,7 +292,6 @@ export default {
     padding-left: 10px;
     border-left: 2px solid #2d8cf0;
   }
-}
 
 .action-area {
   display: flex;
