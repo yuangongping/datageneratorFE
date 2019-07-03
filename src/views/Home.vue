@@ -1,9 +1,18 @@
 <template>
   <!-- TODO: 解释、例子、预览 -->
   <div class="home">
-    <Exporter v-if="rawdata.length > 0" filename="result" filetype="json" :rawdata="rawdata" />
+     <div class="action-area">
+      <BasicConfig 
+        @basic-config="basicConfig">
+      </BasicConfig>
+
+      <FastConfig 
+      @fast-config="fastConfig">
+      </FastConfig>
+     </div>
+
+    <Exporter v-if="rawdata.length > 0" filename="result" filetype="json" :rawdata="rawdata" ></Exporter>
     <Input v-model="nrows" />
-    <Button @click="generate"> 生成 </Button>
     
     <!-- 生产数据的展示区域 -->
     <ul>
@@ -11,86 +20,89 @@
         {{ datarow }}
       </li>
     </ul>
+    <div class="fieldlist">
+      <div class="title">配置项</div>
+      <transition-group name="flip-list" >
+        <div 
+          v-for="(dataTypeConfig, k) in dataTypeConfigs"
+          :key="dataTypeConfig.id"
+          class="config-row"
+        >
+          <!-- 【 通用区域 】字段类型、字段名 -->
+          <div class="field-type">
+            <Tag color="primary">
+              <!-- {{ dataTypeConfig.dataType }} -->
+              {{ DATA_TYPES[dataTypeConfig.dataType].alias }}
+            </Tag>
+          </div>
 
-    <transition-group name="flip-list">
-      <div 
-        v-for="(dataTypeConfig, k) in dataTypeConfigs"
-        :key="dataTypeConfig.id"
-        class="config-row"
-      >
-        <!-- 【 通用区域 】字段类型、字段名 -->
-        <div class="field-type">
-          <Tag color="primary">
-            <!-- {{ dataTypeConfig.dataType }} -->
-            {{ DATA_TYPES[dataTypeConfig.dataType].alias }}
-          </Tag>
+          <div class="field-name">
+            <label>
+              <Input type="text"
+                v-model="dataTypeConfig.fieldName"
+              />
+              <span class="config-title">字段名</span>
+            </label>
+          </div>
+          <!-------------------->
+
+          <!-- 字段配置组件区域 -->
+          <div
+            class="field-config"
+            :is="dataTypeConfig.component"
+            :dataType="dataTypeConfig.dataType"
+            :options.sync="dataTypeConfig.options"
+            :relation.sync="dataTypeConfig.relation"
+          ></div>
+          <!-------------------->
+          
+
+          <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
+
+          <div class="switch-config">
+            <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
+              <i-switch
+                size="large"
+                v-model="dataTypeConfig.__unique"
+              >
+                <span slot="open">唯一</span>
+                <span slot="close">唯一</span>
+              </i-switch>
+            </Tooltip>
+          </div>
+
+          <div class="switch-config">
+            <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
+              <i-switch
+                size="large"
+                v-model="dataTypeConfig.__display"
+              >
+                <span slot="open">显示</span>
+                <span slot="close">显示</span>
+              </i-switch>
+            </Tooltip>
+          </div>
+
+          <div class="up-down" >
+              <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
+              <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
+          </div>
+
+          <div class="delrow">
+            <Icon type="md-close" @click="delRow(k)"/>
+          </div>
+          <!-------------------->
+
         </div>
-
-        <div class="field-name">
-          <label>
-            <Input type="text"
-              v-model="dataTypeConfig.fieldName"
-            />
-            <span class="config-title">字段名</span>
-          </label>
-        </div>
-        <!-------------------->
-
-        <!-- 字段配置组件区域 -->
-        <div
-          class="field-config"
-          :is="dataTypeConfig.component"
-          :dataType="dataTypeConfig.dataType"
-          :options.sync="dataTypeConfig.options"
-          :relation.sync="dataTypeConfig.relation"
-        ></div>
-        <!-------------------->
-        
-
-        <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
-
-        <div class="switch-config">
-          <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
-            <i-switch
-              size="large"
-              v-model="dataTypeConfig.__unique"
-            >
-              <span slot="open">唯一</span>
-              <span slot="close">唯一</span>
-            </i-switch>
-          </Tooltip>
-        </div>
-
-        <div class="switch-config">
-          <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
-            <i-switch
-              size="large"
-              v-model="dataTypeConfig.__display"
-            >
-              <span slot="open">显示</span>
-              <span slot="close">显示</span>
-            </i-switch>
-          </Tooltip>
-        </div>
-
-        <div class="up-down" >
-            <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
-            <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
-        </div>
-
-        <div class="delrow">
-          <Icon type="md-close" @click="delRow(k)"/>
-        </div>
-        <!-------------------->
-
-      </div>
-    </transition-group>
+      </transition-group>
+    </div>
       
-    <Select v-model="dataTypeToAdd">
+    <!-- <Select v-model="dataTypeToAdd">
       <Option :value="dataType" v-for="dataType in Object.keys(DATA_TYPES)" :key=dataType> {{ DATA_TYPES[dataType].alias }} </Option>
     </Select>
-    <Button type="primary" @click="addRow()">添加字段</Button>
+    <Button type="primary" @click="addRow()">添加字段</Button> -->
     <Button @click="checkData"> 检查数据 </Button>
+    
   </div>
 </template>
 
@@ -101,12 +113,14 @@ import deepcopy from 'deepcopy';
 import draggable from 'vuedraggable';
 import { Progress, Button, Input, Select, Option, Icon, Tag, Switch, Tooltip } from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
+import FastConfig from '@/components/FastConfig/FastConfig.vue';
+import BasicConfig from '@/components/BasicConfig/BasicConfig.vue';
 import { Generator } from '@/generator/index';
 import { SexConfig, NameConfig, CounterConfig,
          NumberConfig, IdentificationNumberConfig, Str2NumberConfig,
          StrSpliceConfig, StringSegmenteConfig ,RandomChoiceConfig,
-         TextConfig, TimeConfig,  ProvinceConfig, 
-         CityConfig, DistrictConfig, DistrictCodeConfig } from '@/components/datatypesconfig/index.js';
+         TextConfig, TimeConfig, ProvinceConfig, 
+         CityConfig, DistrictConfig, DistrictCodeConfig } from '@/components/datatypesconfig/index.js';  
 import { DATA_TYPES } from '@/datatypes/index.js';
 export default {
   name: 'home',
@@ -136,7 +150,6 @@ export default {
     'i-switch': Switch,
     // vue draggable
     draggable,
-    
     // 字段配置组件
     SexConfig,
     NameConfig,
@@ -152,7 +165,9 @@ export default {
     StringSegmenteConfig,
     RandomChoiceConfig,
     TextConfig,
-    TimeConfig
+    TimeConfig,
+    FastConfig,
+    BasicConfig
   },
   mounted() {
   },
@@ -176,6 +191,7 @@ export default {
 
     // 生产数据函数
     generate() {
+      console.log('##############', this.dataTypeConfigs)
       const generator = new Generator(this.parseDataTypeConfigs(), this.nrows);
       try {
         this.dataGened = generator.generate();
@@ -188,21 +204,38 @@ export default {
       // this.rawdata = JSON.stringify(this.dataGened);
     },
 
-    // 添加字段组件
-    addRow() {
-      // 依据选择器中选择选项确定组件类型与数据参数配置
-      const { dataTypeToAdd, dataTypeConfigs } = this;
-      const component = dataTypeToAdd + 'Config'
+
+    // 基础字段组件
+    basicConfig(componentToAdd) {
+      const { dataTypeConfigs } = this;
+      const component = componentToAdd + 'Config'
       dataTypeConfigs.push({
         component: component,
         id: new Date().getTime().toString(), // 使用时间戳添加一个唯一标识，可用于排序动画等
         fieldName: "",
-        dataType: dataTypeToAdd,
-        options: JSON.stringify(DATA_TYPES[dataTypeToAdd].options),
-        relation: JSON.stringify(DATA_TYPES[dataTypeToAdd].relation),
-        __unique: DATA_TYPES[dataTypeToAdd].__unique,
-        __display: DATA_TYPES[dataTypeToAdd].__display,
+        dataType: componentToAdd,
+        options: JSON.stringify(DATA_TYPES[componentToAdd].options),
+        relation: JSON.stringify(DATA_TYPES[componentToAdd].relation),
+        __unique: DATA_TYPES[componentToAdd].__unique,
+        __display: DATA_TYPES[componentToAdd].__display,
       })
+    },
+    // 快捷添加
+    fastConfig(configs) {
+      const { dataTypeConfigs } = this;
+      const time = new Date().getTime();
+      for (const i in configs) {
+        dataTypeConfigs.push({
+          component: configs[i].component,
+          id: (time + i).toString(),
+          fieldName: configs[i].fieldName,
+          dataType: configs[i].dataType,
+          options: JSON.stringify(configs[i].options),
+          relation: JSON.stringify(configs[i].relation),
+          __unique: configs[i].__unique,
+          __display: configs[i].__display,
+        })
+      }
     },
     
     // 删除字段组件， k下标
@@ -233,8 +266,40 @@ export default {
 </script>
 
 <style lang="scss">
+.home {
+  padding: 0 30px;
+}
 .flip-list-move {
   transition: transform 1s;
+}
+.fieldlist {
+  margin-top: 15px;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+  background-color: #ffffff;
+  padding: 10px 10px;
+  .title {
+    height: 20px;
+    line-height: 20px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: "SimHei";
+    color: #2d8cf0;
+    padding-left: 10px;
+    border-left: 2px solid #2d8cf0;
+  }
+}
+
+.action-area {
+  display: flex;
+  div {
+    &:nth-child(n) {
+      margin-right: 20px;
+    }
+    &:nth-child(2n) {
+      margin-right: 0;
+    }
+  }
 }
 
 .config-row {

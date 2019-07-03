@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div id="nav">
-      <span class="logo">数据模拟平台</span>
+      <span class="logo">模拟数据生成系统</span>
       <router-link to="/">
         <Icon type="ios-home" size="22" class="icon"/>
         <span>首页</span>
@@ -16,8 +16,8 @@
 </template>
 
 <style lang="scss">
+$mainColor: #2d8cf0;
 #app {
-  background: #f7f7f7;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -34,7 +34,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 22px;
-    color: #5584ff;
+    color: $mainColor;
     font-weight: 700;
     margin-right: 2.5%;
   }
@@ -47,7 +47,7 @@
     font-weight: bold;
     color: #2c3e50;
     &.router-link-exact-active {
-      color: #5584ff;
+      color: $mainColor;
     }
   }
 }
