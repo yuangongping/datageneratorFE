@@ -1,18 +1,16 @@
 <template>
   <!-- TODO: 解释、例子、预览 -->
   <div class="home">
-    <!-- 功能区域, 包括基础配置、快捷配置 -->
-     <div class="action-area">
+    <div class="action-area">
       <BasicConfig 
         @basic-config="basicConfig">
       </BasicConfig>
 
       <FastConfig 
-      @fast-config="fastConfig">
+        @fast-config="fastConfig">
       </FastConfig>
-     </div>
-    
-    <!-- 字段配置项区域 -->
+    </div>
+
     <div class="field-list">
       <div class="field-title">配置项</div>
       <Scroll  v-if="dataTypeConfigs.length > 0" height="400">
@@ -51,6 +49,18 @@
             <!-------------------->
             
 
+          <!-- 字段配置组件区域 -->
+          <div
+            class="field-config"
+            :is="dataTypeConfig.component"
+            :dataType="dataTypeConfig.dataType"
+            :options.sync="dataTypeConfig.options"
+            :relation.sync="dataTypeConfig.relation"
+          ></div>
+
+          <div class=""></div>
+          <!-------------------->
+          
             <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
 
             <div class="switch-config">
@@ -91,9 +101,49 @@
         </transition-group>
       </Scroll>
     </div>
-    <Button @click="checkData"> 检查数据 </Button>
+
+    <Modal
+      title="数据预览"
+      width=1600
+      v-model="previewFlag"
+      :mask-closable="false"
+      @on-cancel="cancel"
+    >
+      <Preview :tableHead="tableHead" :data="dataGened" />
+    </Modal>
+
+    <div class="button">
+      <Button @click="preview"  type="primary" icon="md-eye"> 预览 </Button>
+      <Button @click="checkData"> 检查数据 </Button>
+      <Button @click="downloadFlag=true"  type="primary" icon="md-download"> 导出 </Button>
+    </div>
+
+    <div class="export">
+      <Modal
+        title="数据导出"
+        v-model="downloadFlag"
+        :mask-closable="false"
+        ok-text='下载'
+        cancel-text=''
+        @on-ok="ok"
+        @on-cancel="cancel"
+      >  
+        <span class='text_label'>数据量</span>
+        <InputNumber :max="100000" :min="1" v-model="downlaodDataNum"></InputNumber><br />
+        <span class='text_label'>文件类型</span>
+        <RadioGroup v-model="downloadFileType">
+          <Radio label="JSON" ></Radio>
+          <Radio label="CSV"></Radio>
+          <Radio label="XML"></Radio>
+        </RadioGroup><br />
+        <span class='text_label'>文件名</span>
+        <Input v-model="defaultFilename" placeholder="文件名"  style="width: 200px" />
+        <!-- <Exporter v-if="rawdata.length > 0" filename="result" filetype="json" :rawdata="rawdata" /> -->
+      </Modal>
+    </div>
     
   </div>
+
 </template>
 
 <script>
@@ -101,8 +151,10 @@
 import Vue from 'vue'
 import deepcopy from 'deepcopy';
 import draggable from 'vuedraggable';
-import { Progress, Button, Input, Select, Option, Icon, Tag, Switch, Tooltip, Scroll } from 'iview';
+import { Progress, Button, Input, Select, Option, Icon, Tag, 
+         Switch, Tooltip, Modal, Table, InputNumber, RadioGroup, Radio, Scroll } from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
+import Preview from '@/components/Preview/index.vue'
 import FastConfig from '@/components/FastConfig/FastConfig.vue';
 import BasicConfig from '@/components/BasicConfig/BasicConfig.vue';
 import { Generator } from '@/generator/index';
@@ -116,15 +168,22 @@ export default {
   name: 'home',
   data() {
     return {
+      previewFlag: false,
+      downloadFlag: false,
+      tableHead: [],
+      // 预览数据量, 预览10条
+      previewDataNum: 10, 
+      downlaodDataNum: 1,
+      // 文件下载默认类型
+      downloadFileType: 'JSON',
+      // 默认导出文件名
+      defaultFilename: 'export',
       DATA_TYPES: DATA_TYPES,
       dataTypeConfigs: [
       ],
       dataTypeToAdd: 'Sex',
-      // 生成的数据量变量
-      nrows: 5,
       // 数据生成结果
-      dataGened: [],
-      rawdata: ''
+      dataGened: []
     }
   },
   components: {
@@ -139,8 +198,14 @@ export default {
     Tooltip,
     Scroll,
     'i-switch': Switch,
-    // vue draggable
+    InputNumber,
+    RadioGroup, 
+    Radio,
+    Modal,
+    Table,
     draggable,
+    Preview,
+    
     // 字段配置组件
     SexConfig,
     NameConfig,
@@ -179,23 +244,48 @@ export default {
       // 返回格式化后的数据
       return dataTypeConfigs;
     },
-
     // 生产数据函数
-    generate() {
-      console.log('##############', this.dataTypeConfigs)
-      const generator = new Generator(this.parseDataTypeConfigs(), this.nrows);
+    generate(number) {
+      const generator = new Generator(this.parseDataTypeConfigs(), number);
       try {
-        this.dataGened = generator.generate();
+        return generator.generate();
       } catch (e) {
         this.$Message.error({
           content: e.toString(),
           duration: 5
         });
       }
-      // this.rawdata = JSON.stringify(this.dataGened);
     },
-
-
+    // 预览函数
+    preview(){
+      this.dataGened = this.generate(this.previewDataNum)
+      // 设置对话框为可见状态
+      this.previewFlag = true;
+      // 获取数据的所有keys
+      const keys = Object.keys(this.dataGened[0])
+      // 重置数据表头
+      this.tableHead = [];
+      for(var i = 0; i < keys.length; i++ ){
+        this.tableHead.push(
+          {
+            title: keys[i],
+            key:  keys[i]
+          }
+        )
+      }
+    },
+    download(filename, filetype) {
+      this.dataGened = this.generate(this.downlaodDataNum)
+      const data  = JSON.stringify(this.dataGened);
+      if (data == "" || filename == "" || filetype == "") {
+        throw new Error("下载组件存在非空属性")
+      }
+      const aNode = document.createElement("a"),
+      blob = new Blob([data]);
+      aNode.download = filename + '.' + filetype;
+      aNode.href = (window.URL ? URL : window.webkitURL).createObjectURL(blob);
+      aNode.click();
+    },
     // 基础字段组件
     basicConfig(componentToAdd) {
       const { dataTypeConfigs } = this;
@@ -233,8 +323,6 @@ export default {
     delRow(k) {
       this.dataTypeConfigs.splice(k, 1);
     },
-
-    // 数据检查函数
     sortUp(k) {
       if (k != 0) {
         let temp = this.dataTypeConfigs[k - 1];
@@ -249,8 +337,17 @@ export default {
         Vue.set(this.dataTypeConfigs, k, temp);
       }
     },
+    // 数据检查函数
     checkData() {
       console.log(this.dataTypeConfigs)
+    },
+    // 模态对话框确认监听函数
+    ok () {
+      this.download(this.defaultFilename, this.downloadFileType);
+    },
+    // 模态对话框取消监听函数
+    cancel () {
+      console.log('1111111111111111111');
     }
   }
 }
@@ -263,13 +360,30 @@ export default {
 .flip-list-move {
   transition: transform 1s;
 }
+.button { 
+  Button{
+    margin:1% 1% 0% 0%; 
+  }
+}
+.ivu-modal-body {
+  .text_label{
+    width: 80px;
+    display: inline-block;
+    font-size: 14px;
+    margin: 15px 20px 30px 10px;
+    text-align:justify;
+    text-align-last: justify;
+  }
+  label{
+    margin-right: 20px;
+  }
+}
 .field-list {
-  margin-top: 10px;
+  margin-top: 15px;
   box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
   background-color: #ffffff;
   padding: 10px 10px;
-}
-.field-title {
+  .field-title {
     height: 20px;
     line-height: 20px;
     margin-bottom: 10px;
@@ -280,7 +394,7 @@ export default {
     padding-left: 10px;
     border-left: 2px solid #2d8cf0;
   }
-
+}
 .action-area {
   display: flex;
   div {
@@ -292,7 +406,6 @@ export default {
     }
   }
 }
-
 .config-row {
   font-size: 15px;
   padding: 20px 0 6px 0;
@@ -306,30 +419,25 @@ export default {
   &:nth-child(2n) {
     background-color: #fafafa;
   }
-
   .field-type {
     width: 70px;
     margin-right: 10px;
   }
-
   .field-name {
     width: 160px;
     margin-right: 10px;
   }
-
   .relation-config {
     width:120px;
     .ivu-select-selection {
       width:120px;
     }
   }
-
   .field-config {
     flex: 1;
     display: flex;
     justify-content: flex-start; // 主轴排列方式
     align-items: center; // 交叉轴对齐方式
-
     .config-item {
       margin-right: 10px;
       display: flex;
@@ -337,7 +445,6 @@ export default {
       align-items: center; // 交叉轴对齐方式
     }
   }
-
   .switch-config {
     width: 70px;
   }
@@ -353,7 +460,6 @@ export default {
     flex-direction: column;
     cursor: pointer;
   }
-
   .question {
     color: #66cccc; margin-left: 2px; cursor: pointer; font-size: 12px;
   }
@@ -361,7 +467,6 @@ export default {
 label {
   position:relative;
   display:inline-block;
-
   .config-title {
     padding: 4px;
     pointer-events: none;

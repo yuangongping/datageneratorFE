@@ -4,11 +4,11 @@
       <span class="logo">模拟数据生成系统</span>
       <router-link to="/">
         <Icon type="ios-home" size="22" class="icon"/>
-        <span>首页</span>
+        <span class="text">首页</span>
       </router-link>
       <router-link to="/about">
         <Icon type="ios-help-circle"  size="22"  class="icon"/>
-        <span>帮助</span>
+        <span class="text">帮助</span>
       </router-link>
     </div>
     <router-view/>
@@ -37,6 +37,9 @@ $mainColor: #2d8cf0;
     color: $mainColor;
     font-weight: 700;
     margin-right: 2.5%;
+  }
+  .text{
+    font-size: 14px;
   }
   .icon{
     height: 28px;
