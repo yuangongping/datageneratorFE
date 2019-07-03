@@ -1,6 +1,7 @@
 <template>
   <!-- TODO: 解释、例子、预览 -->
   <div class="home">
+    <!-- 功能区域, 包括基础配置、快捷配置 -->
      <div class="action-area">
       <BasicConfig 
         @basic-config="basicConfig">
@@ -10,19 +11,11 @@
       @fast-config="fastConfig">
       </FastConfig>
      </div>
-
-    <Exporter v-if="rawdata.length > 0" filename="result" filetype="json" :rawdata="rawdata" ></Exporter>
-    <Input v-model="nrows" />
     
-    <!-- 生产数据的展示区域 -->
-    <ul>
-      <li v-for="(datarow, k) in dataGened" :key="k">
-        {{ datarow }}
-      </li>
-    </ul>
+    <!-- 字段配置项区域 -->
     <div class="field-list">
       <div class="field-title">配置项</div>
-      <Scroll  v-if="dataTypeConfigs.length > 0">
+      <Scroll  v-if="dataTypeConfigs.length > 0" height="400">
         <transition-group name="flip-list" >
           <div 
             v-for="(dataTypeConfig, k) in dataTypeConfigs"
@@ -98,11 +91,6 @@
         </transition-group>
       </Scroll>
     </div>
-      
-    <!-- <Select v-model="dataTypeToAdd">
-      <Option :value="dataType" v-for="dataType in Object.keys(DATA_TYPES)" :key=dataType> {{ DATA_TYPES[dataType].alias }} </Option>
-    </Select>
-    <Button type="primary" @click="addRow()">添加字段</Button> -->
     <Button @click="checkData"> 检查数据 </Button>
     
   </div>
@@ -276,7 +264,7 @@ export default {
   transition: transform 1s;
 }
 .field-list {
-  margin-top: 15px;
+  margin-top: 10px;
   box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
   background-color: #ffffff;
   padding: 10px 10px;
@@ -384,5 +372,4 @@ label {
     font-size: 12px;
   }
 }
-
 </style>
