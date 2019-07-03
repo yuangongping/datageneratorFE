@@ -1,13 +1,14 @@
 <template>
-  <div class="fast-config">
-    <div class="title">快捷组件</div>
+  <div class="basic-config"> 
+    <div class="title">基础组件</div>
     <div class="button-group">
       <ButtonGroup 
-        v-for="fastType in Object.keys(FAST_TYPES)" 
-        :key="fastType" 
-        size="small"> 
-        <Button type="info" icon="md-add" @click="fastConfig(fastType)">
-          {{FAST_TYPES[fastType].alias}}
+        v-for="basicType in Object.keys(DATA_TYPES)" 
+        :key="basicType"
+        size="small"
+      > 
+        <Button type="info" icon= "md-add" @click="basicConfig(basicType)">
+          {{DATA_TYPES[basicType].alias}}
         </Button>
       </ButtonGroup>
     </div>
@@ -16,13 +17,13 @@
 
 <script>
 
-import { FAST_TYPES } from './fastconfig.js';
+import { DATA_TYPES } from '@/datatypes/index.js';
 import { ButtonGroup, Button } from 'iview';
 export default {
-  name: 'fastconfig',
+  name: 'basiconfig',
   data() {
     return {
-      FAST_TYPES: FAST_TYPES,
+      DATA_TYPES: DATA_TYPES,
     }
   },
   components: {
@@ -32,19 +33,19 @@ export default {
   mounted() {
   },
   methods: {
-    fastConfig(fastType) {
-      this.$emit('fast-config', FAST_TYPES[fastType].config)
+    basicConfig(basicType) {
+      this.$emit('basic-config', basicType)
     }
   }
 }
 </script>
 
 <style lang="scss">
-.fast-config {
+.basic-config {
   box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
   background-color: #ffffff;
   padding: 10px 10px;
-  width: 50%;
+  width: 80%;
   
   .title {
     height: 20px;

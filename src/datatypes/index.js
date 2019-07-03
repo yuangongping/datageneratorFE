@@ -2,19 +2,22 @@ import SexGenFunc from '@/datatypes/Sex/Sex';
 import NameGenFunc from '@/datatypes/Name/Name';
 import CounterGenFunc from '@/datatypes/Counter/Counter';
 import NumberGenFunc from '@/datatypes/Number/Number';
+import ProvinceGenFunc from '@/datatypes/Province/Province';
+import CityGenFunc from '@/datatypes/City/City';
+import DistrictGenFunc from '@/datatypes/District/District';
+import DistrictCodeGenFunc from '@/datatypes/DistrictCode/DistrictCode';
+import { RELATION_ENUM, SELECT_MODE_ENUM, OPTIONS_ENUM  } from './CONST';
 import IdentificationNumberGenFunc from '@/datatypes/IdentificationNumber/IdentificationNumber';
 import Str2NumberGenFunc from '@/datatypes/Str2Number/Str2Number'
 import StrSpliceGenFunc from  '@/datatypes/StrSplice/StrSplice'
 import StrSegmenteGenFunc from '@/datatypes/StringSegmente/StringSegmente'
 import TextGenFunc from '@/datatypes/Text/Text';
 import RandomChoiceGenFunc from '@/datatypes/RandomChoice/RandomChoice';
-import { RELATION_ENUM, OPTIONS_ENUM } from './CONST';
 import TimeGenFunc from '@/datatypes/Time/Time';
 
 export const DATA_TYPES = {
   Sex: {
     alias: "性别",
-    priority: 0,
     genFunc: SexGenFunc,
     options: {
       manAlias: "男",
@@ -27,13 +30,12 @@ export const DATA_TYPES = {
   },
   Name: {
     alias: "姓名",
-    priority: 1,
     genFunc: NameGenFunc,
     options: {
       sex: "random",
     },
-    __unique: false,
-    __display: true,
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
     relation: {
       fieldNames: "",
       type: RELATION_ENUM.INDEPEND.EN,
@@ -42,34 +44,89 @@ export const DATA_TYPES = {
   },
   Counter: {
     alias: "累加器",
-    priority: 0,
     genFunc: CounterGenFunc,
     options: {
       startNum: 0,
       division: 1,
       template: '',
     },
-    __unique: false,
-    __display: true,
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
     relation: null
   },
   Number: {
     alias: "数字",
-    priority: 100,
     genFunc: NumberGenFunc,
     options: {
       min: 0,
       max: 10,
       decimal: 0,
     },
-    __unique: false,
-    __display: true,
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
     relation: {
       fieldNames: "",
       type: RELATION_ENUM.INDEPEND.EN,
       expresion: '',
       allowTypes: ["Counter", "Number"],
     },
+  },
+  Province: {
+    alias: "省份",
+    genFunc: ProvinceGenFunc,
+    options: {
+      provinces: [], //多选框中选中的省份数组
+    },
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
+    relation: null
+  },
+  City: {
+    alias: "城市",
+    genFunc: CityGenFunc,
+    options: {
+      Select_city_mode: SELECT_MODE_ENUM.City.CITY_RANDOM.CN,
+      cities: [""],
+      provinceChoice: []
+    },
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
+    relation: {
+      fieldNames: "",
+      type: RELATION_ENUM.INDEPEND.EN,
+      allowTypes: ["Province"],
+    },
+  },
+  District: {
+    alias: "区县",
+    genFunc: DistrictGenFunc,
+    options: {
+      Select_district_mode: SELECT_MODE_ENUM.District.DISTRICT_RANDOM.CN,
+      cityChoice: '', //选中的城市， 关联字段时从该城市随机选取一个区县， 作为独立组件使用时，随机生成区县
+      districts: [""],
+      districts_dict: {}
+    },
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
+    relation: {
+      fieldNames: "",
+      type: RELATION_ENUM.INDEPEND.EN,
+      allowTypes: ["City"],
+    },
+  },
+  DistrictCode: {
+    alias: "区县码",
+    genFunc: DistrictCodeGenFunc,
+    options: {
+      district_no: '', //关联字段时输出该关联区县的区县码， 独立组件时随机选取区县码
+    },
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
+    relation: {
+      fieldNames: "",
+      type: RELATION_ENUM.INDEPEND.EN,
+      allowTypes: ["District"],
+    }
   },
   IdentificationNumber: {
     alias: "身份证",
