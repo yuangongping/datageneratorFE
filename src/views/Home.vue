@@ -1,17 +1,6 @@
 <template>
   <!-- TODO: 解释、例子、预览 -->
   <div class="home">
-    <Exporter v-if="rawdata.length > 0" filename="result" filetype="json" :rawdata="rawdata" />
-    <Input v-model="nrows" />
-    <Button @click="generate"> 生成 </Button>
-    
-    <!-- 生产数据的展示区域 -->
-    <ul>
-      <li v-for="(datarow, k) in dataGened" :key="k">
-        {{ datarow }}
-      </li>
-    </ul>
-
     <transition-group name="flip-list">
       <div 
         v-for="(dataTypeConfig, k) in dataTypeConfigs"
@@ -44,6 +33,8 @@
           :options.sync="dataTypeConfig.options"
           :relation.sync="dataTypeConfig.relation"
         ></div>
+
+        <div class=""></div>
         <!-------------------->
         
 
@@ -91,7 +82,46 @@
     </Select>
     <Button type="primary" @click="addRow()">添加字段</Button>
     <Button @click="checkData"> 检查数据 </Button>
+<!-- 
+    <Input v-model="nrows" /> -->
+    <!-- 生产数据的展示区域 -->
+    <Modal
+      title="数据预览"
+      width=1600
+      v-model="previewFlag"
+      :mask-closable="false"
+      @on-cancel="cancel"
+    >
+      <Preview :tableHead="tableHead" :data="dataGened" />
+    </Modal>
+    <div class="review">
+      <Button @click="preview"  type="primary" icon="md-eye"> 预览 </Button>
+      <Button @click="downloadFlag=true"  type="primary" icon="md-download"> 导出 </Button>
+    </div>
+    <div>
+      <Modal
+        title="数据导出"
+        v-model="downloadFlag"
+        :mask-closable="false"
+        @on-ok="ok"
+        @on-cancel="cancel"
+      >
+        <span>生成数据量</span>
+        <InputNumber :max="100000" :min="1" v-model="downlaodDataNum"></InputNumber><br />
+        <span>输出文件类型</span>
+        <RadioGroup v-model="downloadFileType">
+          <Radio label="JSON" ></Radio>
+          <Radio label="CSV"></Radio>
+          <Radio label="XML"></Radio>
+        </RadioGroup><br />
+        <span>文件名</span>
+        <Input v-model="defaultFilename" placeholder="文件名"  style="width: 200px" />
+        <!-- <Exporter v-if="rawdata.length > 0" filename="result" filetype="json" :rawdata="rawdata" /> -->
+      </Modal>
+    </div>
+    
   </div>
+
 </template>
 
 <script>
@@ -99,8 +129,10 @@
 import Vue from 'vue'
 import deepcopy from 'deepcopy';
 import draggable from 'vuedraggable';
-import { Progress, Button, Input, Select, Option, Icon, Tag, Switch, Tooltip } from 'iview';
+import { Progress, Button, Input, Select, Option, Icon, Tag, 
+         Switch, Tooltip, Modal, Table, InputNumber, RadioGroup, Radio } from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
+import Preview from '@/components/Preview/index.vue'
 import { Generator } from '@/generator/index';
 import { SexConfig, NameConfig, CounterConfig,
          NumberConfig, IdentificationNumberConfig, Str2NumberConfig,
@@ -112,15 +144,23 @@ export default {
   name: 'home',
   data() {
     return {
+      previewFlag: false,
+      downloadFlag: false,
+      tableHead: [],
+      // 预览数据量, 预览10条
+      previewDataNum: 10, 
+      downlaodDataNum: 1,
+      // 文件下载默认类型
+      downloadFileType: 'JSON',
+      // 默认导出文件名
+      defaultFilename: 'export',
+
       DATA_TYPES: DATA_TYPES,
       dataTypeConfigs: [
       ],
       dataTypeToAdd: 'Sex',
-      // 生成的数据量变量
-      nrows: 5,
       // 数据生成结果
-      dataGened: [],
-      rawdata: ''
+      dataGened: []
     }
   },
   components: {
@@ -134,8 +174,13 @@ export default {
     Tag,
     Tooltip,
     'i-switch': Switch,
-    // vue draggable
+    InputNumber,
+    RadioGroup, 
+    Radio,
+    Modal,
+    Table,
     draggable,
+    Preview,
     
     // 字段配置组件
     SexConfig,
@@ -173,21 +218,50 @@ export default {
       // 返回格式化后的数据
       return dataTypeConfigs;
     },
-
     // 生产数据函数
-    generate() {
-      const generator = new Generator(this.parseDataTypeConfigs(), this.nrows);
+    generate(number) {
+      const generator = new Generator(this.parseDataTypeConfigs(), number);
       try {
-        this.dataGened = generator.generate();
+        return generator.generate();
       } catch (e) {
         this.$Message.error({
           content: e.toString(),
           duration: 5
         });
       }
-      // this.rawdata = JSON.stringify(this.dataGened);
     },
+    // 预览函数
+    preview(){
+      this.dataGened = this.generate(this.previewDataNum)
+      // 设置对话框为可见状态
+      this.previewFlag = true;
+      // 获取数据的所有keys
+      const keys = Object.keys(this.dataGened[0])
+      // 重置数据表头
+      this.tableHead = [];
+      for(var i = 0; i < keys.length; i++ ){
+        this.tableHead.push(
+          {
+            title: keys[i],
+            key:  keys[i]
+          }
+        )
+      }
+    },
+    download(filename, filetype) {
+      this.dataGened = this.generate(this.downlaodDataNum)
+      const data  = JSON.stringify(this.dataGened);
+      if (data == "" || filename == "" || filetype == "") {
+        throw new Error("下载组件存在非空属性")
+      }
 
+      const aNode = document.createElement("a"),
+      blob = new Blob([data]);
+
+      aNode.download = filename + '.' + filetype;
+      aNode.href = (window.URL ? URL : window.webkitURL).createObjectURL(blob);
+      aNode.click();
+    },
     // 添加字段组件
     addRow() {
       // 依据选择器中选择选项确定组件类型与数据参数配置
@@ -227,7 +301,18 @@ export default {
     },
     checkData() {
       console.log(this.dataTypeConfigs)
+    },
+    closePreview() {
+      this.previewFlag = false;
+    },
+    ok () {
+      this.download(this.defaultFilename, this.downloadFileType);
+    },
+    cancel () {
+      console.log('1111111111111111111');
     }
+
+
   }
 }
 </script>

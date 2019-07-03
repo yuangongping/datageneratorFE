@@ -4,11 +4,11 @@
       <span class="logo">数据模拟平台</span>
       <router-link to="/">
         <Icon type="ios-home" size="22" class="icon"/>
-        <span>首页</span>
+        <span class="text">首页</span>
       </router-link>
       <router-link to="/about">
         <Icon type="ios-help-circle"  size="22"  class="icon"/>
-        <span>帮助</span>
+        <span class="text">帮助</span>
       </router-link>
     </div>
     <router-view/>
@@ -17,7 +17,7 @@
 
 <style lang="scss">
 #app {
-  background: #f7f7f7;
+  background: rgb(250, 248, 247);
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -37,6 +37,9 @@
     color: #5584ff;
     font-weight: 700;
     margin-right: 2.5%;
+  }
+  .text{
+    font-size: 14px;
   }
   .icon{
     height: 28px;
