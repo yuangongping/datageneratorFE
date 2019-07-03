@@ -182,14 +182,3 @@ export const DATA_TYPES = {
     }
   }
 };
-
-export const FAST_TYPES = {
-  PIR: {
-    alias: "人口信息",
-    optionsComponents: {
-      Name: "姓名",
-      Sex: "性别",
-      sex: "random",
-    },
-  },
-};

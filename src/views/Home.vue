@@ -91,6 +91,11 @@
     </Select>
     <Button type="primary" @click="addRow()">添加字段</Button>
     <Button @click="checkData"> 检查数据 </Button>
+
+    <FastConfig 
+      @fast-config="FastConfig">
+    </FastConfig>
+    
   </div>
 </template>
 
@@ -101,17 +106,19 @@ import deepcopy from 'deepcopy';
 import draggable from 'vuedraggable';
 import { Progress, Button, Input, Select, Option, Icon, Tag, Switch, Tooltip } from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
+import FastConfig from '@/components/FastConfig/FastConfig.vue';
 import { Generator } from '@/generator/index';
 import { SexConfig, NameConfig, CounterConfig,
          NumberConfig, IdentificationNumberConfig, Str2NumberConfig,
          StrSpliceConfig, StringSegmenteConfig ,RandomChoiceConfig,
          TextConfig, TimeConfig } from '@/components/datatypesconfig/index.js';
-import { DATA_TYPES } from '@/datatypes/index.js';
+import { DATA_TYPES, FAST_TYPES } from '@/datatypes/index.js';
 export default {
   name: 'home',
   data() {
     return {
       DATA_TYPES: DATA_TYPES,
+      FAST_TYPES: FAST_TYPES,
       dataTypeConfigs: [
       ],
       dataTypeToAdd: 'Sex',
@@ -135,7 +142,6 @@ export default {
     'i-switch': Switch,
     // vue draggable
     draggable,
-    
     // 字段配置组件
     SexConfig,
     NameConfig,
@@ -147,7 +153,8 @@ export default {
     StringSegmenteConfig,
     RandomChoiceConfig,
     TextConfig,
-    TimeConfig
+    TimeConfig,
+    FastConfig
   },
   mounted() {
   },
@@ -219,6 +226,23 @@ export default {
         let temp = this.dataTypeConfigs[k + 1];
         Vue.set(this.dataTypeConfigs, k + 1, this.dataTypeConfigs[k]);
         Vue.set(this.dataTypeConfigs, k, temp);
+      }
+    },
+    // 快捷添加
+    FastConfig(configs) {
+      const { dataTypeConfigs } = this;
+      const time = new Date().getTime();
+      for (const i in configs) {
+        dataTypeConfigs.push({
+          component: configs[i].component,
+          id: (time + i).toString(),
+          fieldName: configs[i].fieldName,
+          dataType: configs[i].dataType,
+          options: JSON.stringify(configs[i].options),
+          relation: JSON.stringify(configs[i].relation),
+          __unique: configs[i].__unique,
+          __display: configs[i].__display,
+        })
       }
     },
     checkData() {
