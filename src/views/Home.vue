@@ -37,18 +37,7 @@
               </label>
             </div>
             <!-------------------->
-
-            <!-- 字段配置组件区域 -->
-            <div
-              class="field-config"
-              :is="dataTypeConfig.component"
-              :dataType="dataTypeConfig.dataType"
-              :options.sync="dataTypeConfig.options"
-              :relation.sync="dataTypeConfig.relation"
-            ></div>
-            <!-------------------->
             
-
           <!-- 字段配置组件区域 -->
           <div
             class="field-config"
