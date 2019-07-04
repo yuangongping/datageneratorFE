@@ -1,6 +1,6 @@
 <template>
   <div class="fast-config">
-    <div class="title">快捷组件</div>
+    <div class="title">快捷配置</div>
     <div class="button-group">
       <ButtonGroup 
         v-for="fastType in Object.keys(FAST_TYPES)" 

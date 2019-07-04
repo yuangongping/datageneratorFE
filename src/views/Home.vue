@@ -11,32 +11,33 @@
       </FastConfig>
     </div>
 
-    <div class="fieldlist">
-      <div class="title">配置项</div>
-      <transition-group name="flip-list" >
-        <div 
-          v-for="(dataTypeConfig, k) in dataTypeConfigs"
-          :key="dataTypeConfig.id"
-          class="config-row"
-        >
-          <!-- 【 通用区域 】字段类型、字段名 -->
-          <div class="field-type">
-            <Tag color="primary">
-              <!-- {{ dataTypeConfig.dataType }} -->
-              {{ DATA_TYPES[dataTypeConfig.dataType].alias }}
-            </Tag>
-          </div>
+    <div class="field-list">
+      <div class="field-title">配置项</div>
+      <Scroll  v-if="dataTypeConfigs.length > 0" height="400">
+        <transition-group name="flip-list" >
+          <div 
+            v-for="(dataTypeConfig, k) in dataTypeConfigs"
+            :key="dataTypeConfig.id"
+            class="config-row"
+          >
+            <!-- 【 通用区域 】字段类型、字段名 -->
+            <div class="field-type">
+              <Tag color="primary">
+                <!-- {{ dataTypeConfig.dataType }} -->
+                {{ DATA_TYPES[dataTypeConfig.dataType].alias }}
+              </Tag>
+            </div>
 
-          <div class="field-name">
-            <label>
-              <Input type="text"
-                v-model="dataTypeConfig.fieldName"
-              />
-              <span class="config-title">字段名</span>
-            </label>
-          </div>
-          <!-------------------->
-
+            <div class="field-name">
+              <label>
+                <Input type="text"
+                  v-model="dataTypeConfig.fieldName"
+                />
+                <span class="config-title">字段名</span>
+              </label>
+            </div>
+            <!-------------------->
+            
           <!-- 字段配置组件区域 -->
           <div
             class="field-config"
@@ -45,59 +46,49 @@
             :options.sync="dataTypeConfig.options"
             :relation.sync="dataTypeConfig.relation"
           ></div>
+
+          <div class=""></div>
           <!-------------------->
           
+            <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
 
-        <!-- 字段配置组件区域 -->
-        <div
-          class="field-config"
-          :is="dataTypeConfig.component"
-          :dataType="dataTypeConfig.dataType"
-          :options.sync="dataTypeConfig.options"
-          :relation.sync="dataTypeConfig.relation"
-        ></div>
+            <div class="switch-config">
+              <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
+                <i-switch
+                  size="large"
+                  v-model="dataTypeConfig.__unique"
+                >
+                  <span slot="open">唯一</span>
+                  <span slot="close">唯一</span>
+                </i-switch>
+              </Tooltip>
+            </div>
 
-        <div class=""></div>
-        <!-------------------->
-        
-          <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
+            <div class="switch-config">
+              <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
+                <i-switch
+                  size="large"
+                  v-model="dataTypeConfig.__display"
+                >
+                  <span slot="open">显示</span>
+                  <span slot="close">显示</span>
+                </i-switch>
+              </Tooltip>
+            </div>
 
-          <div class="switch-config">
-            <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
-              <i-switch
-                size="large"
-                v-model="dataTypeConfig.__unique"
-              >
-                <span slot="open">唯一</span>
-                <span slot="close">唯一</span>
-              </i-switch>
-            </Tooltip>
+            <div class="up-down" >
+                <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
+                <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
+            </div>
+
+            <div class="delrow">
+              <Icon type="md-close" @click="delRow(k)"/>
+            </div>
+            <!-------------------->
+
           </div>
-
-          <div class="switch-config">
-            <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
-              <i-switch
-                size="large"
-                v-model="dataTypeConfig.__display"
-              >
-                <span slot="open">显示</span>
-                <span slot="close">显示</span>
-              </i-switch>
-            </Tooltip>
-          </div>
-
-          <div class="up-down" >
-              <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
-              <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
-          </div>
-
-          <div class="delrow">
-            <Icon type="md-close" @click="delRow(k)"/>
-          </div>
-          <!-------------------->
-
-        </div>
-      </transition-group>
+        </transition-group>
+      </Scroll>
     </div>
 
     <Modal
@@ -150,7 +141,7 @@ import Vue from 'vue'
 import deepcopy from 'deepcopy';
 import draggable from 'vuedraggable';
 import { Progress, Button, Input, Select, Option, Icon, Tag, 
-         Switch, Tooltip, Modal, Table, InputNumber, RadioGroup, Radio } from 'iview';
+         Switch, Tooltip, Modal, Table, InputNumber, RadioGroup, Radio, Scroll } from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
 import Preview from '@/components/Preview/index.vue'
 import FastConfig from '@/components/FastConfig/FastConfig.vue';
@@ -176,7 +167,6 @@ export default {
       downloadFileType: 'JSON',
       // 默认导出文件名
       defaultFilename: 'export',
-
       DATA_TYPES: DATA_TYPES,
       dataTypeConfigs: [
       ],
@@ -195,6 +185,7 @@ export default {
     Icon,
     Tag,
     Tooltip,
+    Scroll,
     'i-switch': Switch,
     InputNumber,
     RadioGroup, 
@@ -242,7 +233,6 @@ export default {
       // 返回格式化后的数据
       return dataTypeConfigs;
     },
-
     // 生产数据函数
     generate(number) {
       const generator = new Generator(this.parseDataTypeConfigs(), number);
@@ -255,7 +245,6 @@ export default {
         });
       }
     },
-
     // 预览函数
     preview(){
       this.dataGened = this.generate(this.previewDataNum)
@@ -274,22 +263,18 @@ export default {
         )
       }
     },
-
     download(filename, filetype) {
       this.dataGened = this.generate(this.downlaodDataNum)
       const data  = JSON.stringify(this.dataGened);
       if (data == "" || filename == "" || filetype == "") {
         throw new Error("下载组件存在非空属性")
       }
-
       const aNode = document.createElement("a"),
       blob = new Blob([data]);
-
       aNode.download = filename + '.' + filetype;
       aNode.href = (window.URL ? URL : window.webkitURL).createObjectURL(blob);
       aNode.click();
     },
-
     // 基础字段组件
     basicConfig(componentToAdd) {
       const { dataTypeConfigs } = this;
@@ -305,7 +290,6 @@ export default {
         __display: DATA_TYPES[componentToAdd].__display,
       })
     },
-
     // 快捷添加
     fastConfig(configs) {
       const { dataTypeConfigs } = this;
@@ -328,7 +312,6 @@ export default {
     delRow(k) {
       this.dataTypeConfigs.splice(k, 1);
     },
-
     sortUp(k) {
       if (k != 0) {
         let temp = this.dataTypeConfigs[k - 1];
@@ -336,7 +319,6 @@ export default {
         Vue.set(this.dataTypeConfigs, k, temp);
       }
     },
-
     sortDown(k) {
       if (k != (this.dataTypeConfigs.length - 1)) {
         let temp = this.dataTypeConfigs[k + 1];
@@ -384,14 +366,13 @@ export default {
   label{
     margin-right: 20px;
   }
-
 }
-.fieldlist {
+.field-list {
   margin-top: 15px;
   box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
   background-color: #ffffff;
   padding: 10px 10px;
-  .title {
+  .field-title {
     height: 20px;
     line-height: 20px;
     margin-bottom: 10px;
@@ -403,7 +384,6 @@ export default {
     border-left: 2px solid #2d8cf0;
   }
 }
-
 .action-area {
   display: flex;
   div {
@@ -415,7 +395,6 @@ export default {
     }
   }
 }
-
 .config-row {
   font-size: 15px;
   padding: 20px 0 6px 0;
@@ -429,30 +408,25 @@ export default {
   &:nth-child(2n) {
     background-color: #fafafa;
   }
-
   .field-type {
     width: 70px;
     margin-right: 10px;
   }
-
   .field-name {
     width: 160px;
     margin-right: 10px;
   }
-
   .relation-config {
     width:120px;
     .ivu-select-selection {
       width:120px;
     }
   }
-
   .field-config {
     flex: 1;
     display: flex;
     justify-content: flex-start; // 主轴排列方式
     align-items: center; // 交叉轴对齐方式
-
     .config-item {
       margin-right: 10px;
       display: flex;
@@ -460,7 +434,6 @@ export default {
       align-items: center; // 交叉轴对齐方式
     }
   }
-
   .switch-config {
     width: 70px;
   }
@@ -476,7 +449,6 @@ export default {
     flex-direction: column;
     cursor: pointer;
   }
-
   .question {
     color: #66cccc; margin-left: 2px; cursor: pointer; font-size: 12px;
   }
@@ -484,7 +456,6 @@ export default {
 label {
   position:relative;
   display:inline-block;
-
   .config-title {
     padding: 4px;
     pointer-events: none;
@@ -495,5 +466,4 @@ label {
     font-size: 12px;
   }
 }
-
 </style>
