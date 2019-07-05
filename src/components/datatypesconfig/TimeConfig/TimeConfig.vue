@@ -15,8 +15,7 @@
       </label>
     </div>
 
-    <!--选择生成时间类型  -->
-
+    <!-- 选择生成时间类型  -->
     <div class="config-item">
       <label>
         <Select
@@ -24,17 +23,18 @@
           placeholder="选择生成时间类型"
           @on-change="chgOptions"
         >
-          <Option value="randomSingleTime" >随机时刻</Option>
-          <Option value="stepIncrementSingleTime" >固定步长递增</Option>
-          <Option value="randomIncrementSingleTime" >随机递增</Option>
+          <Option
+            v-for="TimeTypeKey in Object.keys(Time_OPTIONS_ENUM.TIME_TYPE)"
+            :value="TimeTypeKey"
+            :key="TimeTypeKey"
+          >{{ Time_OPTIONS_ENUM.TIME_TYPE[TimeTypeKey].CN}}</Option>
         </Select>
         <span class="config-title">生成时间类型</span>
       </label>
     </div>
 
     <!-- 固定步长类型时间需提供步长值 -->
-
-    <div class="config-item step" v-if="optionsValue.timeCategory === 'stepIncrementSingleTime'">
+    <div class="config-item step" v-if="optionsValue.timeCategory === Time_OPTIONS_ENUM.TIME_TYPE.FIX.EN">
       <label>
         <InputNumber type="text"
           v-model="optionsValue.timeStep"
@@ -47,8 +47,7 @@
     </div>
 
     <!-- 随机步长类型时间需提供最大、最小步长值 -->
-
-    <div class="config-item step" v-if="optionsValue.timeCategory === 'randomIncrementSingleTime'">
+    <div class="config-item step" v-if="optionsValue.timeCategory === Time_OPTIONS_ENUM.TIME_TYPE.RANDOMINCREMENT.EN">
       <label>
         <InputNumber type="text"
           v-model="optionsValue.minStep"
@@ -87,7 +86,7 @@
       </Select>
     </div>
 
-    <div class="config-item">
+    <div class="config-item" v-if="relationValue.type !== RELATION_ENUM.INDEPEND.EN">
       <label>
         <Input type="text"
           v-model="relationValue.fieldNames"
@@ -116,7 +115,7 @@
         />
         <span class="config-title">最大间隔</span>
       </label>
-    </div>
+    </div> 
     <!-- 时间格式选择 -->
     <div class="config-item">
       <label>
@@ -125,11 +124,11 @@
           placeholder="选择生成时间格式"
           @on-change="chgOptions"
         >
-          <Option value="FORMAT_1" >yyyy-MM-dd HH:mm:ss</Option>
-          <Option value="FORMAT_2" >yyyy-mm-dd</Option>
-          <Option value="FORMAT_3" >年/月/日</Option>
-          <Option value="FORMAT_4" >年/月/日/时/分</Option>
-          <Option value="FORMAT_5" >yyyymmdd</Option>
+          <Option
+            v-for="TimeStyleKey in Object.keys(Time_OPTIONS_ENUM.TIME_STYLE)"
+            :value="TimeStyleKey"
+            :key="TimeStyleKey"
+          >{{ Time_OPTIONS_ENUM.TIME_STYLE[TimeStyleKey].CN}}</Option>
         </Select>
         <span class="config-title">时间格式</span>
       </label>
@@ -149,7 +148,7 @@
 
 
 <script>
-import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
+import { RELATION_ENUM, ALLOW_RELATIONS, OPTIONS_ENUM } from '@/datatypes/CONST.js';
 import {  Input,InputNumber, Select, Option ,DatePicker} from "iview";
 
 export default {
@@ -158,7 +157,8 @@ export default {
       optionsValue: JSON.parse(this.options),
       relationValue: JSON.parse(this.relation),
       RELATION_ENUM: RELATION_ENUM,
-      allowRelations: ALLOW_RELATIONS[this.dataType]
+      allowRelations: ALLOW_RELATIONS[this.dataType],
+      Time_OPTIONS_ENUM: OPTIONS_ENUM[this.dataType]
     };
   },
   props: {
