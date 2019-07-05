@@ -13,6 +13,7 @@ import StringSegmenteConfig from '@/components/datatypesconfig/StringSegmenteCon
 import RandomChoiceConfig from '@/components/datatypesconfig/RandomChoiceConfig/RandomChoiceConfig.vue';
 import TextConfig from '@/components/datatypesconfig/TextConfig/TextConfig.vue';
 import TimeConfig from '@/components/datatypesconfig/TimeConfig/TimeConfig.vue';
+import DetailAddressConfig from '@/components/datatypesconfig/DetailAddressConfig/DetailAddressConfig.vue';
 export {
   SexConfig,
   NameConfig,
@@ -28,5 +29,6 @@ export {
   StringSegmenteConfig,
   RandomChoiceConfig,
   TextConfig,
-  TimeConfig
+  TimeConfig,
+  DetailAddressConfig
 }

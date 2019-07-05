@@ -1,6 +1,6 @@
 <template>
   <div class="basic-config"> 
-    <div class="title">基础配置</div>
+    <div class="title">基础配置项</div>
     <div class="button-group">
       <ButtonGroup 
         v-for="basicType in Object.keys(DATA_TYPES)" 

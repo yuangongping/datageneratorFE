@@ -35,7 +35,7 @@
           </RadioGroup>
       </div>
       
-      <div class="config-item" v-if="optionsValue.Select_district_mode == SELECT_MODE_ENUM.District.DISTRICT_SELECTABLE.CN" style="width: 300px">
+      <div class="config-item" v-if="optionsValue.Select_district_mode == OPTIONS_ENUM.District.DISTRICT_SELECTABLE.CN" style="width: 300px">
         <label>
           <span class="config-title">省份选择</span>
           <Select
@@ -55,7 +55,7 @@
         </label>
       </div>
 
-      <div class="config-item" v-if="optionsValue.Select_district_mode == SELECT_MODE_ENUM.District.DISTRICT_SELECTABLE.CN" style="width: 300px">
+      <div class="config-item" v-if="optionsValue.Select_district_mode == OPTIONS_ENUM.District.DISTRICT_SELECTABLE.CN" style="width: 300px">
         <label>
           <span class="config-title">城市选择</span>
           <Select
@@ -74,7 +74,7 @@
         </label>
       </div>
 
-      <div class="config-item" v-if="optionsValue.Select_district_mode == SELECT_MODE_ENUM.District.DISTRICT_SELECTABLE.CN" style="width: 550px">
+      <div class="config-item" v-if="optionsValue.Select_district_mode == OPTIONS_ENUM.District.DISTRICT_SELECTABLE.CN" style="width: 550px">
         <label>
           <span class="config-title">区县选择</span>
           <Select
@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import { RELATION_ENUM, ALLOW_RELATIONS, SELECT_MODE_ENUM } from '@/datatypes/CONST.js';
+import { RELATION_ENUM, ALLOW_RELATIONS, OPTIONS_ENUM } from '@/datatypes/CONST.js';
 import { Input, Select, Option, Radio, RadioGroup } from "iview";
 import OriginalData from '@/datatypes/COMMON_DATA/OriginalData_dict.js';
 export default {
@@ -106,7 +106,7 @@ export default {
       optionsValue: JSON.parse(this.options),
       relationValue: JSON.parse(this.relation),
       RELATION_ENUM: RELATION_ENUM,
-      SELECT_MODE_ENUM: SELECT_MODE_ENUM,
+      OPTIONS_ENUM: OPTIONS_ENUM,
       allowRelations: ALLOW_RELATIONS[this.dataType],
       allProvinces: Object.keys(OriginalData),
       provinceChoice: [],
@@ -160,7 +160,7 @@ export default {
       this.$emit('update:options', JSON.stringify(this.optionsValue));
     },
     chgRadio() {
-      if(this.optionsValue.Select_district_mode == SELECT_MODE_ENUM.District.DISTRICT_RANDOM.CN){
+      if(this.optionsValue.Select_district_mode == OPTIONS_ENUM.District.DISTRICT_RANDOM.CN){
         this.optionsValue.districts = [];
         this.cities = [];
         this.provinceChoice = [];
@@ -172,7 +172,7 @@ export default {
       if(this.relationValue.type==RELATION_ENUM.COR_RELATION.EN){ 
         this.cities = [];
         this.provinceChoice = [];
-        this.optionsValue.Select_district_mode = SELECT_MODE_ENUM.District.DISTRICT_RANDOM.CN;
+        this.optionsValue.Select_district_mode = OPTIONS_ENUM.District.DISTRICT_RANDOM.CN;
       }
       this.$emit('update:relation', JSON.stringify(this.relationValue));
     }
