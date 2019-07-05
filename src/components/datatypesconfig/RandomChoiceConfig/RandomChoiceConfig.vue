@@ -1,16 +1,17 @@
 <template>
   <!-- 修改组件独立的样式时注意修改组件class -->
   <div class="randomchoice-config">
-    <div class="config-item candidate">
+    <div class="config-item candidate" >
       <label>
         <Input type="text"
             v-model="optionsValue.RandomString"
             @on-change="chgOptions"
-            placeholder="候选值之间用英文逗号隔开"
+            placeholder="候选字符之间用英文逗号隔开"
         />
         <span class="config-title">候选值</span>
       </label>
     </div>
+
   </div>
 </template>
 
@@ -37,18 +38,14 @@ export default {
     };
   },
   props: {
-    fieldName: String,
     dataType: String,
     options: String,
     relation: String,
   },
   components: {
-    Input
+    Input,
   },
   methods: {
-    chgFieldName() {
-      this.$emit('update:fieldName', this.fieldNameValue);
-    },
     chgOptions() {
       this.$emit('update:options', JSON.stringify(this.optionsValue));
     },

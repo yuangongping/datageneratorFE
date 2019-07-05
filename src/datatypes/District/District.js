@@ -1,5 +1,5 @@
 import { randomChoice } from '@/utils/functions';
-import { FIELD_PRE, SELECT_MODE_ENUM, RELATION_ENUM } from '@/datatypes/CONST.js';
+import { FIELD_PRE, OPTIONS_ENUM, RELATION_ENUM } from '@/datatypes/CONST.js';
 import OriginalData_dict from '@/datatypes/COMMON_DATA/OriginalData_dict';
 
 export default (options, relation) => {
@@ -14,7 +14,7 @@ export default (options, relation) => {
   let districts_dict;
 
   if (type === RELATION_ENUM.INDEPEND.EN){  // 独立字段时
-    if(Select_district_mode === SELECT_MODE_ENUM.District.DISTRICT_SELECTABLE.CN){  // 自选特定区县范围
+    if(Select_district_mode === OPTIONS_ENUM.District.DISTRICT_SELECTABLE.CN){  // 自选特定区县范围
       districts_dict = options.districts_dict;
       districts = options.districts;
     }else{  // 随机选择区县

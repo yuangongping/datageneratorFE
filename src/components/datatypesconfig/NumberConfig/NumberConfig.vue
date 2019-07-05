@@ -64,7 +64,7 @@
         <Input type="text"
           v-model="relationValue.expression"
           @on-change="chgRelation"
-          placeholder="${DATA} * ${REALTE}"
+          placeholder="${DATA} * ${RELATE}"
         />
         <span class="config-title">数字表达式</span>
       </label>

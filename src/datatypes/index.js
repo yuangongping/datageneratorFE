@@ -6,7 +6,7 @@ import ProvinceGenFunc from '@/datatypes/Province/Province';
 import CityGenFunc from '@/datatypes/City/City';
 import DistrictGenFunc from '@/datatypes/District/District';
 import DistrictCodeGenFunc from '@/datatypes/DistrictCode/DistrictCode';
-import { RELATION_ENUM, SELECT_MODE_ENUM, OPTIONS_ENUM  } from './CONST';
+import { RELATION_ENUM, OPTIONS_ENUM } from './CONST';
 import IdentificationNumberGenFunc from '@/datatypes/IdentificationNumber/IdentificationNumber';
 import Str2NumberGenFunc from '@/datatypes/Str2Number/Str2Number'
 import StrConcatGenFunc from  '@/datatypes/StrConcat/StrConcat'
@@ -14,6 +14,7 @@ import StrSegmentGenFunc from '@/datatypes/StrSegment/StrSegment'
 import TextGenFunc from '@/datatypes/Text/Text';
 import RandomChoiceGenFunc from '@/datatypes/RandomChoice/RandomChoice';
 import TimeGenFunc from '@/datatypes/Time/Time';
+import DetailAddressGenFunc from '@/datatypes/DetailAddress/DetailAddress';
 import RandomFieldGenFunc from '@/datatypes/RandomField/RandomField'
 
 export const DATA_TYPES = {
@@ -57,7 +58,7 @@ export const DATA_TYPES = {
     alias: "城市",
     genFunc: CityGenFunc,
     options: {
-      Select_city_mode: SELECT_MODE_ENUM.City.CITY_RANDOM.CN,
+      Select_city_mode: OPTIONS_ENUM.City.CITY_RANDOM.CN,
       cities: [],
       provinceChoice: []
     },
@@ -73,7 +74,7 @@ export const DATA_TYPES = {
     alias: "区县",
     genFunc: DistrictGenFunc,
     options: {
-      Select_district_mode: SELECT_MODE_ENUM.District.DISTRICT_RANDOM.CN,
+      Select_district_mode: OPTIONS_ENUM.District.DISTRICT_RANDOM.CN,
       cityChoice: '', //选中的城市， 关联字段时从该城市随机选取一个区县， 作为独立组件使用时，随机生成区县
       districts: [],
       districts_dict: {}
@@ -245,9 +246,20 @@ export const DATA_TYPES = {
     },
     relation: {
       fieldNames: "",
-      type: RELATION_ENUM.COR_RELATION.EN,
-      allowTypes: ["Sex", "Number"],
-
+      minInterval:0,
+      maxInterval:1,
+      type: RELATION_ENUM.INDEPEND.EN,
+      allowTypes: ["Time"],
+    }
+  },
+  DetailAddress: {
+    alias: "详细地址",
+    genFunc: DetailAddressGenFunc,
+    options: {
+      addressType: OPTIONS_ENUM.DetailAddress.RANDOM_ADDRESS.EN,
     },
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
+    relation: null
   },
 };

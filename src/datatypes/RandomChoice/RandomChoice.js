@@ -13,8 +13,8 @@ export default (options, relation) => {
       resultstring = RandomString;
     } 
   } else{
-    throw new Error('随机选择字符串不能为空, 请重新输入！');
-    }
+    throw new Error('字符或字段候选值不能为空, 请重新输入！');
+  }
 
   // 将生成结果传递下去
   const deliver_options = {};

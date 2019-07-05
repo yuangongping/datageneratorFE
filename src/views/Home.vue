@@ -12,8 +12,8 @@
     </div>
 
     <div class="field-list">
-      <div class="field-title">配置项</div>
-      <Scroll  v-if="dataTypeConfigs.length > 0" height="400">
+      <Scroll  v-if="dataTypeConfigs.length > 0" height="650">
+        <div class="field-title">配置项</div>
         <transition-group name="flip-list" >
           <div 
             v-for="(dataTypeConfig, k) in dataTypeConfigs"
@@ -145,7 +145,7 @@ import { SexConfig, NameConfig, CounterConfig,
          NumberConfig, IdentificationNumberConfig, Str2NumberConfig,
          StrConcatConfig, StrSegmentConfig ,RandomChoiceConfig,
          TextConfig, TimeConfig, ProvinceConfig, 
-         CityConfig, DistrictConfig, DistrictCodeConfig, RandomFieldConfig} from '@/components/datatypesconfig/index.js';  
+         CityConfig, DistrictConfig, DistrictCodeConfig, RandomFieldConfig, DetailAddressConfig } from '@/components/datatypesconfig/index.js';  
 import { DATA_TYPES } from '@/datatypes/index.js';
 export default {
   name: 'home',
@@ -207,7 +207,8 @@ export default {
     TimeConfig,
     RandomFieldConfig,
     FastConfig,
-    BasicConfig
+    BasicConfig,
+    DetailAddressConfig
   },
   mounted() {
   },

@@ -39,29 +39,6 @@ export const ALLOW_RELATIONS = {
   RandomField: ['COR_RELATION']
 }
 
-export const SELECT_MODE_ENUM ={
-  City: {
-    CITY_RANDOM: {
-      EN: "CITY_RANDOM",
-      CN: "随机城市"
-    },
-    CITY_SELECTABLE: {
-      EN: "CITY_SELECTABLE",
-      CN: "自选城市"
-    }
-  },
-  District: {
-    DISTRICT_RANDOM: {
-      EN: "DISTRICT_RANDOM",
-      CN: "随机区县"
-    },
-    DISTRICT_SELECTABLE: {
-      EN: "DISTRICT_SELECTABLE",
-      CN: "自选区县"
-    }
-  }
-}
-
 export const OPTIONS_ENUM = {
   Text: {
     LEN_TYPE: {
@@ -89,6 +66,40 @@ export const OPTIONS_ENUM = {
       },
     }
   },
+  City: {
+    CITY_RANDOM: {
+      EN: "CITY_RANDOM",
+      CN: "随机城市"
+    },
+    CITY_SELECTABLE: {
+      EN: "CITY_SELECTABLE",
+      CN: "自选城市"
+    }
+  },
+  District: {
+    DISTRICT_RANDOM: {
+      EN: "DISTRICT_RANDOM",
+      CN: "随机区县"
+    },
+    DISTRICT_SELECTABLE: {
+      EN: "DISTRICT_SELECTABLE",
+      CN: "自选区县"
+    }
+  },
+  DetailAddress: {
+    RANDOM_ADDRESS: {
+      EN: "RANDOM_ADDRESS",
+      CN: "城区/乡镇"
+    },
+    CITY_ADDRESS: {
+      EN: "CITY_ADDRESS",
+      CN: "城区"
+    },
+    VILLAGE_ADDRESS: {
+      EN: "VILLAGE_ADDRESS",
+      CN: "乡镇"
+    }
+  },  
   Time: {
     TIME_TYPE: {
       RANDOMSING: {

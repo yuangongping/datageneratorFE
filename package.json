@@ -12,6 +12,7 @@
     "deepcopy": "^2.0.0",
     "iview": "^3.4.2",
     "mathjs": "^6.0.2",
+    "v-viewer": "^1.4.1",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
     "vuedraggable": "^2.23.0",

@@ -13,6 +13,7 @@ import StrSegmentConfig from '@/components/datatypesconfig/StrSegmentConfig/StrS
 import RandomChoiceConfig from '@/components/datatypesconfig/RandomChoiceConfig/RandomChoiceConfig.vue';
 import TextConfig from '@/components/datatypesconfig/TextConfig/TextConfig.vue';
 import TimeConfig from '@/components/datatypesconfig/TimeConfig/TimeConfig.vue';
+import DetailAddressConfig from '@/components/datatypesconfig/DetailAddressConfig/DetailAddressConfig.vue';
 import RandomFieldConfig from '@/components/datatypesconfig/RandomFieldConfig/RandomFieldConfig.vue';
 
 export {
@@ -31,5 +32,6 @@ export {
   RandomChoiceConfig,
   TextConfig,
   TimeConfig,
+  DetailAddressConfig,
   RandomFieldConfig
 }
