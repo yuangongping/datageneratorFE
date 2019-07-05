@@ -9,11 +9,12 @@ import DistrictCodeGenFunc from '@/datatypes/DistrictCode/DistrictCode';
 import { RELATION_ENUM, SELECT_MODE_ENUM, OPTIONS_ENUM  } from './CONST';
 import IdentificationNumberGenFunc from '@/datatypes/IdentificationNumber/IdentificationNumber';
 import Str2NumberGenFunc from '@/datatypes/Str2Number/Str2Number'
-import StrSpliceGenFunc from  '@/datatypes/StrSplice/StrSplice'
-import StrSegmenteGenFunc from '@/datatypes/StringSegmente/StringSegmente'
+import StrConcatGenFunc from  '@/datatypes/StrConcat/StrConcat'
+import StrSegmentGenFunc from '@/datatypes/StrSegment/StrSegment'
 import TextGenFunc from '@/datatypes/Text/Text';
 import RandomChoiceGenFunc from '@/datatypes/RandomChoice/RandomChoice';
 import TimeGenFunc from '@/datatypes/Time/Time';
+import RandomFieldGenFunc from '@/datatypes/RandomField/RandomField'
 
 export const DATA_TYPES = {
   Sex: {
@@ -59,7 +60,7 @@ export const DATA_TYPES = {
     genFunc: NumberGenFunc,
     options: {
       min: 0,
-      max: 10,
+      max: 100000000000000,
       decimal: 0,
     },
     __unique: false, // 生成结果是否是唯一值
@@ -86,7 +87,7 @@ export const DATA_TYPES = {
     genFunc: CityGenFunc,
     options: {
       Select_city_mode: SELECT_MODE_ENUM.City.CITY_RANDOM.CN,
-      cities: [""],
+      cities: [],
       provinceChoice: []
     },
     __unique: false, // 生成结果是否是唯一值
@@ -103,7 +104,7 @@ export const DATA_TYPES = {
     options: {
       Select_district_mode: SELECT_MODE_ENUM.District.DISTRICT_RANDOM.CN,
       cityChoice: '', //选中的城市， 关联字段时从该城市随机选取一个区县， 作为独立组件使用时，随机生成区县
-      districts: [""],
+      districts: [],
       districts_dict: {}
     },
     __unique: false, // 生成结果是否是唯一值
@@ -130,7 +131,6 @@ export const DATA_TYPES = {
   },
   IdentificationNumber: {
     alias: "身份证",
-    priority: 100,
     genFunc: IdentificationNumberGenFunc,
     __unique: false,
     __display: true,
@@ -145,7 +145,6 @@ export const DATA_TYPES = {
   },
   Str2Number: {
     alias: "字符串转数字",
-    priority: 200,
     genFunc: Str2NumberGenFunc,
     __unique: false,
     __display: true,
@@ -159,10 +158,9 @@ export const DATA_TYPES = {
       allowTypes: ["Counter", "Number"],
     },
   },
-  StrSplice: {
-    alias: "字符串拼接",
-    priority: 200,
-    genFunc: StrSpliceGenFunc,
+  StrConcat: {
+    alias: "字段拼接",
+    genFunc: StrConcatGenFunc,
     __unique: false,
     __display: true,
     options: {
@@ -175,10 +173,9 @@ export const DATA_TYPES = {
       allowTypes: ["Counter", "Number"],
     },
   },
-  StringSegmente: {
-    alias: "字符串分割",
-    priority: 200,
-    genFunc: StrSegmenteGenFunc,
+  StrSegment: {
+    alias: "字段截取",
+    genFunc: StrSegmentGenFunc,
     __unique: false,
     __display: true,
     options: {
@@ -194,7 +191,6 @@ export const DATA_TYPES = {
   },
   Text: {
     alias: "文本",
-    priority: 0,
     genFunc: TextGenFunc,
     options: {
       textTypes: Object.keys(OPTIONS_ENUM.Text.TEXT_TYPE),
@@ -209,7 +205,6 @@ export const DATA_TYPES = {
   },
   RandomChoice: {
     alias: "随机选择",
-    priority: 0,
     genFunc: RandomChoiceGenFunc,
     options: {
       RandomString: "",
@@ -220,7 +215,6 @@ export const DATA_TYPES = {
   },
   Time: {
     alias: "时间",
-    priority: 105,
     genFunc: TimeGenFunc,
     options: {
       timeStamp: 0,
@@ -237,5 +231,22 @@ export const DATA_TYPES = {
       type: RELATION_ENUM.INDEPEND.EN,
       allowTypes: ["Time"],
     }
-  }
+  },
+  RandomField: {
+    alias: "字段随机",
+    genFunc: RandomFieldGenFunc,
+    __unique: false,
+    __display: true,
+    options: {
+      __fieldName: "",
+      weightFirst: 1,
+      weightSecond: 1
+    },
+    relation: {
+      fieldNames: "",
+      type: RELATION_ENUM.COR_RELATION.EN,
+      allowTypes: ["Sex", "Number"],
+
+    },
+  },
 };

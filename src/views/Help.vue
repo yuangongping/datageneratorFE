@@ -4,7 +4,7 @@
     <button v-on:click="shuffle">Shuffle</button>
     <transition-group name="flip-list" tag="ul">
       <li v-for="(item, k) in items" v-bind:key="item.val">
-        {{ item.val }}
+        {{ item.val }}{{ k }}
       </li>
     </transition-group>
   </div>

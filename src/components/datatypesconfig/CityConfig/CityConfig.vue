@@ -35,14 +35,16 @@
           </RadioGroup>
         </div>
       
-        <div class="config-item" v-if="optionsValue.Select_city_mode == SELECT_MODE_ENUM.City.CITY_SELECTABLE.CN" style="width: 300px">
+        <div v-if="optionsValue.Select_city_mode == SELECT_MODE_ENUM.City.CITY_SELECTABLE.CN" >
           <label>
             <span class="config-title">省份选择</span>
             <Select
               v-model="optionsValue.provinceChoice" 
               @on-change="chgProvinces"
               multiple
+              :max-tag-count="1"
               collapse-tags
+              style="width:200px"
             >
               <Option 
                 v-for="province in allProvinces"
@@ -55,13 +57,15 @@
           </label>
         </div>
 
-        <div class="config-item" v-if="optionsValue.Select_city_mode == SELECT_MODE_ENUM.City.CITY_SELECTABLE.CN" style="width: 550px">
+        <div v-if="optionsValue.Select_city_mode == SELECT_MODE_ENUM.City.CITY_SELECTABLE.CN" style="margin-left:10px;">
           <label>
             <span class="config-title">城市选择</span>
             <Select
               v-model="optionsValue.cities" 
               @on-change="chgcities"
+              :max-tag-count="1"
               multiple
+              style="width:200px"
             >
               <Option 
                 v-for="city in this.cities"
