@@ -49,7 +49,7 @@
     </div>
 
 
-    <div class="config-item">
+    <div class="config-item" v-if="relationValue.type !== RELATION_ENUM.INDEPEND.EN">
       <label>
         <Input type="text"
             v-model="relationValue.fieldNames"
@@ -59,7 +59,7 @@
       </label>
     </div>
     
-    <div class="config-item">
+    <div class="config-item" v-if="relationValue.type !== RELATION_ENUM.INDEPEND.EN">
       <label>
         <Input type="text"
           v-model="relationValue.expression"
