@@ -23,7 +23,6 @@
             <!-- 【 通用区域 】字段类型、字段名 -->
             <div class="field-type">
               <Tag color="primary">
-                <!-- {{ dataTypeConfig.dataType }} -->
                 {{ DATA_TYPES[dataTypeConfig.dataType].alias }}
               </Tag>
             </div>
@@ -36,7 +35,6 @@
                 <span class="config-title">字段名</span>
               </label>
             </div>
-            <!-------------------->
             
           <!-- 字段配置组件区域 -->
           <div
@@ -48,7 +46,6 @@
           ></div>
 
           <div class=""></div>
-          <!-------------------->
           
             <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
 
@@ -84,7 +81,6 @@
             <div class="delrow">
               <Icon type="md-close" @click="delRow(k)"/>
             </div>
-            <!-------------------->
 
           </div>
         </transition-group>
@@ -103,7 +99,6 @@
 
     <div class="button">
       <Button @click="preview"  type="primary" icon="md-eye"> 预览 </Button>
-      <Button @click="checkData"> 检查数据 </Button>
       <Button @click="downloadFlag=true"  type="primary" icon="md-download"> 导出 </Button>
     </div>
 
@@ -112,7 +107,7 @@
         title="数据导出"
         v-model="downloadFlag"
         :mask-closable="false"
-        ok-text='下载'
+        ok-text='导出'
         cancel-text=''
         @on-ok="ok"
         @on-cancel="cancel"
@@ -127,7 +122,6 @@
         </RadioGroup><br />
         <span class='text_label'>文件名</span>
         <Input v-model="defaultFilename" placeholder="文件名"  style="width: 200px" />
-        <!-- <Exporter v-if="rawdata.length > 0" filename="result" filetype="json" :rawdata="rawdata" /> -->
       </Modal>
     </div>
     
@@ -149,9 +143,13 @@ import BasicConfig from '@/components/BasicConfig/BasicConfig.vue';
 import { Generator } from '@/generator/index';
 import { SexConfig, NameConfig, CounterConfig,
          NumberConfig, IdentificationNumberConfig, Str2NumberConfig,
-         StrSpliceConfig, StringSegmenteConfig ,RandomChoiceConfig,
+         StrConcatConfig, StrSegmentConfig ,RandomChoiceConfig,
          TextConfig, TimeConfig, ProvinceConfig, 
+<<<<<<< HEAD
          CityConfig, DistrictConfig, DistrictCodeConfig, DetailAddressConfig } from '@/components/datatypesconfig/index.js';  
+=======
+         CityConfig, DistrictConfig, DistrictCodeConfig, RandomFieldConfig} from '@/components/datatypesconfig/index.js';  
+>>>>>>> ca11b39c5c0c1548a11a0a5e3d6abe9453ee5b0b
 import { DATA_TYPES } from '@/datatypes/index.js';
 export default {
   name: 'home',
@@ -206,11 +204,12 @@ export default {
     DistrictCodeConfig,
     IdentificationNumberConfig,
     Str2NumberConfig,
-    StrSpliceConfig,
-    StringSegmenteConfig,
+    StrConcatConfig,
+    StrSegmentConfig,
     RandomChoiceConfig,
     TextConfig,
     TimeConfig,
+    RandomFieldConfig,
     FastConfig,
     BasicConfig,
     DetailAddressConfig
@@ -236,34 +235,40 @@ export default {
     },
     // 生产数据函数
     generate(number) {
+<<<<<<< HEAD
       console.log('@@@@@@@@@@@@@', this.dataTypeConfigs)
+=======
+      console.log(this.parseDataTypeConfigs())
+>>>>>>> ca11b39c5c0c1548a11a0a5e3d6abe9453ee5b0b
       const generator = new Generator(this.parseDataTypeConfigs(), number);
+      return generator.generate();
+    },
+    // 预览函数
+    preview(){
+      this.dataGened = [];
       try {
-        return generator.generate();
+        this.dataGened = this.generate(this.previewDataNum);
+        // 设置对话框为可见状态
+        this.previewFlag = true;
+        // 获取数据的所有keys
+        const keys = Object.keys(this.dataGened[0]);
+        // 重置数据表头
+        this.tableHead = [];
+        for(var i = 0; i < keys.length; i++ ){
+          this.tableHead.push(
+            {
+              title: keys[i],
+              key:  keys[i]
+            }
+          )
+        }
       } catch (e) {
         this.$Message.error({
           content: e.toString(),
           duration: 5
         });
       }
-    },
-    // 预览函数
-    preview(){
-      this.dataGened = this.generate(this.previewDataNum)
-      // 设置对话框为可见状态
-      this.previewFlag = true;
-      // 获取数据的所有keys
-      const keys = Object.keys(this.dataGened[0])
-      // 重置数据表头
-      this.tableHead = [];
-      for(var i = 0; i < keys.length; i++ ){
-        this.tableHead.push(
-          {
-            title: keys[i],
-            key:  keys[i]
-          }
-        )
-      }
+      
     },
     download(filename, filetype) {
       this.dataGened = this.generate(this.downlaodDataNum)
@@ -338,7 +343,7 @@ export default {
     },
     // 模态对话框取消监听函数
     cancel () {
-      console.log('1111111111111111111');
+      console.log('');
     }
   }
 }

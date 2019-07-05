@@ -1,6 +1,6 @@
 
 <template>
-  <div class="about">
+  <div class="help">
     <div class="sys">
         <span class="title" >文档介绍</span>
         <p>本文档解释了您想要了解的有关模拟数据生成系统的信息：包括功能介绍、常见问题。</p>    
@@ -35,6 +35,13 @@
         <p>图中数字表达式的填写只能是${DATA}或${RELATE}，其中${RELATE}代表的是关联字段的值，${DATA}代表的是本字段的值，运算关系可以任意选择。例如图中数字表达式为Y=X^2， Z=X+Y。</p>
         <img src="../assets/images/express.png" />
     </div>
+  <div id="flip-list-demo" class="demo">
+    <button v-on:click="shuffle">Shuffle</button>
+    <transition-group name="flip-list" tag="ul">
+      <li v-for="(item, k) in items" v-bind:key="item.val">
+        {{ item.val }}{{ k }}
+      </li>
+    </transition-group>
   </div>
 </template>
 

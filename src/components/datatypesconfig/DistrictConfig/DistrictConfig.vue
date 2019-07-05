@@ -1,6 +1,7 @@
 <template>
   <!-- 修改组件独立的样式时注意修改组件class -->
   <div class="district-config">
+
 		<div class="config-item relation-config">
       <Select
         v-model="relationValue.type" 
@@ -28,21 +29,22 @@
 		</div>
 
     <div class="config-item" v-if="relationValue.type === RELATION_ENUM.INDEPEND.EN">
-      <div class="config-item">
+      <div>
           <RadioGroup v-model="optionsValue.Select_district_mode" @on-change="chgRadio" type="button" size="small">
             <Radio label="随机区县"></Radio>
             <Radio label="自选区县"></Radio>
           </RadioGroup>
       </div>
       
-      <div class="config-item" v-if="optionsValue.Select_district_mode == OPTIONS_ENUM.District.DISTRICT_SELECTABLE.CN" style="width: 300px">
+      <div class="select" v-if="optionsValue.Select_district_mode == SELECT_MODE_ENUM.District.DISTRICT_SELECTABLE.CN">
         <label>
           <span class="config-title">省份选择</span>
           <Select
             v-model="provinceChoice" 
             @on-change="chgProvinces"
             multiple
-            collapse-tags
+            :max-tag-count="1"
+            style="width:200px;"
           >
             <Option 
               v-for="province in allProvinces"
@@ -55,13 +57,15 @@
         </label>
       </div>
 
-      <div class="config-item" v-if="optionsValue.Select_district_mode == OPTIONS_ENUM.District.DISTRICT_SELECTABLE.CN" style="width: 300px">
+      <div class="select" v-if="optionsValue.Select_district_mode == SELECT_MODE_ENUM.District.DISTRICT_SELECTABLE.CN" >
         <label>
           <span class="config-title">城市选择</span>
           <Select
             v-model="cityChioce" 
             @on-change="chgcities"
             multiple
+            :max-tag-count="1"
+            style="width:200px;"
           >
             <Option 
               v-for="city in this.cities"
@@ -74,13 +78,15 @@
         </label>
       </div>
 
-      <div class="config-item" v-if="optionsValue.Select_district_mode == OPTIONS_ENUM.District.DISTRICT_SELECTABLE.CN" style="width: 550px">
+      <div class="select" v-if="optionsValue.Select_district_mode == SELECT_MODE_ENUM.District.DISTRICT_SELECTABLE.CN">
         <label>
           <span class="config-title">区县选择</span>
           <Select
             v-model="optionsValue.districts" 
             @on-change="chgdistricts"
             multiple
+            :max-tag-count="1"
+            style="width:200px;"
           >
             <Option 
               v-for="district in this.districts"
@@ -95,6 +101,13 @@
     </div>
   </div>
 </template>
+<style lang="scss">
+.select{
+  margin-left: 10px;
+}
+
+</style>
+
 
 <script>
 import { RELATION_ENUM, ALLOW_RELATIONS, OPTIONS_ENUM } from '@/datatypes/CONST.js';

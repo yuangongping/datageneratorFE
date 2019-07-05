@@ -84,6 +84,7 @@ export const FAST_TYPES = {
       }
     ]
   },
+
   FLIGHT: {
     alias: "航班信息",
     config: [
@@ -108,10 +109,10 @@ export const FAST_TYPES = {
         "__display": false
       },
       {
-        "component": "StrSpliceConfig",
+        "component": "strConcatConfig",
         "id": "1562123485891",
         "fieldName": "FlightNo",
-        "dataType": "StrSplice",
+        "dataType": "StrConcat",
         "options": {"__fieldName":""},
         "relation": {"fieldNames":"airlines,areacode","type":"COR_RELATION","expresion":"","allowTypes":["Counter","Number"]},
         "__unique": false,
@@ -158,6 +159,187 @@ export const FAST_TYPES = {
         "__display": true
       }
     ]
+  },
+
+  EMAIL:{
+    alias: "电子邮箱",
+    config: [
+      //生成qq号
+      {
+        "component": "NumberConfig",
+        "id": "1562123467908",
+        "fieldName": "QQPrefix",
+        "dataType": "Number",
+        "options": {
+          "decimal": 0,
+          "max": 100000000000000,
+          "min": 1000000,
+          "__display": true,
+          "__unique": false
+        },
+        "relation": {
+          "type": "INDEPEND"
+        },
+        "__unique": true,
+        "__display": false
+      },
+      // qq邮箱后缀
+      {
+        "component": "RandomChoiceConfig",
+        "id": "1562123220530",
+        "fieldName": "QQSuffix",
+        "dataType": "RandomChoice",
+        "options": {"RandomString":"@qq.com"},
+        "relation": null,
+        "__unique": false,
+        "__display": false
+      },
+      // 拼接qq号与邮箱后缀
+      {
+        "component": "StrConcatConfig",
+        "dataType": "StrConcat",
+        "fieldName": "QQEmail",
+        "id": "1562297401908",
+        "options": {
+          "__fieldName": "QQEmail",
+          "__unique": false,
+          "__display": false
+        },
+        "relation":{
+          "expresion": "",
+          "fieldNames": "QQPrefix,QQSuffix",
+          "type": "COR_RELATION"
+        },
+        "__display": false,
+        "__unique": false
+      },
+      // 随机生成账号
+      {
+        "component": "TextConfig",
+        "id": "1562123467908",
+        "fieldName": "prefix",
+        "dataType": "Text",
+        "options": {"textTypes":["NUMBER", "ENGLISH"],"min":6,"max":14,"fix":'',"lenType":"RANDOM"},
+        "relation": null,
+        "__unique": true,
+        "__display": false
+      },
+      // 随机后缀
+      {
+        "component": "RandomChoiceConfig",
+        "id": "1562123220530",
+        "fieldName": "suffix",
+        "dataType": "RandomChoice",
+        "options": {"RandomString":"@126.com, @163.com, @sina.com, @sohu.com, @yahoo.com.cn"},
+        "relation": null,
+        "__unique": false,
+        "__display": false
+      },
+       // 拼接其他邮箱账号与后缀
+      {
+        "component": "StrConcatConfig",
+        "dataType": "StrConcat",
+        "fieldName": "OtherEmail",
+        "id": "1562297401908",
+        "options": {
+          "__fieldName": "QQEmail",
+          "__unique": false,
+          "__display": true
+        },
+        "relation":{
+          "fieldNames": "prefix,suffix",
+          "type": "COR_RELATION"
+        },
+        "__display": false,
+        "__unique": false
+      },
+
+      // 最忌选择组件，获得最后的额邮箱
+      {
+        "component": "RandomFieldConfig",
+        "id": "1562123220530",
+        "fieldName": "email",
+        "dataType": "RandomField",
+        "options": {
+          "weightFirst": 1,
+          "weightSecond": 2,
+          "__display": true,
+          "__fieldName": "email",
+          "__unique": false
+        },
+        "relation": {
+          "fieldNames": "QQEmail,OtherEmail",
+          "type": "COR_RELATION",
+          "__display": true,
+          "__unique": false
+        },
+          "__unique": false,
+          "__display": true
+      },
+
+    ]
+  },
+
+  PHONE:{
+    alias: "联系电话",
+    config: [
+      // 号码前缀，即前三位
+      {
+        "component": "RandomChoiceConfig",
+        "dataType": "RandomChoice",
+        "fieldName": "phonePrefix",
+        "id": "1562299050493",
+        "options": {
+          "RandomString": "130,131,32,155,156,185,186,135,136,137,138,139,147,150,151,152,157,158,133,153,180,189", 
+          " __unique": false, 
+          "__display": true, 
+          "__fieldName": "phonePrefix",
+        },
+        "relation": null,
+        "__display": false,
+        "__unique": false
+      },
+      // 号码的后缀，后8位
+      {
+        "component": "TextConfig",
+        "dataType": "Text",
+        "fieldName": "phoneSuffix",
+        "id": "1562299508691",
+        "options": {
+          "fix": 8,
+          "lenType": "FIX",
+          "max": 10,
+          "min": 0,
+          "textTypes": ["NUMBER"],
+          "__display": true,
+          "__fieldName": "phoneSuffix",
+          "__unique": false,
+        },
+        "relation": null,
+        "__display": false,
+        "__unique": false,
+
+      },
+      // 前三位与后三位拼接
+      {
+        "component": "StrConcatConfig",
+        "dataType": "StrConcat",
+        "fieldName": "phone",
+        "id": "1562306610410",
+        "options": {
+          "__fieldName": "phone", 
+          "__unique": false,
+          "__display": true
+        },
+        "relation": {
+          "fieldNames": "phonePrefix,phoneSuffix", 
+          "type": "COR_RELATION", 
+         },
+        "__display": true,
+        "__unique": false,
+      }
+    ]
   }
+
 };
 

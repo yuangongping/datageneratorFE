@@ -71,12 +71,10 @@ export default {
       if (rawdata == "" || filename == "" || filetype == "") {
         throw new Error("下载组件存在非空属性")
       }
-
       const aNode = document.createElement("a"),
-      blob = new Blob([rawdata]); 
-
+      blob = new Blob([rawdata]);
       aNode.download = filename + '.' + filetype;
-      aNode.href = (window.URL ? URL : webkitURL).createObjectURL(blob);
+      aNode.href = (window.URL ? URL : window.webkitURL).createObjectURL(blob);
       aNode.click();
     }
   }
