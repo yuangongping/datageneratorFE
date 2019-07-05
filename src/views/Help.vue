@@ -35,21 +35,15 @@
         <p>图中数字表达式的填写只能是${DATA}或${RELATE}，其中${RELATE}代表的是关联字段的值，${DATA}代表的是本字段的值，运算关系可以任意选择。例如图中数字表达式为Y=X^2， Z=X+Y。</p>
         <img src="../assets/images/express.png" />
     </div>
-  <div id="flip-list-demo" class="demo">
-    <button v-on:click="shuffle">Shuffle</button>
-    <transition-group name="flip-list" tag="ul">
-      <li v-for="(item, k) in items" v-bind:key="item.val">
-        {{ item.val }}{{ k }}
-      </li>
-    </transition-group>
-  </div>
+ </div>
+
 </template>
 
 
 
 
 <style>
-.about {
+.help {
   padding: 0 20px;
   line-height: 30px;
   font-size: 15px;

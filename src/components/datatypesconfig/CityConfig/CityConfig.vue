@@ -35,7 +35,7 @@
           </RadioGroup>
         </div>
       
-        <div v-if="optionsValue.Select_city_mode == SELECT_MODE_ENUM.City.CITY_SELECTABLE.CN" >
+        <div v-if="optionsValue.Select_city_mode == OPTIONS_ENUM.City.CITY_SELECTABLE.CN" >
           <label>
             <span class="config-title">省份选择</span>
             <Select
@@ -57,7 +57,7 @@
           </label>
         </div>
 
-        <div v-if="optionsValue.Select_city_mode == SELECT_MODE_ENUM.City.CITY_SELECTABLE.CN" style="margin-left:10px;">
+        <div v-if="optionsValue.Select_city_mode == OPTIONS_ENUM.City.CITY_SELECTABLE.CN" style="margin-left:10px;">
           <label>
             <span class="config-title">城市选择</span>
             <Select

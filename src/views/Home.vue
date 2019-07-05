@@ -145,11 +145,7 @@ import { SexConfig, NameConfig, CounterConfig,
          NumberConfig, IdentificationNumberConfig, Str2NumberConfig,
          StrConcatConfig, StrSegmentConfig ,RandomChoiceConfig,
          TextConfig, TimeConfig, ProvinceConfig, 
-<<<<<<< HEAD
-         CityConfig, DistrictConfig, DistrictCodeConfig, DetailAddressConfig } from '@/components/datatypesconfig/index.js';  
-=======
-         CityConfig, DistrictConfig, DistrictCodeConfig, RandomFieldConfig} from '@/components/datatypesconfig/index.js';  
->>>>>>> ca11b39c5c0c1548a11a0a5e3d6abe9453ee5b0b
+         CityConfig, DistrictConfig, DistrictCodeConfig, RandomFieldConfig, DetailAddressConfig } from '@/components/datatypesconfig/index.js';  
 import { DATA_TYPES } from '@/datatypes/index.js';
 export default {
   name: 'home',
@@ -235,11 +231,7 @@ export default {
     },
     // 生产数据函数
     generate(number) {
-<<<<<<< HEAD
-      console.log('@@@@@@@@@@@@@', this.dataTypeConfigs)
-=======
       console.log(this.parseDataTypeConfigs())
->>>>>>> ca11b39c5c0c1548a11a0a5e3d6abe9453ee5b0b
       const generator = new Generator(this.parseDataTypeConfigs(), number);
       return generator.generate();
     },

@@ -6,7 +6,7 @@ import ProvinceGenFunc from '@/datatypes/Province/Province';
 import CityGenFunc from '@/datatypes/City/City';
 import DistrictGenFunc from '@/datatypes/District/District';
 import DistrictCodeGenFunc from '@/datatypes/DistrictCode/DistrictCode';
-import { RELATION_ENUM, OPTIONS_ENUM  } from './CONST';
+import { RELATION_ENUM, OPTIONS_ENUM } from './CONST';
 import IdentificationNumberGenFunc from '@/datatypes/IdentificationNumber/IdentificationNumber';
 import Str2NumberGenFunc from '@/datatypes/Str2Number/Str2Number'
 import StrConcatGenFunc from  '@/datatypes/StrConcat/StrConcat'
@@ -14,11 +14,8 @@ import StrSegmentGenFunc from '@/datatypes/StrSegment/StrSegment'
 import TextGenFunc from '@/datatypes/Text/Text';
 import RandomChoiceGenFunc from '@/datatypes/RandomChoice/RandomChoice';
 import TimeGenFunc from '@/datatypes/Time/Time';
-<<<<<<< HEAD
 import DetailAddressGenFunc from '@/datatypes/DetailAddress/DetailAddress';
-=======
 import RandomFieldGenFunc from '@/datatypes/RandomField/RandomField'
->>>>>>> ca11b39c5c0c1548a11a0a5e3d6abe9453ee5b0b
 
 export const DATA_TYPES = {
   Name: {
@@ -61,13 +58,8 @@ export const DATA_TYPES = {
     alias: "城市",
     genFunc: CityGenFunc,
     options: {
-<<<<<<< HEAD
       Select_city_mode: OPTIONS_ENUM.City.CITY_RANDOM.CN,
-      cities: [""],
-=======
-      Select_city_mode: SELECT_MODE_ENUM.City.CITY_RANDOM.CN,
       cities: [],
->>>>>>> ca11b39c5c0c1548a11a0a5e3d6abe9453ee5b0b
       provinceChoice: []
     },
     __unique: false, // 生成结果是否是唯一值
@@ -254,7 +246,6 @@ export const DATA_TYPES = {
     },
     relation: {
       fieldNames: "",
-<<<<<<< HEAD
       minInterval:0,
       maxInterval:1,
       type: RELATION_ENUM.INDEPEND.EN,
@@ -270,11 +261,5 @@ export const DATA_TYPES = {
     __unique: false, // 生成结果是否是唯一值
     __display: true, // 生成结果是否包含该字段
     relation: null
-=======
-      type: RELATION_ENUM.COR_RELATION.EN,
-      allowTypes: ["Sex", "Number"],
-
-    },
->>>>>>> ca11b39c5c0c1548a11a0a5e3d6abe9453ee5b0b
   },
 };

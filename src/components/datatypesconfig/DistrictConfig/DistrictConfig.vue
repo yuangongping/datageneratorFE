@@ -36,7 +36,7 @@
           </RadioGroup>
       </div>
       
-      <div class="select" v-if="optionsValue.Select_district_mode == SELECT_MODE_ENUM.District.DISTRICT_SELECTABLE.CN">
+      <div class="select" v-if="optionsValue.Select_district_mode == OPTIONS_ENUM.District.DISTRICT_SELECTABLE.CN">
         <label>
           <span class="config-title">省份选择</span>
           <Select
@@ -57,7 +57,7 @@
         </label>
       </div>
 
-      <div class="select" v-if="optionsValue.Select_district_mode == SELECT_MODE_ENUM.District.DISTRICT_SELECTABLE.CN" >
+      <div class="select" v-if="optionsValue.Select_district_mode == OPTIONS_ENUM.District.DISTRICT_SELECTABLE.CN" >
         <label>
           <span class="config-title">城市选择</span>
           <Select
@@ -78,7 +78,7 @@
         </label>
       </div>
 
-      <div class="select" v-if="optionsValue.Select_district_mode == SELECT_MODE_ENUM.District.DISTRICT_SELECTABLE.CN">
+      <div class="select" v-if="optionsValue.Select_district_mode == OPTIONS_ENUM.District.DISTRICT_SELECTABLE.CN">
         <label>
           <span class="config-title">区县选择</span>
           <Select

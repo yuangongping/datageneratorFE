@@ -1,5 +1,5 @@
 import { randomChoice } from '@/utils/functions';
-import { FIELD_PRE, RELATION_ENUM, OPTIONS_ENUM } from '@/datatypes/CONST.js';
+import { FIELD_PRE, RELATION_ENUM, OPTIONS_ENUM  } from '@/datatypes/CONST.js';
 import OriginalData from '@/datatypes/COMMON_DATA/OriginalData_dict';
 
 export default (options, relation) => {
@@ -9,7 +9,7 @@ export default (options, relation) => {
   let city = '';
 
   if(type === RELATION_ENUM.INDEPEND.EN){ // 不关联字段时
-    if(options.Select_city_mode == SELECT_MODE_ENUM.City.CITY_SELECTABLE.CN){ 
+    if(options.Select_city_mode == OPTIONS_ENUM.City.CITY_SELECTABLE.CN){ 
       if(cities.length === 0){
         throw new Error("请选择城市!"); // 数组为空抛出异常
       }else{

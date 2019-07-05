@@ -66,7 +66,6 @@ export const OPTIONS_ENUM = {
       },
     }
   },
-<<<<<<< HEAD
   City: {
     CITY_RANDOM: {
       EN: "CITY_RANDOM",
@@ -99,8 +98,8 @@ export const OPTIONS_ENUM = {
     VILLAGE_ADDRESS: {
       EN: "VILLAGE_ADDRESS",
       CN: "乡镇"
-    }  
-=======
+    }
+  },  
   Time: {
     TIME_TYPE: {
       RANDOMSING: {
@@ -142,7 +141,6 @@ export const OPTIONS_ENUM = {
         CN: "yyyy-MM-dd HH:mm"
       }
     }
->>>>>>> ca11b39c5c0c1548a11a0a5e3d6abe9453ee5b0b
   }
 }
 
