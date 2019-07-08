@@ -49,9 +49,6 @@ export default {
     chgOptions() {
       this.$emit('update:options', JSON.stringify(this.optionsValue));
     },
-    chgRelation() {
-      this.$emit('update:relation', JSON.stringify(this.relationValue));
-    }
   }
 };
 </script>

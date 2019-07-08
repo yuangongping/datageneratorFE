@@ -39,11 +39,19 @@ export class Generator{
   getJsonTemplate() {
     const { configArr } = this;
     const jsonTemplate = {};
+    const fieldNameList =[];
     configArr.forEach(el => {
+      if (el.fieldName.length == 0){
+        throw new Error("字段名不能为空, 请填写字段名");
+      }
+      fieldNameList.push(el.fieldName)
       if (el.options.__display) {
         jsonTemplate[el.fieldName] = null;
       }
     });
+    if (fieldNameList.length != new Set(fieldNameList).size) {
+      throw new Error("字段名不能相同, 请重新填写字段名");
+    } 
     return jsonTemplate;
   }
 

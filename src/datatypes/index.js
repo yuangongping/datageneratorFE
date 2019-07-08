@@ -16,6 +16,7 @@ import RandomChoiceGenFunc from '@/datatypes/RandomChoice/RandomChoice';
 import TimeGenFunc from '@/datatypes/Time/Time';
 import DetailAddressGenFunc from '@/datatypes/DetailAddress/DetailAddress';
 import RandomFieldGenFunc from '@/datatypes/RandomField/RandomField'
+import GeographCoordinatesGenFunc from '@/datatypes/GeographCoordinates/GeographCoordinates'
 
 export const DATA_TYPES = {
   Name: {
@@ -262,4 +263,17 @@ export const DATA_TYPES = {
     __display: true, // 生成结果是否包含该字段
     relation: null
   },
+  GeographCoordinates: {
+    alias: "地理坐标",
+    genFunc: GeographCoordinatesGenFunc,
+    options: {
+    },
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
+    relation: {
+      fieldNames: "",
+      type: RELATION_ENUM.INDEPEND.EN,
+      allowTypes: ["District"],
+    }
+  }
 };
