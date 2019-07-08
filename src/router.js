@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
-// import index from './views/index.vue'
 
 Vue.use(Router)
 
@@ -12,12 +11,26 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: Home,
+      meta: {
+        requireAuth: true
+      }
     },
     {
       path: '/help',
       name: 'help',
-      component: () => import(/* webpackChunkName: "help" */ './views/Help.vue')
+      component: () => import(/* webpackChunkName: "help" */ './views/Help.vue'),
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/responsibility',
+      name: 'responsibility',
+      component: () => import(/* webpackChunkName: "responsibility" */ './views/ResponsibilityStatement.vue'),
+      meta: {
+        requireAuth: false
+      }
     }
   ]
 })

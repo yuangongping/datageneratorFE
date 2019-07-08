@@ -15,6 +15,7 @@
       </div>
     </div>
     <router-view/>
+    <Footer />
   </div>
 </template>
 
@@ -84,9 +85,11 @@ $mainColor: #2d8cf0;
 
 <script>
 import { Icon } from 'iview';
+import Footer from '@/components/Footer/Footer.vue';  
 export default {
   components: {
     Icon,
+    Footer
   }
 }
 </script>

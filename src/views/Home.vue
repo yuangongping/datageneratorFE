@@ -11,8 +11,8 @@
       </FastConfig>
     </div>
 
-    <div class="field-list">
-      <Scroll  v-if="dataTypeConfigs.length > 0" height="650">
+    <div class="field-list"  v-if="dataTypeConfigs.length > 0">
+      <Scroll height="650">
         <div class="field-title">配置项</div>
         <transition-group name="flip-list" >
           <div 
@@ -43,12 +43,9 @@
             :dataType="dataTypeConfig.dataType"
             :options.sync="dataTypeConfig.options"
             :relation.sync="dataTypeConfig.relation"
-          ></div>
-
-          <div class=""></div>
-          
+            >
+          </div>
             <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
-
             <div class="switch-config">
               <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
                 <i-switch
@@ -124,7 +121,6 @@
         <Input v-model="defaultFilename" placeholder="文件名"  style="width: 200px" />
       </Modal>
     </div>
-    
   </div>
 
 </template>
