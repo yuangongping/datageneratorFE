@@ -1,5 +1,5 @@
 import { FIELD_PRE, RELATION_ENUM } from '../CONST.js';
-import {ALLREGIONS } from './DATA.js'
+import ALLREGIONS  from '../COMMON_DATA/OriginalData_dict.js'
 
 // 判断闰年
 const isRuinian = (year) => {
