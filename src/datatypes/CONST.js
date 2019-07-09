@@ -36,7 +36,8 @@ export const ALLOW_RELATIONS = {
   StrConcat: ['COR_RELATION'],
   StrSegment:  ['COR_RELATION'],
   Time: ['INDEPEND', 'GREATER'],
-  RandomField: ['COR_RELATION']
+  RandomField: ['COR_RELATION'],
+  GeographCoordinates: ['INDEPEND', 'COR_RELATION']
 }
 
 export const OPTIONS_ENUM = {

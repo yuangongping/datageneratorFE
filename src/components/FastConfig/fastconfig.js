@@ -1,20 +1,20 @@
 export const FAST_TYPES = {
   PIR: {
-    alias: "人口信息",
+    alias: "人口信息表",
     config: [
       {
         "component": "NameConfig",
-        "id": "1562119605868",
+        "id": "15623135567590",
         "fieldName": "name",
         "dataType": "Name",
-        "options": { "sex": "random" },
+        "options": {"sex":"random"},
         "relation": {"fieldNames":"sex","type":"COR_RELATION","allowTypes":["Sex"]},
         "__unique": false,
         "__display": true
       },
       {
         "component": "SexConfig",
-        "id": "1562119618179",
+        "id": "15623135567591",
         "fieldName": "sex",
         "dataType": "Sex",
         "options": {"manAlias":"男","womanAlias":"女","sex":"random"},
@@ -24,37 +24,37 @@ export const FAST_TYPES = {
       },
       {
         "component": "ProvinceConfig",
-        "id": "1562119624356",
+        "id": "15623135567592",
         "fieldName": "province",
         "dataType": "Province",
         "options": {"provinces":["云南省","四川省","贵州省"]},
         "relation": null,
         "__unique": false,
-        "__display": true
+        "__display": false
       },
       {
         "component": "CityConfig",
-        "id": "1562119635962",
+        "id": "15623135567593",
         "fieldName": "city",
         "dataType": "City",
         "options": {"Select_city_mode":"随机城市","cities":[""],"provinceChoice":[]},
         "relation": {"fieldNames":"province","type":"COR_RELATION","allowTypes":["Province"]},
         "__unique": false,
-        "__display": true
+        "__display": false
       },
       {
         "component": "DistrictConfig",
-        "id": "1562119649641",
+        "id": "15623135567594",
         "fieldName": "district",
         "dataType": "District",
         "options": {"Select_district_mode":"随机区县","cityChoice":"","districts":[""],"districts_dict":{}},
         "relation": {"fieldNames":"city","type":"COR_RELATION","allowTypes":["City"]},
         "__unique": false,
-        "__display": true
+        "__display": false
       },
       {
         "component": "DistrictCodeConfig",
-        "id": "1562119674077",
+        "id": "15623135567595",
         "fieldName": "districtcode",
         "dataType": "DistrictCode",
         "options": {"district_no":""},
@@ -64,8 +64,8 @@ export const FAST_TYPES = {
       },
       {
         "component": "TimeConfig",
-        "id": "1562119696002",
-        "fieldName": "time",
+        "id": "15623135567596",
+        "fieldName": "birthday",
         "dataType": "Time",
         "options": {"timeStamp":0,"__lastTimeValue":0,"minStep":0,"maxStep":1,"initialTime":["2019-07-02T16:00:00.000Z","2019-07-26T16:00:00.000Z"],"timeCategory":"randomSingleTime","timeFormat":"FORMAT_5"},
         "relation": {"fieldNames":"","minInterval":0,"maxInterval":1,"type":"INDEPEND","allowTypes":["Time"]},
@@ -73,12 +73,62 @@ export const FAST_TYPES = {
         "__display": false
       },
       {
+        "component": "StrConcatConfig",
+        "id": "1562313563166",
+        "fieldName": "address",
+        "dataType": "StrConcat",
+        "options": {"__fieldName":""},
+        "relation": {"fieldNames":"province,city,district","type":"COR_RELATION","expresion":"","allowTypes":["Counter","Number"]},
+        "__unique": false,
+        "__display": true
+      },
+      {
+        "component": "DetailAddressConfig",
+        "id": "1562313627800",
+        "fieldName": "datail_address",
+        "dataType": "DetailAddress",
+        "options": {"addressType":"RANDOM_ADDRESS"},
+        "relation": null,
+        "__unique": false,
+        "__display": true
+      },
+      {
+        "component": "RandomChoiceConfig",
+        "id": "15623136855140",
+        "fieldName": "phonePrefix",
+        "dataType": "RandomChoice",
+        "options": {"RandomString":"130,131,32,155,156,185,186,135,136,137,138,139,147,150,151,152,157,158,133,153,180,189","__fieldName":"phonePrefix"},
+        "relation": null,
+        "__unique": false,
+        "__display": false
+      },
+      {
         "component": "IdentificationNumberConfig",
-        "id": "1562119717173",
+        "id": "15623135567597",
         "fieldName": "id_card",
         "dataType": "IdentificationNumber",
         "options": {"__fieldName":""},
-        "relation": {"fieldNames":"districtcode,time,sex","type":"COR_RELATION","allowTypes":["Sex","Number"]},
+        "relation": {"fieldNames":"districtcode,birthday,sex","type":"COR_RELATION","allowTypes":["Sex","Number"]},
+        "__unique": false,
+        "__display": true
+      },
+      {
+        "component": "TextConfig",
+        "id": "15623136855141",
+        "fieldName": "phoneSuffix",
+        "dataType": "Text",
+        "options": {"fix":8,"lenType":"FIX","max":10,"min":0,"textTypes":["NUMBER"],"__fieldName":"phoneSuffix"},
+        "relation": null,
+        "__unique": false,
+        "__display": false
+      },
+      {
+        "component": "StrConcatConfig",
+        "id": "15623136855142",
+        "fieldName": "phone",
+        "dataType": "StrConcat",
+        "options": {"__fieldName":"phone"},
+        "relation": {"fieldNames":"phonePrefix,phoneSuffix","type":"COR_RELATION"},
         "__unique": false,
         "__display": true
       }
@@ -86,7 +136,7 @@ export const FAST_TYPES = {
   },
 
   FLIGHT: {
-    alias: "航班信息",
+    alias: "航班信息表",
     config: [
       {
         "component": "RandomChoiceConfig",
@@ -140,10 +190,10 @@ export const FAST_TYPES = {
       },
       {
         "component": "TimeConfig",
-        "id": "1562124059933",
-        "fieldName": "time",
+        "id": "15623158009915",
+        "fieldName": "departure_time",
         "dataType": "Time",
-        "options": {"timeStamp":0,"__lastTimeValue":0,"minStep":0,"maxStep":1,"initialTime":["2019-07-02T16:00:00.000Z","2019-07-26T16:00:00.000Z"],"timeCategory":"randomSingleTime","timeFormat":"FORMAT_4"},
+        "options": {"timeStamp":0,"__lastTimeValue":0,"minStep":0,"maxStep":1,"initialTime":["2019-07-02T08:00:00.000Z","2019-07-26T08:00:00.000Z"],"timeCategory":"randomSingleTime","timeFormat":"FORMAT_6"},
         "relation": {"fieldNames":"","minInterval":0,"maxInterval":1,"type":"INDEPEND","allowTypes":["Time"]},
         "__unique": false,
         "__display": true

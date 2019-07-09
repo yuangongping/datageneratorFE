@@ -141,7 +141,8 @@ import { SexConfig, NameConfig, CounterConfig,
          NumberConfig, IdentificationNumberConfig, Str2NumberConfig,
          StrConcatConfig, StrSegmentConfig ,RandomChoiceConfig,
          TextConfig, TimeConfig, ProvinceConfig, 
-         CityConfig, DistrictConfig, DistrictCodeConfig, RandomFieldConfig, DetailAddressConfig } from '@/components/datatypesconfig/index.js';  
+         CityConfig, DistrictConfig, DistrictCodeConfig, 
+         RandomFieldConfig, DetailAddressConfig, GeographCoordinatesConfig } from '@/components/datatypesconfig/index.js';  
 import { DATA_TYPES } from '@/datatypes/index.js';
 export default {
   name: 'home',
@@ -204,7 +205,8 @@ export default {
     RandomFieldConfig,
     FastConfig,
     BasicConfig,
-    DetailAddressConfig
+    DetailAddressConfig,
+    GeographCoordinatesConfig
   },
   mounted() {
   },
@@ -227,7 +229,7 @@ export default {
     },
     // 生产数据函数
     generate(number) {
-      console.log(this.parseDataTypeConfigs())
+      console.log(this.dataTypeConfigs)
       const generator = new Generator(this.parseDataTypeConfigs(), number);
       return generator.generate();
     },

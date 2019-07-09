@@ -87,14 +87,8 @@ export default {
     CheckboxGroup,
   },
   methods: {
-    chgFieldName() {
-      this.$emit("update:fieldName", this.fieldNameValue);
-    },
     chgOptions() {
       this.$emit("update:options", JSON.stringify(this.optionsValue));
-    },
-    chgRelation() {
-      this.$emit("update:relation", JSON.stringify(this.relationValue));
     }
   }
 };
