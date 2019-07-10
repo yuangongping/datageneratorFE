@@ -16,6 +16,7 @@ import TimeConfig from '@/components/datatypesconfig/TimeConfig/TimeConfig.vue';
 import DetailAddressConfig from '@/components/datatypesconfig/DetailAddressConfig/DetailAddressConfig.vue';
 import RandomFieldConfig from '@/components/datatypesconfig/RandomFieldConfig/RandomFieldConfig.vue';
 import GeographCoordinatesConfig from '@/components/datatypesconfig/GeographCoordinatesConfig/GeographCoordinatesConfig.vue';
+import OccupationConfig from '@/components/datatypesconfig/OccupationConfig/OccupationConfig.vue';
 export {
   SexConfig,
   NameConfig,
@@ -34,5 +35,6 @@ export {
   TimeConfig,
   DetailAddressConfig,
   RandomFieldConfig,
-  GeographCoordinatesConfig
+  GeographCoordinatesConfig,
+  OccupationConfig
 }

@@ -131,6 +131,16 @@ export const FAST_TYPES = {
         "relation": {"fieldNames":"phonePrefix,phoneSuffix","type":"COR_RELATION"},
         "__unique": false,
         "__display": true
+      },
+      {
+        "component": "OccupationConfig",
+        "id": "1562659830842",
+        "fieldName": "occupation",
+        "dataType": "Occupation",
+        "options": {"occupationTypes":["高级管理","技术","运维/技术支持","大数据","项目管理","硬件开发","通信","电子/半导体","高端技术职位","软件销售支持","产品","设计","编辑","客服","市场","公关媒介","广告","人事/财务/行政","财务","法务","销售","金融","银行","教育","医疗健康","仓储","房地产/建筑","其他"]},
+        "relation": {"fieldNames":"birthday","type":"COR_RELATION","allowTypes":["Time"]},
+        "__unique": false,
+        "__display": true
       }
     ]
   },
@@ -387,6 +397,91 @@ export const FAST_TYPES = {
          },
         "__display": true,
         "__unique": false,
+      }
+    ]
+  },
+  CALLRECORD: {
+    alias: "通话记录",
+    config: [
+      {
+        "component": "RandomChoiceConfig",
+        "id": "15626601979910",
+        "fieldName": "originatingPrefix",
+        "dataType": "RandomChoice",
+        "options": {"RandomString":"130,131,32,155,156,185,186,135,136,137,138,139,147,150,151,152,157,158,133,153,180,189"," __unique":false,"__display":true,"__fieldName":"phonePrefix"},
+        "relation": null,
+        "__unique": false,
+        "__display": false
+      },
+      {
+        "component": "TextConfig",
+        "id": "15626601979911",
+        "fieldName": "originatingSuffix",
+        "dataType": "Text",
+        "options": {"fix":8,"lenType":"FIX","max":10,"min":0,"textTypes":["NUMBER"],"__display":true,"__fieldName":"phoneSuffix","__unique":false},
+        "relation": null,
+        "__unique": false,
+        "__display": false
+      },
+      {
+        "component": "StrConcatConfig",
+        "id": "15626601979912",
+        "fieldName": "originating_call",
+        "dataType": "StrConcat",
+        "options": {"__fieldName":"phone","__unique":false,"__display":true},
+        "relation": {"fieldNames":"originatingPrefix,originatingSuffix","type":"COR_RELATION"},
+        "__unique": false,
+        "__display": true
+      },
+      {
+        "component": "RandomChoiceConfig",
+        "id": "15626610637340",
+        "fieldName": "terminatingPrefix",
+        "dataType": "RandomChoice",
+        "options": {"RandomString":"130,131,32,155,156,185,186,135,136,137,138,139,147,150,151,157,158,133,153,180,189"," __unique":false,"__display":true,"__fieldName":"phonePrefix"},
+        "relation": null,
+        "__unique": false,
+        "__display": false
+      },
+      {
+        "component": "TextConfig",
+        "id": "15626610637341",
+        "fieldName": "terminatingSuffix",
+        "dataType": "Text",
+        "options": {"fix":8,"lenType":"FIX","max":10,"min":0,"textTypes":["NUMBER"],"__display":true,"__fieldName":"phoneSuffix","__unique":false},
+        "relation": null,
+        "__unique": false,
+        "__display": false
+      },
+      {
+        "component": "StrConcatConfig",
+        "id": "1562660318155",
+        "fieldName": "terminating_call",
+        "dataType": "StrConcat",
+        "options": {"__fieldName":""},
+        "relation": {"fieldNames":"terminatingPrefix,terminatingSuffix","type":"COR_RELATION","expresion":"","allowTypes":["Counter","Number"]},
+        "__unique": false,
+        "__display": true
+      },
+      {
+        "component": "TimeConfig",
+        "id": "1562660369232",
+        "fieldName": "start_time",
+        "dataType": "Time",
+        "options": {"timeStamp":0,"__lastTimeValue":0,"minStep":0,"maxStep":1,"initialTime":["2019-06-30T16:00:00.000Z","2019-07-11T16:00:00.000Z"],"timeCategory":"RANDOMSING","timeFormat":"FORMAT_1"},
+        "relation": {"fieldNames":"","minInterval":0,"maxInterval":1,"type":"INDEPEND","allowTypes":["Time"]},
+        "__unique": false,
+        "__display": true
+      },
+      {
+        "component": "NumberConfig",
+        "id": "1562660812552",
+        "fieldName": "talk_time/秒",
+        "dataType": "Number",
+        "options": {"min":1,"max":7200,"decimal":0},
+        "relation": {"fieldNames":"","type":"INDEPEND","expresion":"","allowTypes":["Counter","Number"]},
+        "__unique": false,
+        "__display": true
       }
     ]
   }
