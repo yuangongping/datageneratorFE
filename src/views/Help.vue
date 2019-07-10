@@ -15,7 +15,10 @@
         <p class="questions"> 预览</p>
         <p>提供预览已选择的字段数据生成样例，默认10条。</p>
         <p class="questions"> 导出</p>
-        <p>提供数据下载功能，支持自定义数据量（最多支持10万条）、导出文件类型以及自定义文件名。</p>
+        <p>提供数据下载功能，支持自定义数据量、导出文件类型以及自定义文件名。</p>
+        <br>
+        <p>注：该系统对下载数据量没有明确要求,为保证用户更好的体验，建议分批次下载数据,单次下载量不超过10万条！</p>
+        <a class="bottom" href="./responsibility">免责申明</a>
       </div>
       <div class="right">
         <h6>常见问题</h6>
@@ -41,12 +44,12 @@
 
 
 
-
 <style lang="scss">
 .help {
   line-height: 30px;
   font-size: 15px;
 }
+
 .header{
   h3{
     display: block;
@@ -78,6 +81,11 @@
     width: 30%;
     padding-right: 20px;
     border-right: 1px solid #f0f0f0;
+    .bottom{
+      position: fixed;
+      bottom: 200px;
+      font-size: 10px;
+    }
   }
   .right{
     padding-left: 100px;

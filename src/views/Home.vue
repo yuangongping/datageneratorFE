@@ -13,7 +13,20 @@
 
     <div class="field-list"  v-if="dataTypeConfigs.length > 0">
       <Scroll height="650">
-        <div class="field-title">配置项</div>
+        <div class="field-title">
+          <span>
+            配置项
+          </span>
+          <Poptip
+            confirm
+            title="确定清空配置吗？"
+            @on-ok="emptyConfigs"
+            class="empty-config"
+          >
+            <span>清空</span>
+          </Poptip>
+          
+        </div>
         <transition-group name="flip-list" >
           <div 
             v-for="(dataTypeConfig, k) in dataTypeConfigs"
@@ -130,8 +143,8 @@
 import Vue from 'vue'
 import deepcopy from 'deepcopy';
 import draggable from 'vuedraggable';
-import { Progress, Button, Input, Select, Option, Icon, Tag, 
-         Switch, Tooltip, Modal, Table, InputNumber, RadioGroup, Radio, Scroll} from 'iview';
+import { Progress, Button, Input, Select, Option, Icon, Tag, Poptip,
+         Switch, Tooltip, Modal, Table, InputNumber, RadioGroup, Radio, Scroll } from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
 import Preview from '@/components/Preview/index.vue'
 import FastConfig from '@/components/FastConfig/FastConfig.vue';
@@ -187,6 +200,7 @@ export default {
     Table,
     draggable,
     Preview,
+    Poptip,
     
     // 字段配置组件
     SexConfig,
@@ -344,11 +358,14 @@ export default {
         Vue.set(this.dataTypeConfigs, k, temp);
       }
     },
-
     // 模态对话框确认监听函数
     ok () {
       this.download(this.defaultFilename, this.downloadFileType);
+    },
 
+    // 清空配置
+    emptyConfigs() {
+      this.dataTypeConfigs = [];
     }
   }
 }
@@ -390,6 +407,8 @@ export default {
     margin-right: 20px;
   }
 }
+
+
 .field-list {
   margin-top: 15px;
   box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
@@ -405,6 +424,19 @@ export default {
     color: #2d8cf0;
     padding-left: 10px;
     border-left: 2px solid #2d8cf0;
+    display: flex;
+
+    span {
+      flex: 1;
+    }
+    .empty-config {
+      width: 35px;
+      color: #888;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 100;
+      font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    }
   }
 }
 .action-area {
