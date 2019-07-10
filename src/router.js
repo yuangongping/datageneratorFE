@@ -12,25 +12,16 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home,
-      meta: {
-        requireAuth: true
-      }
     },
     {
       path: '/help',
       name: 'help',
       component: () => import(/* webpackChunkName: "help" */ './views/Help.vue'),
-      meta: {
-        requireAuth: true
-      }
     },
     {
       path: '/responsibility',
       name: 'responsibility',
       component: () => import(/* webpackChunkName: "responsibility" */ './views/ResponsibilityStatement.vue'),
-      meta: {
-        requireAuth: false
-      }
     }
   ]
 })

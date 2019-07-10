@@ -3,9 +3,6 @@ import detailaddressData from '@/datatypes/DetailAddress/detailaddressData';
 import { FIELD_PRE, OPTIONS_ENUM } from '@/datatypes/CONST.js';
 
 export default (options, relation) => {
-  if (relation.type !== '') {
-    console.log('s')
-  }
   // 确定详细地址类型, 如果是随机地址每次就从城市地址和乡村地址中随机选择一种
   const addressType = options.addressType == OPTIONS_ENUM.DetailAddress.RANDOM_ADDRESS.EN 
       ? randomChoice(Object.keys(OPTIONS_ENUM.DetailAddress)) : options.addressType;

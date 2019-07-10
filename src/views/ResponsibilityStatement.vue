@@ -1,51 +1,56 @@
 <template>
-    <div class="responsibility">
-        <div class="body">
-             <h3>{{ title }}</h3>
-            <p>{{ intriduction }}</p>
-            <ul>
-                <li v-for="data in terms" :key=data>{{ data }}</li>
-            </ul>
-           <Button class="confirm" type="primary" @click="confirm">已阅读所有条款</Button>
-        </div>
+  <div class="responsibility">
+    <div>
+      <h3>{{ title }}</h3>
+      <p>{{ intriduction }}</p>
+      <ul>
+        <li v-for="data in terms" :key="data">{{ data }}</li>
+      </ul>
+      <strong v-if="authTime" class="agreed">
+          您已于 {{ authTime }} 同意所有声明条款
+      </strong>
+      <Button v-else class="confirm" type="primary" @click="confirm">阅读并同意所有条款</Button>
+
     </div>
+  </div>
 </template>
 
 <style lang="scss">
-.responsibility{
-    display:flex;
-    justify-content: center;
-    align-items: center;
-    width:100%;
-    height:100%;
-    font-size: 16px;
-    color: #333333;
-    line-height:45px;
-    h3{
-        margin-bottom: 20px; 
-    }
-    p{
-        margin-bottom: 20px;
-    }
-    ul{
-        margin-left: 23px;
-        padding-left: 0;
-    }
-    .confirm{
-        margin-top:  50px;
-        margin-left: 45%
-    }
-    .body{
-        width: 800px;
-    }
-
+.responsibility {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: 16px;
+  color: #333333;
+  line-height: 45px;
+  div {
+    width: 800px;
+  }
+  h3 {
+    margin-bottom: 20px;
+  }
+  p {
+    margin-bottom: 20px;
+  }
+  ul {
+    margin-left: 23px;
+    padding-left: 0;
+  }
+  .confirm {
+    margin-top: 50px;
+    margin-left: 45%;
+  }
+  .agreed {
+    color: #ff3d3d;
+  }
 }
 </style>
 
-
 <script>
 import { Button } from 'iview';
-import { setCookies } from '@/utils/cookies.js';
+import { setAuthTime, getAuthTime } from '@/utils/cookies.js';
 export default {
     data(){
         return {
@@ -66,13 +71,32 @@ export default {
             ]
         }
     },
+    computed: {
+        authTime: () => {
+            return getAuthTime();
+        }
+    },
     components: {
         Button
     },
     methods: {
+        formatNumber(str){
+            let num;
+            str > 9 ? num = str : num = "0" + str;
+            return num;
+        },
+        getTime(){
+            const date = new Date();
+            const time = date.getFullYear() + "年"
+              + this.formatNumber((date.getMonth() + 1))+ "月"
+              + this.formatNumber(date.getDate()) + "日 " 
+              + this.formatNumber(date.getHours()) + ":" 
+              + this.formatNumber(date.getMinutes()) + ":" 
+              + this.formatNumber(date.getSeconds());
+            return time;
+        },
         confirm(){
-            const timestamp = new Date().getTime();
-            setCookies(timestamp);
+            setAuthTime(this.getTime());
             this.$router.push({ path: '/' })
         }
     }
