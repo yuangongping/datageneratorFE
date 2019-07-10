@@ -325,10 +325,7 @@ export default {
         Vue.set(this.dataTypeConfigs, k, temp);
       }
     },
-    // 数据检查函数
-    checkData() {
-      console.log(this.dataTypeConfigs)
-    },
+  
     // 模态对话框确认监听函数
     ok () {
       this.download(this.defaultFilename, this.downloadFileType);

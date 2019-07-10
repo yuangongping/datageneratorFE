@@ -1,3 +1,13 @@
+const date = (new Date())
+var timelist = [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())]
+  for(var i=0; i < timelist.length; i++){
+    if (timelist[i].length < 2){
+      timelist[i] = '0' + timelist[i];
+    }
+  }
+const localhost = timelist[0] + '-' + timelist[1] + '-' + timelist[2] + 'T16:00:00.000Z';
+const starttime = String(parseInt(timelist[0])- 100) + '-' + timelist[1] + '-' + timelist[2] + 'T16:00:00.000Z';
+
 export const FAST_TYPES = {
   PIR: {
     alias: "人口信息表",
@@ -67,28 +77,28 @@ export const FAST_TYPES = {
         "id": "15623135567596",
         "fieldName": "birthday",
         "dataType": "Time",
-        "options": {"timeStamp":0,"__lastTimeValue":0,"minStep":0,"maxStep":1,"initialTime":["2019-07-02T16:00:00.000Z","2019-07-26T16:00:00.000Z"],"timeCategory":"randomSingleTime","timeFormat":"FORMAT_5"},
+        "options": {"timeStamp":0,"__lastTimeValue":0,"minStep":0,"maxStep":1,"initialTime":[starttime,localhost],"timeCategory":"RANDOMSING","timeFormat":"FORMAT_5"},
         "relation": {"fieldNames":"","minInterval":0,"maxInterval":1,"type":"INDEPEND","allowTypes":["Time"]},
+        "__unique": false,
+        "__display": false
+      },
+      {
+        "component": "DetailAddressConfig",
+        "id": "1562313627800",
+        "fieldName": "address",
+        "dataType": "DetailAddress",
+        "options": {"addressType":"RANDOM_ADDRESS"},
+        "relation": null,
         "__unique": false,
         "__display": false
       },
       {
         "component": "StrConcatConfig",
         "id": "1562313563166",
-        "fieldName": "address",
+        "fieldName": "detail_address",
         "dataType": "StrConcat",
         "options": {"__fieldName":""},
-        "relation": {"fieldNames":"province,city,district","type":"COR_RELATION","expresion":"","allowTypes":["Counter","Number"]},
-        "__unique": false,
-        "__display": true
-      },
-      {
-        "component": "DetailAddressConfig",
-        "id": "1562313627800",
-        "fieldName": "datail_address",
-        "dataType": "DetailAddress",
-        "options": {"addressType":"RANDOM_ADDRESS"},
-        "relation": null,
+        "relation": {"fieldNames":"province,city,district,address","type":"COR_RELATION","expresion":"","allowTypes":["Counter","Number"]},
         "__unique": false,
         "__display": true
       },
@@ -97,7 +107,7 @@ export const FAST_TYPES = {
         "id": "15623136855140",
         "fieldName": "phonePrefix",
         "dataType": "RandomChoice",
-        "options": {"RandomString":"130,131,32,155,156,185,186,135,136,137,138,139,147,150,151,152,157,158,133,153,180,189","__fieldName":"phonePrefix"},
+        "options": {"RandomString":"130,131,132,155,156,185,186,135,136,137,138,139,147,150,151,152,157,158,133,153,180,189","__fieldName":"phonePrefix"},
         "relation": null,
         "__unique": false,
         "__display": false
@@ -350,7 +360,7 @@ export const FAST_TYPES = {
         "fieldName": "phonePrefix",
         "id": "1562299050493",
         "options": {
-          "RandomString": "130,131,32,155,156,185,186,135,136,137,138,139,147,150,151,152,157,158,133,153,180,189", 
+          "RandomString": "130,131,132,155,156,185,186,135,136,137,138,139,147,150,151,152,157,158,133,153,180,189", 
           " __unique": false, 
           "__display": true, 
           "__fieldName": "phonePrefix",
@@ -408,7 +418,7 @@ export const FAST_TYPES = {
         "id": "15626601979910",
         "fieldName": "originatingPrefix",
         "dataType": "RandomChoice",
-        "options": {"RandomString":"130,131,32,155,156,185,186,135,136,137,138,139,147,150,151,152,157,158,133,153,180,189"," __unique":false,"__display":true,"__fieldName":"phonePrefix"},
+        "options": {"RandomString":"130,131,132,155,156,185,186,135,136,137,138,139,147,150,151,152,157,158,133,153,180,189"," __unique":false,"__display":true,"__fieldName":"phonePrefix"},
         "relation": null,
         "__unique": false,
         "__display": false
@@ -438,7 +448,7 @@ export const FAST_TYPES = {
         "id": "15626610637340",
         "fieldName": "terminatingPrefix",
         "dataType": "RandomChoice",
-        "options": {"RandomString":"130,131,32,155,156,185,186,135,136,137,138,139,147,150,151,157,158,133,153,180,189"," __unique":false,"__display":true,"__fieldName":"phonePrefix"},
+        "options": {"RandomString":"130,131,132,155,156,185,186,135,136,137,138,139,147,150,151,157,158,133,153,180,189"," __unique":false,"__display":true,"__fieldName":"phonePrefix"},
         "relation": null,
         "__unique": false,
         "__display": false
@@ -476,9 +486,9 @@ export const FAST_TYPES = {
       {
         "component": "NumberConfig",
         "id": "1562660812552",
-        "fieldName": "talk_time/秒",
+        "fieldName": "talk_time",
         "dataType": "Number",
-        "options": {"min":1,"max":7200,"decimal":0},
+        "options": {"min":0,"max":5,"decimal":2},
         "relation": {"fieldNames":"","type":"INDEPEND","expresion":"","allowTypes":["Counter","Number"]},
         "__unique": false,
         "__display": true
