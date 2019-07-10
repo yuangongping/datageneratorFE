@@ -5,7 +5,6 @@ export default (options, relation) => {
   let provinces = [];
   let provinceChoice;
   provinces = options.provinces; // 获取多选框选中的省份数组
-  
   if(provinces.length === 0){
     throw new Error("请选择省份!"); // 数组为空抛出异常
   }

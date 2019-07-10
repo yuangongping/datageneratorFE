@@ -14,8 +14,10 @@
         </router-link>
       </div>
     </div>
-    <router-view/>
-    <Footer />
+    <router-view class="router-view"/>
+    <footer>
+      <span> Copyright @ 2019 - 提升政府治理能力大数据应用技术国家工程实验室 中电科大数据研究院有限公司</span>
+    </footer>
   </div>
 </template>
 
@@ -26,6 +28,22 @@ $mainColor: #2d8cf0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+}
+.router-view {
+  padding: 0 30px 40px 30px;
+}
+footer {
+  position: fixed;
+  // display: flex;
+  // align-items: center;
+
+  bottom:0;
+  box-shadow: 10px 2px 12px 0 rgba(0,0,0,.2);
+  background-color: #fff;
+  text-align: center;
+  width: 100%;
+  padding: 5px !important;
+  z-index: 100;
 }
 #nav {
   display: flex;
@@ -66,13 +84,6 @@ $mainColor: #2d8cf0;
   .text{
     font-size: 14px;
   }
-  // .icon{
-  //   height: 28px;
-  //   width: 1.7%;
-  //   margin-top: 15px;
-  //   margin-left: 30px;
-  // }
-  
 }
 .ivu-col {
   display: flex !important;
@@ -85,11 +96,9 @@ $mainColor: #2d8cf0;
 
 <script>
 import { Icon } from 'iview';
-import Footer from '@/components/Footer/Footer.vue';  
 export default {
   components: {
     Icon,
-    Footer
   }
 }
 </script>

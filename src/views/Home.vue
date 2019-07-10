@@ -349,9 +349,6 @@ export default {
 </script>
 
 <style lang="scss">
-.home {
-  padding: 0 30px;
-}
 .flip-list-move {
   transition: transform 1s;
 }

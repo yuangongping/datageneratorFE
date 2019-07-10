@@ -81,7 +81,7 @@ export default (options, relation) => {
       resultTIme = new Date(stepTime * 1000);
       transResult = Number(stepTime);  // 传递生成结果的时间戳
       if(stepTime > endTimeStamp || stepTime < startTimeStamp ){
-        throw new Error(`${options.__fieldName}生成时间已超出所设置时间范围`);
+        throw new Error(`${options.__fieldName}使用固定步长递增生成，生成时间已超出所设置的最大时间`);
       }
     }
     // 生成随机递增时间
