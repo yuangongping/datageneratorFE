@@ -7,6 +7,7 @@ import CityGenFunc from '@/datatypes/City/City';
 import DistrictGenFunc from '@/datatypes/District/District';
 import DistrictCodeGenFunc from '@/datatypes/DistrictCode/DistrictCode';
 import { RELATION_ENUM, OPTIONS_ENUM } from './CONST';
+import OccupationData from '@/datatypes/COMMON_DATA/OccupationData.js';
 import IdentificationNumberGenFunc from '@/datatypes/IdentificationNumber/IdentificationNumber';
 import Str2NumberGenFunc from '@/datatypes/Str2Number/Str2Number'
 import StrConcatGenFunc from  '@/datatypes/StrConcat/StrConcat'
@@ -17,7 +18,7 @@ import TimeGenFunc from '@/datatypes/Time/Time';
 import DetailAddressGenFunc from '@/datatypes/DetailAddress/DetailAddress';
 import RandomFieldGenFunc from '@/datatypes/RandomField/RandomField'
 import GeographCoordinatesGenFunc from '@/datatypes/GeographCoordinates/GeographCoordinates'
-
+import OccupationGenFunc from '@/datatypes/Occupation/Occupation'
 export const DATA_TYPES = {
   Name: {
     alias: "姓名",
@@ -274,6 +275,20 @@ export const DATA_TYPES = {
       fieldNames: "",
       type: RELATION_ENUM.INDEPEND.EN,
       allowTypes: ["District"],
+    }
+  },
+  Occupation: {
+    alias: "职业",
+    genFunc: OccupationGenFunc,
+    options: {
+      occupationTypes: Object.keys(OccupationData)
+    },
+    __unique: false, // 生成结果是否是唯一值
+    __display: true, // 生成结果是否包含该字段
+    relation: {
+      fieldNames: "",
+      type: RELATION_ENUM.INDEPEND.EN,
+      allowTypes: ["Time"],
     }
   }
 };

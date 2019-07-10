@@ -140,7 +140,8 @@ import { SexConfig, NameConfig, CounterConfig,
          StrConcatConfig, StrSegmentConfig ,RandomChoiceConfig,
          TextConfig, TimeConfig, ProvinceConfig, 
          CityConfig, DistrictConfig, DistrictCodeConfig, 
-         RandomFieldConfig, DetailAddressConfig, GeographCoordinatesConfig } from '@/components/datatypesconfig/index.js';  
+         RandomFieldConfig, DetailAddressConfig, GeographCoordinatesConfig,
+         OccupationConfig} from '@/components/datatypesconfig/index.js';  
 import { DATA_TYPES } from '@/datatypes/index.js';
 export default {
   name: 'home',
@@ -204,7 +205,8 @@ export default {
     FastConfig,
     BasicConfig,
     DetailAddressConfig,
-    GeographCoordinatesConfig
+    GeographCoordinatesConfig,
+    OccupationConfig
   },
   mounted() {
   },
