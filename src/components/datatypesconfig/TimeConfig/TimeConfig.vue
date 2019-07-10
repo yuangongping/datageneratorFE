@@ -34,44 +34,45 @@
     </div>
 
     <!-- 固定步长类型时间需提供步长值 -->
-    <div class="config-item step" v-if="optionsValue.timeCategory === Time_OPTIONS_ENUM.TIME_TYPE.FIX.EN">
+    <div class="config-item" v-if="optionsValue.timeCategory === Time_OPTIONS_ENUM.TIME_TYPE.FIX.EN">
       <label>
         <InputNumber type="text"
           v-model="optionsValue.timeStep"
           @on-change="chgOptions"
-          placeholder="(分钟)"
+          placeholder="分钟"
           :disabled="relationValue.type==='GREATER'?true:false"
         />
-        <span class="config-title">步长</span>
+        <span class="config-title">步长 / 分钟</span>
       </label>
     </div>
 
     <!-- 随机步长类型时间需提供最大、最小步长值 -->
-    <div class="config-item step" v-if="optionsValue.timeCategory === Time_OPTIONS_ENUM.TIME_TYPE.RANDOMINCREMENT.EN">
+    <div class="config-item" v-if="optionsValue.timeCategory === Time_OPTIONS_ENUM.TIME_TYPE.RANDOMINCREMENT.EN">
       <label>
         <InputNumber type="text"
           v-model="optionsValue.minStep"
           @on-change="chgOptions"
-          placeholder="(分钟)"
+          placeholder="分钟"
           :disabled="relationValue.type==='GREATER'?true:false"
+          style="width:100px;"
           />
-        <span class="config-title">最小步长</span>
+        <span class="config-title">最小步长 / 分钟</span>
       </label>
-
+      <span style="margin-left:10px"></span>
       <label>
         <InputNumber type="text"
           v-model="optionsValue.maxStep"
           @on-change="chgOptions"
-          placeholder="(分钟)"
+          placeholder="分钟"
           :disabled="relationValue.type==='GREATER'?true:false"
+          style="width:100px;"
         />
-        <span class="config-title">最大步长</span>
+        <span class="config-title">最大步长 / 分钟</span>
       </label>
     </div>
 
     <!-- 选择为独立字段或者关联字段 -->
-
-    <div class="config-item relation-config">
+    <div class="config-item">
       <Select
         v-model="relationValue.type" 
         @on-change="chgRelation"
@@ -103,19 +104,22 @@
           v-model="relationValue.minInterval"
           @on-change="chgRelation"
           placeholder="分钟"
+          style="width:100px;"
         />
-        <span class="config-title">最小间隔</span>
+        <span class="config-title">最小间隔 / 分钟</span>
       </label>
-
+      <span style="margin-left:10px"></span>
       <label>
         <InputNumber type="text"
           v-model="relationValue.maxInterval"
           @on-change="chgRelation"
           placeholder="分钟"
+          style="width:100px;"
         />
-        <span class="config-title">最大间隔</span>
+        <span class="config-title">最大间隔 / 分钟</span>
       </label>
     </div> 
+    
     <!-- 时间格式选择 -->
     <div class="config-item">
       <label>
@@ -135,17 +139,6 @@
     </div>
   </div>
 </template>
-
-<style lang="scss">
-.time-config {
-  .step {
-    .ivu-input-number {
-      width: 95px;
-    }
-  }
-}
-</style>
-
 
 <script>
 import { RELATION_ENUM, ALLOW_RELATIONS, OPTIONS_ENUM } from '@/datatypes/CONST.js';
