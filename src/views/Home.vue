@@ -117,6 +117,8 @@
         </RadioGroup><br />
         <span class='text_label'>文件名</span>
         <Input v-model="defaultFilename" placeholder="文件名"  style="width: 200px" />
+
+       
       </Modal>
     </div>
   </div>
@@ -129,7 +131,7 @@ import Vue from 'vue'
 import deepcopy from 'deepcopy';
 import draggable from 'vuedraggable';
 import { Progress, Button, Input, Select, Option, Icon, Tag, 
-         Switch, Tooltip, Modal, Table, InputNumber, RadioGroup, Radio, Scroll } from 'iview';
+         Switch, Tooltip, Modal, Table, InputNumber, RadioGroup, Radio, Scroll} from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
 import Preview from '@/components/Preview/index.vue'
 import FastConfig from '@/components/FastConfig/FastConfig.vue';
@@ -149,6 +151,7 @@ export default {
     return {
       previewFlag: false,
       downloadFlag: false,
+      loadingGif: false,
       tableHead: [],
       // 预览数据量, 预览10条
       previewDataNum: 10, 
@@ -261,9 +264,9 @@ export default {
       }
       
     },
-
+    
     // 导出模态框的下载函数
-    download(filename, filetype) {
+    async download(filename, filetype) {
       this.dataGened = []
       try{
         this.dataGened = this.generate(this.downlaodDataNum)
@@ -271,11 +274,13 @@ export default {
         if (data == "" || filename == "" || filetype == "") {
           throw new Error("下载组件存在非空属性")
         }
-        const aNode = document.createElement("a"),
+        const $aNode = document.createElement("a"),
         blob = new Blob([data]);
-        aNode.download = filename + '.' + filetype;
-        aNode.href = (window.URL ? URL : window.webkitURL).createObjectURL(blob);
-        aNode.click();
+        $aNode.download = filename + '.' + filetype;
+        $aNode.href = (window.URL ? URL : window.webkitURL).createObjectURL(blob);
+        document.body.appendChild($aNode);
+        $aNode.click();
+        document.body.removeChild($aNode);
       }catch (e) {
         this.$Message.error({
           content: e.toString(),
@@ -343,12 +348,27 @@ export default {
     // 模态对话框确认监听函数
     ok () {
       this.download(this.defaultFilename, this.downloadFileType);
+
     }
   }
 }
 </script>
 
 <style lang="scss">
+.demo-spin-icon-load{
+        animation: ani-demo-spin 1s linear infinite;
+    }
+    @keyframes ani-demo-spin {
+        from { transform: rotate(0deg);}
+        50%  { transform: rotate(180deg);}
+        to   { transform: rotate(360deg);}
+    }
+    .demo-spin-col{
+        height: 100px;
+        position: relative;
+        border: 1px solid #eee;
+}
+
 .flip-list-move {
   transition: transform 1s;
 }
