@@ -89,12 +89,11 @@
       width=1600
       v-model="previewFlag"
       :mask-closable="false"
-      @on-cancel="cancel"
     >
       <Preview :tableHead="tableHead" :data="dataGened" />
     </Modal>
 
-    <div class="button">
+    <div class="button" v-if="dataTypeConfigs.length > 0">
       <Button @click="preview"  type="primary" icon="md-eye"> 预览 </Button>
       <Button @click="downloadFlag=true"  type="primary" icon="md-download"> 导出 </Button>
     </div>
@@ -107,7 +106,6 @@
         ok-text='导出'
         cancel-text=''
         @on-ok="ok"
-        @on-cancel="cancel"
       >  
         <span class='text_label'>数据量</span>
         <InputNumber :max="100000" :min="1" v-model="downlaodDataNum"></InputNumber><br />
@@ -229,12 +227,13 @@ export default {
       // 返回格式化后的数据
       return dataTypeConfigs;
     },
+
     // 生产数据函数
     generate(number) {
-      console.log(this.dataTypeConfigs)
       const generator = new Generator(this.parseDataTypeConfigs(), number);
       return generator.generate();
     },
+
     // 预览函数
     preview(){
       this.dataGened = [];
@@ -262,18 +261,29 @@ export default {
       }
       
     },
+
+    // 导出模态框的下载函数
     download(filename, filetype) {
-      this.dataGened = this.generate(this.downlaodDataNum)
-      const data  = JSON.stringify(this.dataGened);
-      if (data == "" || filename == "" || filetype == "") {
-        throw new Error("下载组件存在非空属性")
+      this.dataGened = []
+      try{
+        this.dataGened = this.generate(this.downlaodDataNum)
+        const data  = JSON.stringify(this.dataGened);
+        if (data == "" || filename == "" || filetype == "") {
+          throw new Error("下载组件存在非空属性")
+        }
+        const aNode = document.createElement("a"),
+        blob = new Blob([data]);
+        aNode.download = filename + '.' + filetype;
+        aNode.href = (window.URL ? URL : window.webkitURL).createObjectURL(blob);
+        aNode.click();
+      }catch (e) {
+        this.$Message.error({
+          content: e.toString(),
+          duration: 5
+        });
       }
-      const aNode = document.createElement("a"),
-      blob = new Blob([data]);
-      aNode.download = filename + '.' + filetype;
-      aNode.href = (window.URL ? URL : window.webkitURL).createObjectURL(blob);
-      aNode.click();
     },
+
     // 基础字段组件
     basicConfig(componentToAdd) {
       const { dataTypeConfigs } = this;
@@ -289,6 +299,7 @@ export default {
         __display: DATA_TYPES[componentToAdd].__display,
       })
     },
+
     // 快捷添加
     fastConfig(configs) {
       const { dataTypeConfigs } = this;
@@ -311,6 +322,7 @@ export default {
     delRow(k) {
       this.dataTypeConfigs.splice(k, 1);
     },
+    // 上移
     sortUp(k) {
       if (k != 0) {
         let temp = this.dataTypeConfigs[k - 1];
@@ -318,6 +330,8 @@ export default {
         Vue.set(this.dataTypeConfigs, k, temp);
       }
     },
+
+    // 下移
     sortDown(k) {
       if (k != (this.dataTypeConfigs.length - 1)) {
         let temp = this.dataTypeConfigs[k + 1];
@@ -325,17 +339,10 @@ export default {
         Vue.set(this.dataTypeConfigs, k, temp);
       }
     },
-    // 数据检查函数
-    checkData() {
-      console.log(this.dataTypeConfigs)
-    },
+
     // 模态对话框确认监听函数
     ok () {
       this.download(this.defaultFilename, this.downloadFileType);
-    },
-    // 模态对话框取消监听函数
-    cancel () {
-      console.log('');
     }
   }
 }

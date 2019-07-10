@@ -3,6 +3,9 @@ import nameData from '@/datatypes/Name/nameData';
 import { FIELD_PRE } from '@/datatypes/CONST.js';
 
 export default (options, relation) => {
+  if (relation.type !== '') {
+    console.log('s')
+  }
   const country = options.country || 'China';
   const sex = options.sex;
 

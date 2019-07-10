@@ -265,7 +265,7 @@ export const DATA_TYPES = {
     relation: null
   },
   GeographCoordinates: {
-    alias: "地理坐标",
+    alias: "经纬度",
     genFunc: GeographCoordinatesGenFunc,
     options: {
     },
