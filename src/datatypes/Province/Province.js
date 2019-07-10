@@ -4,9 +4,7 @@ import { FIELD_PRE } from '@/datatypes/CONST.js';
 export default (options, relation) => {
   let provinces = [];
   let provinceChoice;
-  if (relation){
-    console.log(relation);
-  }
+  
   provinces = options.provinces; // 获取多选框选中的省份数组
   
   if(provinces.length === 0){

@@ -3,6 +3,7 @@ import nameData from '@/datatypes/Name/nameData';
 import { FIELD_PRE } from '@/datatypes/CONST.js';
 
 export default (options, relation) => {
+ 
   const country = options.country || 'China';
   const sex = options.sex;
 

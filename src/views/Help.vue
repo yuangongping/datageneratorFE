@@ -46,7 +46,6 @@
 
 <style lang="scss">
 .help {
-  padding: 0 20px;
   line-height: 30px;
   font-size: 15px;
 }

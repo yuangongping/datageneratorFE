@@ -13,7 +13,20 @@
 
     <div class="field-list"  v-if="dataTypeConfigs.length > 0">
       <Scroll height="650">
-        <div class="field-title">配置项</div>
+        <div class="field-title">
+          <span>
+            配置项
+          </span>
+          <Poptip
+            confirm
+            title="确定清空配置吗？"
+            @on-ok="emptyConfigs"
+            class="empty-config"
+          >
+            <span>清空</span>
+          </Poptip>
+          
+        </div>
         <transition-group name="flip-list" >
           <div 
             v-for="(dataTypeConfig, k) in dataTypeConfigs"
@@ -89,12 +102,11 @@
       width=1600
       v-model="previewFlag"
       :mask-closable="false"
-      @on-cancel="cancel"
     >
       <Preview :tableHead="tableHead" :data="dataGened" />
     </Modal>
 
-    <div class="button">
+    <div class="button" v-if="dataTypeConfigs.length > 0">
       <Button @click="preview"  type="primary" icon="md-eye"> 预览 </Button>
       <Button @click="downloadFlag=true"  type="primary" icon="md-download"> 导出 </Button>
     </div>
@@ -107,7 +119,6 @@
         ok-text='导出'
         cancel-text=''
         @on-ok="ok"
-        @on-cancel="cancel"
       >  
         <span class='text_label'>数据量</span>
         <InputNumber :max="100000" :min="1" v-model="downlaodDataNum"></InputNumber><br />
@@ -130,7 +141,7 @@
 import Vue from 'vue'
 import deepcopy from 'deepcopy';
 import draggable from 'vuedraggable';
-import { Progress, Button, Input, Select, Option, Icon, Tag, 
+import { Progress, Button, Input, Select, Option, Icon, Tag, Poptip,
          Switch, Tooltip, Modal, Table, InputNumber, RadioGroup, Radio, Scroll } from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
 import Preview from '@/components/Preview/index.vue'
@@ -186,6 +197,7 @@ export default {
     Table,
     draggable,
     Preview,
+    Poptip,
     
     // 字段配置组件
     SexConfig,
@@ -229,12 +241,13 @@ export default {
       // 返回格式化后的数据
       return dataTypeConfigs;
     },
+
     // 生产数据函数
     generate(number) {
-      console.log(this.dataTypeConfigs)
       const generator = new Generator(this.parseDataTypeConfigs(), number);
       return generator.generate();
     },
+
     // 预览函数
     preview(){
       this.dataGened = [];
@@ -262,18 +275,29 @@ export default {
       }
       
     },
+
+    // 导出模态框的下载函数
     download(filename, filetype) {
-      this.dataGened = this.generate(this.downlaodDataNum)
-      const data  = JSON.stringify(this.dataGened);
-      if (data == "" || filename == "" || filetype == "") {
-        throw new Error("下载组件存在非空属性")
+      this.dataGened = []
+      try{
+        this.dataGened = this.generate(this.downlaodDataNum)
+        const data  = JSON.stringify(this.dataGened);
+        if (data == "" || filename == "" || filetype == "") {
+          throw new Error("下载组件存在非空属性")
+        }
+        const aNode = document.createElement("a"),
+        blob = new Blob([data]);
+        aNode.download = filename + '.' + filetype;
+        aNode.href = (window.URL ? URL : window.webkitURL).createObjectURL(blob);
+        aNode.click();
+      }catch (e) {
+        this.$Message.error({
+          content: e.toString(),
+          duration: 5
+        });
       }
-      const aNode = document.createElement("a"),
-      blob = new Blob([data]);
-      aNode.download = filename + '.' + filetype;
-      aNode.href = (window.URL ? URL : window.webkitURL).createObjectURL(blob);
-      aNode.click();
     },
+
     // 基础字段组件
     basicConfig(componentToAdd) {
       const { dataTypeConfigs } = this;
@@ -289,6 +313,7 @@ export default {
         __display: DATA_TYPES[componentToAdd].__display,
       })
     },
+
     // 快捷添加
     fastConfig(configs) {
       const { dataTypeConfigs } = this;
@@ -311,6 +336,7 @@ export default {
     delRow(k) {
       this.dataTypeConfigs.splice(k, 1);
     },
+    // 上移
     sortUp(k) {
       if (k != 0) {
         let temp = this.dataTypeConfigs[k - 1];
@@ -318,6 +344,8 @@ export default {
         Vue.set(this.dataTypeConfigs, k, temp);
       }
     },
+
+    // 下移
     sortDown(k) {
       if (k != (this.dataTypeConfigs.length - 1)) {
         let temp = this.dataTypeConfigs[k + 1];
@@ -325,23 +353,20 @@ export default {
         Vue.set(this.dataTypeConfigs, k, temp);
       }
     },
-  
     // 模态对话框确认监听函数
     ok () {
       this.download(this.defaultFilename, this.downloadFileType);
     },
-    // 模态对话框取消监听函数
-    cancel () {
-      console.log('');
+
+    // 清空配置
+    emptyConfigs() {
+      this.dataTypeConfigs = [];
     }
   }
 }
 </script>
 
 <style lang="scss">
-.home {
-  padding: 0 30px;
-}
 .flip-list-move {
   transition: transform 1s;
 }
@@ -363,6 +388,8 @@ export default {
     margin-right: 20px;
   }
 }
+
+
 .field-list {
   margin-top: 15px;
   box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
@@ -378,6 +405,19 @@ export default {
     color: #2d8cf0;
     padding-left: 10px;
     border-left: 2px solid #2d8cf0;
+    display: flex;
+
+    span {
+      flex: 1;
+    }
+    .empty-config {
+      width: 35px;
+      color: #888;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 100;
+      font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    }
   }
 }
 .action-area {
