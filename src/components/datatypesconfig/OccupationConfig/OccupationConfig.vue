@@ -84,7 +84,7 @@ export default {
     Input
   },
   methods: {
-     chgOptions() {
+    chgOptions() {
       this.$emit('update:options', JSON.stringify(this.optionsValue));
     },
     chgRelation() {

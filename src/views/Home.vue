@@ -353,7 +353,6 @@ export default {
         Vue.set(this.dataTypeConfigs, k, temp);
       }
     },
-
     // 模态对话框确认监听函数
     ok () {
       this.download(this.defaultFilename, this.downloadFileType);
