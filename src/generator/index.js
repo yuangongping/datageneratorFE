@@ -188,7 +188,6 @@ export class Generator{
     const data = [];
     // 依据需要生成的数据量进行循环
     const sortedDataTypes = this.getSortedDataTypes();
-
     for (let i = 0; i < nrows; i++) {
       // 生成单个数据变量
       const genOneObj = {};
@@ -218,14 +217,16 @@ export class Generator{
         // 获取各个字段的值
         genOneObj[el.fieldName] = this.getValue(el.dataType.genFunc, el.fieldName, options, el.dataType.relation);
       });
-
+      
       // 按照之前的数据模板重新赋值生成的数据，保证之前模板不受排序的影响
       const templateRow = {};
       for (let key in jsonTemplate) {
         templateRow[key] = genOneObj[key].data;
       }
+      
       data.push(templateRow);
     }
+    
     return data;
   }
 
