@@ -33,6 +33,36 @@ export const FAST_TYPES = {
         "__display": true
       },
       {
+        "component": "StrSegmentConfig",
+        "id": "1562752459106",
+        "fieldName": "year",
+        "dataType": "StrSegment",
+        "options": {"start":0,"end":4,"__fieldName":""},
+        "relation": {"fieldNames":"birthday","type":"COR_RELATION","allowTypes":["Counter","Number"]},
+        "__unique": false,
+        "__display": false
+      },
+      {
+        "component": "Str2NumberConfig",
+        "id": "1562752478569",
+        "fieldName": "year_num",
+        "dataType": "Str2Number",
+        "options": {"__fieldName":""},
+        "relation": {"fieldNames":"year","type":"COR_RELATION","expresion":"","allowTypes":["Counter","Number"]},
+        "__unique": false,
+        "__display": false
+      },
+      {
+        "component": "NumberConfig",
+        "id": "1562752502439",
+        "fieldName": "age",
+        "dataType": "Number",
+        "options": {"min":0,"max":100000000000000,"decimal":0},
+        "relation": {"fieldNames":"year_num","type":"NUM_EXPRESS","expresion":"","allowTypes":["Counter","Number"],"expression":"2019-${RELATE}"},
+        "__unique": false,
+        "__display": true
+      },
+      {
         "component": "ProvinceConfig",
         "id": "15623135567592",
         "fieldName": "province",
@@ -119,7 +149,7 @@ export const FAST_TYPES = {
         "dataType": "IdentificationNumber",
         "options": {"__fieldName":""},
         "relation": {"fieldNames":"districtcode,birthday,sex","type":"COR_RELATION","allowTypes":["Sex","Number"]},
-        "__unique": false,
+        "__unique": true,
         "__display": true
       },
       {
@@ -148,7 +178,7 @@ export const FAST_TYPES = {
         "fieldName": "occupation",
         "dataType": "Occupation",
         "options": {"occupationTypes":["高级管理","技术","运维/技术支持","大数据","项目管理","硬件开发","通信","电子/半导体","高端技术职位","软件销售支持","产品","设计","编辑","客服","市场","公关媒介","广告","人事/财务/行政","财务","法务","销售","金融","银行","教育","医疗健康","仓储","房地产/建筑","其他"]},
-        "relation": {"fieldNames":"birthday","type":"COR_RELATION","allowTypes":["Time"]},
+        "relation": {"fieldNames":"age","type":"COR_RELATION","allowTypes":["Time"]},
         "__unique": false,
         "__display": true
       }
