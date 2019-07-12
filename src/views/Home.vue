@@ -103,7 +103,7 @@
       v-model="previewFlag"
       :mask-closable="false"
     >
-      <Preview :tableHead="tableHead" :data="dataGened" />
+      <Preview :tableHead="tableHead" :data="dataPreview" />
     </Modal>
 
     <div class="button" v-if="dataTypeConfigs.length > 0">
@@ -118,7 +118,7 @@
         :mask-closable="false"
         ok-text='导出'
         cancel-text=''
-        @on-ok="ok"
+        @on-ok="exportData"
       >  
         <span class='text_label'>数据量</span>
         <InputNumber :max="100000" :min="1" v-model="downlaodDataNum"></InputNumber><br />
@@ -168,7 +168,7 @@ export default {
       tableHead: [],
       // 预览数据量, 预览10条
       previewDataNum: 10, 
-      downlaodDataNum: 1,
+      downlaodDataNum: 100000,
       // 文件下载默认类型
       downloadFileType: 'JSON',
       // 默认导出文件名
@@ -178,7 +178,7 @@ export default {
       ],
       dataTypeToAdd: 'Sex',
       // 数据生成结果
-      dataGened: []
+      dataPreview: []
     }
   },
   components: {
@@ -253,13 +253,15 @@ export default {
 
     // 预览函数
     preview(){
-      this.dataGened = [];
+      // this.generate(100000)
+      // console.log('ok')
+      this.dataPreview = [];
       try {
-        this.dataGened = this.generate(this.previewDataNum);
+        this.dataPreview = this.generate(this.previewDataNum);
         // 设置对话框为可见状态
         this.previewFlag = true;
         // 获取数据的所有keys
-        const keys = Object.keys(this.dataGened[0]);
+        const keys = Object.keys(this.dataPreview[0]);
         // 重置数据表头
         this.tableHead = [];
         for(var i = 0; i < keys.length; i++ ){
@@ -281,10 +283,8 @@ export default {
     
     // 导出模态框的下载函数
     async download(filename, filetype) {
-      this.dataGened = []
       try{
-        this.dataGened = this.generate(this.downlaodDataNum)
-        const data  = JSON.stringify(this.dataGened);
+        const data  = JSON.stringify(this.generate(this.downlaodDataNum));
         if (data == "" || filename == "" || filetype == "") {
           throw new Error("下载组件存在非空属性")
         }
@@ -359,7 +359,7 @@ export default {
       }
     },
     // 模态对话框确认监听函数
-    ok () {
+    exportData () {
       this.download(this.defaultFilename, this.downloadFileType);
     },
 
