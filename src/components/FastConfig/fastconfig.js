@@ -1,4 +1,4 @@
-const date = (new Date())
+const date = new Date()
 var timelist = [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())]
   for(var i=0; i < timelist.length; i++){
     if (timelist[i].length < 2){
