@@ -191,7 +191,7 @@ export default {
     addSuggestion() {
       this.suggestionList.push({
          id: 2,
-        opinioner : 'jasovjidbh',
+        opinioner : 'test',
         content: this.content,
         pubTime: '2019-07-12 8:00:20',
         likeNum: 0,
