@@ -254,8 +254,6 @@ export default {
 
     // 预览函数
     preview(){
-      // this.generate(100000)
-      // console.log('ok')
       this.dataPreview = [];
       try {
         this.dataPreview = this.generate(this.previewDataNum);
