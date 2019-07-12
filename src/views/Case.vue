@@ -2,7 +2,7 @@
     <div class="case">
       <div
         class="case-item" 
-        v-for="caseItem in cases" 
+        v-for="caseItem in caseList" 
         :key="caseItem.id"
         
       >
@@ -110,56 +110,11 @@ import { Icon } from 'iview';
 export default { 
   data() {
     return {
-      caseList: [{
-        id: 1,
-        name: '法人库',
-        sharer: '胖胖的小可爱',
-        likeNum: 0,
-        quoteNum: 0,
-        config: '[{"component": "NameConfig","id": "1562834639872","fieldName": "name","dataType": "Name","options": {"sex": "random","__unique": false,"__display": true,"__fieldName": "name"},"relation": {"fieldNames": "sex","type": "COR_RELATION","allowTypes": ["Sex"]},"__unique": false,"__display": true},{"component": "SexConfig","id": "1562834640306","fieldName": "sex","dataType": "Sex","options": {"manAlias": "男","womanAlias": "女","sex": "random","__unique": false,"__display": true,"__fieldName": "sex"},"relation": null,"__unique": false,"__display": true}]',
-        shareTime: '2019-07-08 18:20:20'
-      },
-      {
-        id: 2,
-        name: '人口信息库',
-        sharer: '胖胖的小可爱',
-        likeNum: 0,
-        quoteNum: 0,
-        config: '[{"component": "NameConfig","id": "1562834639872","fieldName": "name","dataType": "Name","options": {"sex": "random","__unique": false,"__display": true,"__fieldName": "name"},"relation": {"fieldNames": "sex","type": "COR_RELATION","allowTypes": ["Sex"]},"__unique": false,"__display": true},{"component": "SexConfig","id": "1562834640306","fieldName": "sex","dataType": "Sex","options": {"manAlias": "男","womanAlias": "女","sex": "random","__unique": false,"__display": true,"__fieldName": "sex"},"relation": null,"__unique": false,"__display": true}]',
-        shareTime: '2019-07-12 11:58:20'
-      }],
+      caseList: [],
     }
   },
   components: {
     Icon
-  },
-  computed: {
-    cases() {
-      const _cases = []
-      this.caseList.forEach(_case => {
-        const fields = []
-        const configs = JSON.parse(_case.config);
-        configs.forEach(config => {
-          if (config.__display) {
-            fields.push({
-              fieldName: config.fieldName,
-            })
-          }
-        })
-
-        _cases.push({
-          id:_case.id,
-          sharer: _case.sharer,
-          name: _case.name,
-          shareTime: _case.shareTime,
-          likeNum: _case.likeNum,
-          quoteNum: _case.quoteNum,
-          fields: fields,
-        })
-      })
-
-      return _cases;
-    }
   },
   filters: {
     headText(name) {
@@ -190,6 +145,27 @@ export default {
 			}	
 		}
   },
+  mounted() {
+    const data = [{
+        id: 1,
+        name: '法人库',
+        sharer: '胖胖的小可爱',
+        likeNum: 0,
+        quoteNum: 0,
+        config: '[{"component": "NameConfig","id": "1562834639872","fieldName": "name","dataType": "Name","options": {"sex": "random","__unique": false,"__display": true,"__fieldName": "name"},"relation": {"fieldNames": "sex","type": "COR_RELATION","allowTypes": ["Sex"]},"__unique": false,"__display": true},{"component": "SexConfig","id": "1562834640306","fieldName": "sex","dataType": "Sex","options": {"manAlias": "男","womanAlias": "女","sex": "random","__unique": false,"__display": true,"__fieldName": "sex"},"relation": null,"__unique": false,"__display": true}]',
+        shareTime: '2019-07-08 18:20:20'
+      },
+      {
+        id: 2,
+        name: '人口信息库',
+        sharer: '胖胖的小可爱',
+        likeNum: 0,
+        quoteNum: 0,
+        config: '[{"component": "NameConfig","id": "1562834639872","fieldName": "name","dataType": "Name","options": {"sex": "random","__unique": false,"__display": true,"__fieldName": "name"},"relation": {"fieldNames": "sex","type": "COR_RELATION","allowTypes": ["Sex"]},"__unique": false,"__display": true},{"component": "SexConfig","id": "1562834640306","fieldName": "sex","dataType": "Sex","options": {"manAlias": "男","womanAlias": "女","sex": "random","__unique": false,"__display": true,"__fieldName": "sex"},"relation": null,"__unique": false,"__display": true}]',
+        shareTime: '2019-07-12 11:58:20'
+      }];
+    this.caseList = this.parseCases(data);
+  },
   methods: {
     addHeart(id) {
        this.caseList.forEach(_case => {
@@ -197,6 +173,32 @@ export default {
             _case.likeNum ++
           }
        })
+    },
+    parseCases(caseData) {
+      const _cases = []
+      caseData.forEach(_case => {
+        const fields = []
+        const configs = JSON.parse(_case.config);
+        configs.forEach(config => {
+          if (config.__display) {
+            fields.push({
+              fieldName: config.fieldName,
+            })
+          }
+        })
+
+        _cases.push({
+          id:_case.id,
+          sharer: _case.sharer,
+          name: _case.name,
+          shareTime: _case.shareTime,
+          likeNum: _case.likeNum,
+          quoteNum: _case.quoteNum,
+          fields: fields,
+        })
+      })
+
+      return _cases;
     }
   }
 }
