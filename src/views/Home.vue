@@ -109,6 +109,7 @@
     <div class="button" v-if="dataTypeConfigs.length > 0">
       <Button @click="preview"  type="primary" icon="md-eye"> 预览 </Button>
       <Button @click="downloadFlag=true"  type="primary" icon="md-download"> 导出 </Button>
+      <Button @click="downloadFlag=true"  type="primary" icon="md-share"> 分享保存数据模型 </Button>
     </div>
 
     <div class="export">
@@ -372,23 +373,7 @@ export default {
 </script>
 
 <style lang="scss">
-.demo-spin-icon-load{
-        animation: ani-demo-spin 1s linear infinite;
-    }
-    @keyframes ani-demo-spin {
-        from { transform: rotate(0deg);}
-        50%  { transform: rotate(180deg);}
-        to   { transform: rotate(360deg);}
-    }
-    .demo-spin-col{
-        height: 100px;
-        position: relative;
-        border: 1px solid #eee;
-}
 
-.flip-list-move {
-  transition: transform 1s;
-}
 .button { 
   Button{
     margin:1% 1% 0% 0%; 

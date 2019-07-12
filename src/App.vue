@@ -8,6 +8,12 @@
           <Icon type="ios-home" size="22" class="icon"/>
           <span class="text">首页</span>
         </router-link>
+
+        <router-link to="/community">
+          <Icon type="ios-people"  size="22"  class="icon"/>
+          <span class="text">社区</span>
+        </router-link>
+
         <router-link to="/help">
           <Icon type="ios-help-circle"  size="22"  class="icon"/>
           <span class="text">帮助</span>
@@ -30,13 +36,11 @@ $mainColor: #2d8cf0;
   color: #2c3e50;
 }
 .router-view {
+
   padding: 0 30px 40px 30px;
 }
 footer {
   position: fixed;
-  // display: flex;
-  // align-items: center;
-
   bottom:0;
   box-shadow: 10px 2px 12px 0 rgba(0,0,0,.2);
   background-color: #fff;

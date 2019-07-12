@@ -13,11 +13,19 @@ export default new Router({
       name: 'home',
       component: Home,
     },
+    
+    {
+      path: '/community',
+      name: 'community',
+      component: () => import(/* webpackChunkName: "community" */ './views/Community.vue'),
+    },
+
     {
       path: '/help',
       name: 'help',
       component: () => import(/* webpackChunkName: "help" */ './views/Help.vue'),
     },
+
     {
       path: '/responsibility',
       name: 'responsibility',

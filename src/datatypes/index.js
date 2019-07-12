@@ -138,6 +138,9 @@ export const DATA_TYPES = {
     alias: "时间",
     genFunc: TimeGenFunc,
     options: {
+      timeCategory: 'RANDOMSING',
+      timeFormat: 'FORMAT_4',
+      initialTime:["1980-01-31T16:00:00.000Z","2018-12-31T16:00:00.000Z"],
       timeStamp: 0,
       __lastTimeValue: 0,
       minStep:0,
@@ -189,7 +192,7 @@ export const DATA_TYPES = {
     },
     relation: {
       fieldNames: "",
-      type: RELATION_ENUM.INDEPEND.EN,
+      type: RELATION_ENUM.COR_RELATION.EN,
       expresion: '',
       allowTypes: ["Counter", "Number"],
     },
@@ -204,9 +207,9 @@ export const DATA_TYPES = {
     },
     relation: {
       fieldNames: "",
-      type: RELATION_ENUM.INDEPEND.EN,
+      type: RELATION_ENUM.COR_RELATION.EN,
       expresion: '',
-      allowTypes: ["Counter", "Number"],
+      allowTypes: ['*'],
     },
   },
   StrSegment: {
@@ -221,8 +224,8 @@ export const DATA_TYPES = {
     },
     relation: {
       fieldNames: "",
-      type: RELATION_ENUM.INDEPEND.EN,
-      allowTypes: ["Counter", "Number"],
+      type: RELATION_ENUM.COR_RELATION.EN,
+      allowTypes: ["*"],
     }
   },
 
