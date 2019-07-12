@@ -120,7 +120,8 @@
         ok-text='导出'
         cancel-text=''
         @on-ok="ok"
-      >  
+        
+      > 
         <span class='text_label'>数据量</span>
         <InputNumber :max="100000" :min="1" v-model="downlaodDataNum"></InputNumber><br />
         <span class='text_label'>文件类型</span>
@@ -132,7 +133,6 @@
         <span class='text_label'>文件名</span>
         <Input v-model="defaultFilename" placeholder="文件名"  style="width: 200px" />
 
-       
       </Modal>
     </div>
   </div>
@@ -166,6 +166,7 @@ export default {
       previewFlag: false,
       downloadFlag: false,
       loadingGif: false,
+      loading: false,
       tableHead: [],
       // 预览数据量, 预览10条
       previewDataNum: 10, 
@@ -282,10 +283,8 @@ export default {
     
     // 导出模态框的下载函数
     async download(filename, filetype) {
-      this.dataGened = []
       try{
-        this.dataGened = this.generate(this.downlaodDataNum)
-        const data  = JSON.stringify(this.dataGened);
+        const data  = JSON.stringify(this.generate(this.downlaodDataNum));
         if (data == "" || filename == "" || filetype == "") {
           throw new Error("下载组件存在非空属性")
         }
@@ -361,7 +360,9 @@ export default {
     },
     // 模态对话框确认监听函数
     ok () {
+      this.loading = true;
       this.download(this.defaultFilename, this.downloadFileType);
+      this.loading = false;
     },
 
     // 清空配置

@@ -1,4 +1,3 @@
-
 <template>
   <div class="help">
     <div class="header">

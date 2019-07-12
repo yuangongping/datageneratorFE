@@ -1,9 +1,13 @@
 <template>
     <div class="community">
-        <p>sssssssssssssss</p>
-        <p>sssssssssssssss</p>
-        <p>sssssssssssssss</p>
-        <p>sssssssssssssss</p>
+        <Modal
+            title=""
+            v-model="downloadFlag"
+            ok-text=''
+            cancel-text=''
+            :closable="false">
+            <img src="./../assets/images/gif.gif" width="100px">
+        </Modal>
     </div>
 </template>
 <style lang="scss">
@@ -16,7 +20,26 @@
 }
 </style>
 <script>
+import {  Modal } from 'iview';
 export default {
+    data(){
+        return {
+            downloadFlag: true,
+        }
+    },
+    components: {
+        Modal
+    },
+    // created() {
+    //     this.getData();
+    // },
+    methods:{
+        // getData(){
+        //     // 向后端发起请求
+        //     const data = ''  
+        // }
+    },
+   
     
 }
 </script>
