@@ -96,6 +96,7 @@ footer {
   justify-content: flex-start !important;
   justify-items: column !important;
 }
+
 </style>
 
 <script>
