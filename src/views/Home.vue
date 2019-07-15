@@ -1,97 +1,141 @@
 <template>
   <!-- TODO: 解释、例子、预览 -->
   <div class="home">
-    <Exporter v-if="rawdata.length > 0" filename="result" filetype="json" :rawdata="rawdata" />
-    <Input v-model="nrows" />
-    <Button @click="generate"> 生成 </Button>
-    
-    <!-- 生产数据的展示区域 -->
-    <ul>
-      <li v-for="(datarow, k) in dataGened" :key="k">
-        {{ datarow }}
-      </li>
-    </ul>
-    <transition-group name="flip-list">
-      <div 
-        v-for="(dataTypeConfig, k) in dataTypeConfigs"
-        :key="dataTypeConfig.id"
-        class="config-row"
-      >
-        <!-- 【 通用区域 】字段类型、字段名 -->
-        <div class="field-type">
-          <Tag color="primary">
-            <!-- {{ dataTypeConfig.dataType }} -->
-            {{ DATA_TYPES[dataTypeConfig.dataType].alias }}
-          </Tag>
+    <div class="action-area">
+      <BasicConfig 
+        @basic-config="basicConfig">
+      </BasicConfig>
+
+      <FastConfig 
+        @fast-config="fastConfig">
+      </FastConfig>
+    </div>
+
+    <div class="field-list"  v-if="dataTypeConfigs.length > 0">
+      <Scroll height="650">
+        <div class="field-title">
+          <span>
+            配置项
+          </span>
+          <Poptip
+            confirm
+            title="确定清空配置吗？"
+            @on-ok="emptyConfigs"
+            class="empty-config"
+          >
+            <span>清空</span>
+          </Poptip>
+          
         </div>
+        <transition-group name="flip-list" >
+          <div 
+            v-for="(dataTypeConfig, k) in dataTypeConfigs"
+            :key="dataTypeConfig.id"
+            class="config-row"
+          >
+            <!-- 【 通用区域 】字段类型、字段名 -->
+            <div class="field-type">
+              <Tag color="primary">
+                {{ DATA_TYPES[dataTypeConfig.dataType].alias }}
+              </Tag>
+            </div>
 
-        <div class="field-name">
-          <label>
-            <Input type="text"
-              v-model="dataTypeConfig.fieldName"
-            />
-            <span class="config-title">字段名</span>
-          </label>
-        </div>
-        <!-------------------->
-
-        <!-- 字段配置组件区域 -->
-        <div
-          class="field-config"
-          :is="dataTypeConfig.component"
-          :dataType="dataTypeConfig.dataType"
-          :options.sync="dataTypeConfig.options"
-          :relation.sync="dataTypeConfig.relation"
-        ></div>
-        <!-------------------->
-        
-
-        <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
-
-        <div class="switch-config">
-          <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
-            <i-switch
-              size="large"
-              v-model="dataTypeConfig.__unique"
+            <div class="field-name">
+              <label>
+                <Input type="text"
+                  v-model="dataTypeConfig.fieldName"
+                />
+                <span class="config-title">字段名</span>
+              </label>
+            </div>
+            
+          <!-- 字段配置组件区域 -->
+          <div
+            class="field-config"
+            :is="dataTypeConfig.component"
+            :dataType="dataTypeConfig.dataType"
+            :options.sync="dataTypeConfig.options"
+            :relation.sync="dataTypeConfig.relation"
             >
-              <span slot="open">唯一</span>
-              <span slot="close">唯一</span>
-            </i-switch>
-          </Tooltip>
-        </div>
+          </div>
+            <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
+            <div class="switch-config">
+              <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
+                <i-switch
+                  size="large"
+                  v-model="dataTypeConfig.__unique"
+                >
+                  <span slot="open">唯一</span>
+                  <span slot="close">唯一</span>
+                </i-switch>
+              </Tooltip>
+            </div>
 
-        <div class="switch-config">
-          <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
-            <i-switch
-              size="large"
-              v-model="dataTypeConfig.__display"
-            >
-              <span slot="open">显示</span>
-              <span slot="close">显示</span>
-            </i-switch>
-          </Tooltip>
-        </div>
+            <div class="switch-config">
+              <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
+                <i-switch
+                  size="large"
+                  v-model="dataTypeConfig.__display"
+                >
+                  <span slot="open">显示</span>
+                  <span slot="close">显示</span>
+                </i-switch>
+              </Tooltip>
+            </div>
 
-        <div class="up-down" >
-            <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
-            <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
-        </div>
+            <div class="up-down" >
+                <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
+                <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
+            </div>
 
+            <div class="delrow">
+              <Icon type="md-close" @click="delRow(k)"/>
+            </div>
 
-        <div class="delrow">
-          <Icon type="md-close" @click="delRow(k)"/>
-        </div>
-        <!-------------------->
+          </div>
+        </transition-group>
+      </Scroll>
+    </div>
 
-      </div>
-    </transition-group>
-      
-    <Select v-model="dataTypeToAdd">
-      <Option :value="dataType" v-for="dataType in Object.keys(DATA_TYPES)" :key=dataType> {{ DATA_TYPES[dataType].alias }} </Option>
-    </Select>
-    <Button type="primary" @click="addRow()">添加字段</Button>
-    <Button @click="checkData"> 检查数据 </Button>
+    <Modal
+      title="数据预览"
+      width=1600
+      v-model="previewFlag"
+      :mask-closable="false"
+    >
+      <Preview :tableHead="tableHead" :data="dataPreview" />
+    </Modal>
+
+    <div class="preview-save" v-if="dataTypeConfigs.length > 0">
+      <Button @click="preview"  type="primary" icon="md-eye"> 预览 </Button>
+      <Button @click="downloadFlag=true"  type="primary" icon="md-share"> 保存并分享数据</Button>
+      <span>保存数据以便于下次生成使用，同时推荐您将结果分享到社区，共享生成配置</span>
+      <Button @click="downloadFlag=true"  type="primary" icon="md-download"> 导出 </Button>
+    </div>
+
+    <div class="export">
+      <Modal
+        title="数据导出"
+        v-model="downloadFlag"
+        :mask-closable="false"
+        ok-text='导出'
+        cancel-text=''
+        @on-ok="exportData"
+      >  
+        <span class='text_label'>数据量</span>
+        <InputNumber :max="100000" :min="1" v-model="downlaodDataNum"></InputNumber><br />
+        <span class='text_label'>文件类型</span>
+        <RadioGroup v-model="downloadFileType">
+          <Radio label="JSON" ></Radio>
+          <Radio label="CSV"></Radio>
+          <Radio label="XML"></Radio>
+        </RadioGroup><br />
+        <span class='text_label'>文件名</span>
+        <Input v-model="defaultFilename" placeholder="文件名"  style="width: 200px" />
+      </Modal>
+    </div>
   </div>
+
 </template>
 
 <script>
@@ -99,28 +143,42 @@
 import Vue from 'vue'
 import deepcopy from 'deepcopy';
 import draggable from 'vuedraggable';
-import { Progress, Button, Input, Select, Option, Icon, Tag, Switch, Tooltip } from 'iview';
+import { Progress, Button, Input, Select, Option, Icon, Tag, Poptip,
+         Switch, Tooltip, Modal, Table, InputNumber, RadioGroup, Radio, Scroll } from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
+import Preview from '@/components/Preview/index.vue'
+import FastConfig from '@/components/FastConfig/FastConfig.vue';
+import BasicConfig from '@/components/BasicConfig/BasicConfig.vue';
 import { Generator } from '@/generator/index';
 import { SexConfig, NameConfig, CounterConfig,
          NumberConfig, IdentificationNumberConfig, Str2NumberConfig,
-         StrSpliceConfig, StringSegmenteConfig ,RandomChoiceConfig,
-         TextConfig, TimeConfig,  ProvinceConfig, 
-         CityConfig, DistrictConfig, DistrictCodeConfig } from '@/components/datatypesconfig/index.js';
+         StrConcatConfig, StrSegmentConfig ,RandomChoiceConfig,
+         TextConfig, TimeConfig, ProvinceConfig, 
+         CityConfig, DistrictConfig, DistrictCodeConfig, 
+         RandomFieldConfig, DetailAddressConfig, GeographCoordinatesConfig,
+         OccupationConfig} from '@/components/datatypesconfig/index.js';  
 import { DATA_TYPES } from '@/datatypes/index.js';
 export default {
   name: 'home',
   data() {
     return {
+      previewFlag: false,
+      downloadFlag: false,
+      loadingGif: false,
+      tableHead: [],
+      // 预览数据量, 预览10条
+      previewDataNum: 10, 
+      downlaodDataNum: 100,
+      // 文件下载默认类型
+      downloadFileType: 'JSON',
+      // 默认导出文件名
+      defaultFilename: 'export',
       DATA_TYPES: DATA_TYPES,
       dataTypeConfigs: [
       ],
       dataTypeToAdd: 'Sex',
-      // 生成的数据量变量
-      nrows: 5,
       // 数据生成结果
-      dataGened: [],
-      rawdata: ''
+      dataPreview: []
     }
   },
   components: {
@@ -133,9 +191,16 @@ export default {
     Icon,
     Tag,
     Tooltip,
+    Scroll,
     'i-switch': Switch,
-    // vue draggable
+    InputNumber,
+    RadioGroup, 
+    Radio,
+    Modal,
+    Table,
     draggable,
+    Preview,
+    Poptip,
     
     // 字段配置组件
     SexConfig,
@@ -148,11 +213,17 @@ export default {
     DistrictCodeConfig,
     IdentificationNumberConfig,
     Str2NumberConfig,
-    StrSpliceConfig,
-    StringSegmenteConfig,
+    StrConcatConfig,
+    StrSegmentConfig,
     RandomChoiceConfig,
     TextConfig,
-    TimeConfig
+    TimeConfig,
+    RandomFieldConfig,
+    FastConfig,
+    BasicConfig,
+    DetailAddressConfig,
+    GeographCoordinatesConfig,
+    OccupationConfig
   },
   mounted() {
   },
@@ -175,43 +246,100 @@ export default {
     },
 
     // 生产数据函数
-    generate() {
-      const generator = new Generator(this.parseDataTypeConfigs(), this.nrows);
+    generate(number) {
+      const generator = new Generator(this.parseDataTypeConfigs(), number);
+      return generator.generate();
+    },
+
+    // 预览函数
+    preview(){
+      this.dataPreview = [];
       try {
-        this.dataGened = generator.generate();
+        this.dataPreview = this.generate(this.previewDataNum);
+        // 设置对话框为可见状态
+        this.previewFlag = true;
+        // 获取数据的所有keys
+        const keys = Object.keys(this.dataPreview[0]);
+        // 重置数据表头
+        this.tableHead = [];
+        for(var i = 0; i < keys.length; i++ ){
+          this.tableHead.push(
+            {
+              title: keys[i],
+              key:  keys[i]
+            }
+          )
+        }
       } catch (e) {
         this.$Message.error({
           content: e.toString(),
           duration: 5
         });
       }
-      // this.rawdata = JSON.stringify(this.dataGened);
+      
+    },
+    
+    // 导出模态框的下载函数
+    async download(filename, filetype) {
+      try{
+        const data  = JSON.stringify(this.generate(this.downlaodDataNum));
+        if (data == "" || filename == "" || filetype == "") {
+          throw new Error("下载组件存在非空属性")
+        }
+        const $aNode = document.createElement("a"),
+        blob = new Blob([data]);
+        $aNode.download = filename + '.' + filetype;
+        $aNode.href = (window.URL ? URL : window.webkitURL).createObjectURL(blob);
+        document.body.appendChild($aNode);
+        $aNode.click();
+        document.body.removeChild($aNode);
+      }catch (e) {
+        this.$Message.error({
+          content: e.toString(),
+          duration: 5
+        });
+      }
     },
 
-    // 添加字段组件
-    addRow() {
-      // 依据选择器中选择选项确定组件类型与数据参数配置
-      const { dataTypeToAdd, dataTypeConfigs } = this;
-      // const component = 'SexConfig' //dataTypeToAdd.toLowerCase() + '-config'
-      const component = dataTypeToAdd + 'Config'
+    // 基础字段组件
+    basicConfig(componentToAdd) {
+      const { dataTypeConfigs } = this;
+      const component = componentToAdd + 'Config'
       dataTypeConfigs.push({
         component: component,
         id: new Date().getTime().toString(), // 使用时间戳添加一个唯一标识，可用于排序动画等
         fieldName: "",
-        dataType: dataTypeToAdd,
-        options: JSON.stringify(DATA_TYPES[dataTypeToAdd].options),
-        relation: JSON.stringify(DATA_TYPES[dataTypeToAdd].relation),
-        __unique: DATA_TYPES[dataTypeToAdd].__unique,
-        __display: DATA_TYPES[dataTypeToAdd].__display,
+        dataType: componentToAdd,
+        options: JSON.stringify(DATA_TYPES[componentToAdd].options),
+        relation: JSON.stringify(DATA_TYPES[componentToAdd].relation),
+        __unique: DATA_TYPES[componentToAdd].__unique,
+        __display: DATA_TYPES[componentToAdd].__display,
       })
+    },
+
+    // 快捷添加
+    fastConfig(configs) {
+      const { dataTypeConfigs } = this;
+      const time = new Date().getTime();
+      for (const i in configs) {
+        dataTypeConfigs.push({
+          component: configs[i].component,
+          id: (time + i).toString(),
+          fieldName: configs[i].fieldName,
+          dataType: configs[i].dataType,
+          options: JSON.stringify(configs[i].options),
+          relation: JSON.stringify(configs[i].relation),
+          __unique: configs[i].__unique,
+          __display: configs[i].__display,
+        })
+      }
     },
     
     // 删除字段组件， k下标
     delRow(k) {
       this.dataTypeConfigs.splice(k, 1);
     },
-
-    // 数据检查函数
+    // 上移
     sortUp(k) {
       if (k != 0) {
         let temp = this.dataTypeConfigs[k - 1];
@@ -219,6 +347,8 @@ export default {
         Vue.set(this.dataTypeConfigs, k, temp);
       }
     },
+
+    // 下移
     sortDown(k) {
       if (k != (this.dataTypeConfigs.length - 1)) {
         let temp = this.dataTypeConfigs[k + 1];
@@ -226,8 +356,14 @@ export default {
         Vue.set(this.dataTypeConfigs, k, temp);
       }
     },
-    checkData() {
-      console.log(this.dataTypeConfigs)
+    // 模态对话框确认监听函数
+    exportData () {
+      this.download(this.defaultFilename, this.downloadFileType);
+    },
+
+    // 清空配置
+    emptyConfigs() {
+      this.dataTypeConfigs = [];
     }
   }
 }
@@ -238,6 +374,70 @@ export default {
   transition: transform 1s;
 }
 
+.preview-save { 
+  button{
+    margin: 10px;
+    &:nth-child(1) {
+      margin-left: 0;
+    }
+  }
+}
+.ivu-modal-body {
+  .text_label{
+    width: 80px;
+    display: inline-block;
+    font-size: 14px;
+    margin: 15px 20px 30px 10px;
+    text-align:justify;
+    text-align-last: justify;
+  }
+  label{
+    margin-right: 20px;
+  }
+}
+
+
+.field-list {
+  margin-top: 15px;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+  background-color: #ffffff;
+  padding: 10px 10px;
+  .field-title {
+    height: 20px;
+    line-height: 20px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: "SimHei";
+    color: #2d8cf0;
+    padding-left: 10px;
+    border-left: 2px solid #2d8cf0;
+    display: flex;
+
+    span {
+      flex: 1;
+    }
+    .empty-config {
+      width: 35px;
+      color: #888;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 100;
+      font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    }
+  }
+}
+.action-area {
+  display: flex;
+  div {
+    &:nth-child(n) {
+      margin-right: 20px;
+    }
+    &:nth-child(2n) {
+      margin-right: 0;
+    }
+  }
+}
 .config-row {
   font-size: 15px;
   padding: 20px 0 6px 0;
@@ -251,30 +451,26 @@ export default {
   &:nth-child(2n) {
     background-color: #fafafa;
   }
-
   .field-type {
     width: 70px;
+    padding-left: 5px;
     margin-right: 10px;
   }
-
   .field-name {
     width: 160px;
     margin-right: 10px;
   }
-
   .relation-config {
     width:120px;
     .ivu-select-selection {
       width:120px;
     }
   }
-
   .field-config {
     flex: 1;
     display: flex;
     justify-content: flex-start; // 主轴排列方式
     align-items: center; // 交叉轴对齐方式
-
     .config-item {
       margin-right: 10px;
       display: flex;
@@ -282,7 +478,6 @@ export default {
       align-items: center; // 交叉轴对齐方式
     }
   }
-
   .switch-config {
     width: 70px;
   }
@@ -298,7 +493,6 @@ export default {
     flex-direction: column;
     cursor: pointer;
   }
-
   .question {
     color: #66cccc; margin-left: 2px; cursor: pointer; font-size: 12px;
   }
@@ -306,7 +500,6 @@ export default {
 label {
   position:relative;
   display:inline-block;
-
   .config-title {
     padding: 4px;
     pointer-events: none;
@@ -317,5 +510,4 @@ label {
     font-size: 12px;
   }
 }
-
 </style>

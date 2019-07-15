@@ -1,13 +1,13 @@
-import { FIELD_PRE, RELATION_ENUM } from '../CONST.js';
+import { FIELD_PRE, RELATION_ENUM, OPTIONS_ENUM } from '../CONST.js';
 import { random, floor} from 'mathjs';
 
 export default (options, relation) => {
-  const timeStep = (Number(options.timeStep) || 1)*60;  // 固定步长递增的步长值 
+  const timeStep = (Number(options.timeStep) || 1) * 60;  // 固定步长递增的步长值 
   const initialTime = options.initialTime;  // 时间范围
   const timeFormat = options.timeFormat;  // 时间格式
   const timeCategory = options.timeCategory;  // 时间类型
-  const startTimeStamp = Number(Date.parse(initialTime[0])/1000);  // 将起始时间转换为时间戳
-  const endTimeStamp = Number(Date.parse(initialTime[1])/1000);  // 将终止时间转换为时间戳
+  const startTimeStamp = Number(Date.parse(initialTime[0]) / 1000);  // 将起始时间转换为时间戳,单位为秒
+  const endTimeStamp = Number(Date.parse(initialTime[1]) / 1000);  // 将终止时间转换为时间戳,单位为秒
   var transResult, resultTIme, randomStepStamp, randomInterval;  // 后续所用到的变量值
   //有关联关系
   if(relation.type !== RELATION_ENUM.INDEPEND.EN) {
@@ -25,14 +25,15 @@ export default (options, relation) => {
       if(minInterval > maxInterval){
         throw new Error(`最小间隔需小于等于最大间隔`);
       }
-      if (timeCategory === "randomSingleTime"){  // 选择生成随机时刻类型的时间
+      // 选择生成随机时刻类型的时间
+      if (timeCategory === OPTIONS_ENUM.Time.TIME_TYPE.RANDOMSING.EN){  
         randomInterval = floor(random() * (maxInterval - minInterval + 1) + minInterval) + relVal;  // 单位为秒
         transResult = randomInterval;  // 传递生成结果时间戳
         resultTIme = new Date(randomInterval * 1000);  // 最终生成时间
       }
-      else if(timeCategory === "stepIncrementSingleTime")  // 有关联关系时生成固定步长时间序列,步长由所关联字段步长决定
+      else if(timeCategory === OPTIONS_ENUM.Time.TIME_TYPE.FIX.EN)  // 有关联关系时生成固定步长时间序列,步长由所关联字段步长决定
       {
-        if(relationCategory === "randomSingleTime" || relationCategory === "randomIncrementSingleTime"){  // 所关联字段时间类型为随机时刻或随机递增时无法关联
+        if(relationCategory === OPTIONS_ENUM.Time.TIME_TYPE.RANDOMSING.EN || relationCategory === OPTIONS_ENUM.Time.TIME_TYPE.RANDOMINCREMENT.EN){  // 所关联字段时间类型为随机时刻或随机递增时无法关联
           throw new Error(`${options.__fieldName}字段所选时间类型无法与${relation.fieldNames}字段时间类型进行关联`);
         }
         else{  // 所关联字段时间类型为固定步长递增，当前字段步长由所关联字段步长决定
@@ -45,10 +46,10 @@ export default (options, relation) => {
         }
       }
       else{  // 有关联关系时生成随机递增时间序列
-        if(relationCategory === "randomSingleTime"){  // 所关联字段时间类型为随机时间
+        if(relationCategory === OPTIONS_ENUM.Time.TIME_TYPE.RANDOMSING.EN){  // 所关联字段时间类型为随机时间
           throw new Error(`${options.__fieldName}字段所选时间类型无法与${relation.fieldNames}字段时间类型进行关联`);
         }
-        else if(relationCategory === "stepIncrementSingleTime" || relationCategory === "randomIncrementSingleTime" ){  // 所关联字段时间类型为固定步长递增或随机递增
+        else if(relationCategory === OPTIONS_ENUM.Time.TIME_TYPE.FIX.EN || relationCategory === OPTIONS_ENUM.Time.TIME_TYPE.RANDOMINCREMENT.EN ){  // 所关联字段时间类型为固定步长递增或随机递增
           randomInterval = floor(random() * (maxInterval - minInterval + 1) + minInterval) + relVal;  // 单位为秒
           while(randomInterval < options.__lastTimeValue){  // 确保当前时间大于上一次生成的时间
             randomInterval = floor(random() * (maxInterval - minInterval + 1) + minInterval) + relVal;  // 单位为秒
@@ -68,20 +69,23 @@ export default (options, relation) => {
     if(!timeCategory ){
       throw new Error(`请选择生成时间类型`);
     }
-    if(timeCategory === "randomSingleTime"){  // 生成随机时间
+    // 生成随机时间
+    if(timeCategory === OPTIONS_ENUM.Time.TIME_TYPE.RANDOMSING.EN){  
       var randomStamp =  floor(random() * (endTimeStamp - startTimeStamp + 1) + startTimeStamp);
       resultTIme = new Date(randomStamp * 1000);
       transResult = Number(randomStamp);  // 传递生成结果的时间戳
     }
-    else if(timeCategory === "stepIncrementSingleTime") {  // 生成固定步长递增时间
+    // 生成固定步长递增时间
+    else if(timeCategory === OPTIONS_ENUM.Time.TIME_TYPE.FIX.EN) {  
       let stepTime = startTimeStamp + options.__counter * timeStep;
       resultTIme = new Date(stepTime * 1000);
       transResult = Number(stepTime);  // 传递生成结果的时间戳
       if(stepTime > endTimeStamp || stepTime < startTimeStamp ){
-        throw new Error(`${options.__fieldName}生成时间已超出所设置时间范围`);
+        throw new Error(`${options.__fieldName}使用固定步长递增生成，生成时间已超出所设置的最大时间`);
       }
     }
-    else{  // 生成随机递增时间
+    // 生成随机递增时间
+    else{  
       if(options.minStep > options.maxStep){
         throw new Error(`最小间隔需小于等于最大间隔`);
       }
@@ -108,28 +112,31 @@ export default (options, relation) => {
       timelist[i] = '0' + timelist[i];
     }
   }
-  if(timeFormat === 'FORMAT_1'){
+  if(timeFormat === OPTIONS_ENUM.Time.TIME_STYLE.FORMAT_1.EN){
     resultTIme = resultTIme.toLocaleDateString().replace(/\//g, "-") + " " + resultTIme.toTimeString().substr(0, 8);
   }
-  else if(timeFormat === 'FORMAT_2'){
+  else if(timeFormat === OPTIONS_ENUM.Time.TIME_STYLE.FORMAT_2.EN){
     resultTIme = timelist[0] + '-' + timelist[1] + '-' + timelist[2];
   }
-  else if(timeFormat === 'FORMAT_3'){
+  else if(timeFormat === OPTIONS_ENUM.Time.TIME_STYLE.FORMAT_3.EN){
     resultTIme = timelist[0] + '年' + timelist[1] + '月' + timelist[2] + '日';
   }
-  else if(timeFormat === 'FORMAT_5'){
+  else if(timeFormat === OPTIONS_ENUM.Time.TIME_STYLE.FORMAT_5.EN){
     resultTIme = timelist[0] + timelist[1] + timelist[2];
+  }
+  else if(timeFormat === OPTIONS_ENUM.Time.TIME_STYLE.FORMAT_6.EN){
+    resultTIme = timelist[0] + "-" + timelist[1] + "-" + timelist[2]+ " " + timelist[3] + ":" + timelist[4];
   }
   else{
     resultTIme = timelist[0] + '年' + timelist[1] + '月' + timelist[2] + '日' + ' ' + timelist[3] + '时' + timelist[4] + '分';
   }
 
   const deliver_options = {};
-  deliver_options[FIELD_PRE + options.__fieldName] = resultTIme; 
+  deliver_options[FIELD_PRE + options.__fieldName] = resultTIme;
   deliver_options['relationCategory'] = timeCategory;
   deliver_options.timeStamp = transResult;
   return{
     options: deliver_options,
-    data: resultTIme
+    data:resultTIme
   };
 };

@@ -18,21 +18,21 @@
 
     <div class="config-item" v-if="relationValue.type === 'COR_RELATION'">
       <label>
+        <Tooltip max-width="200" content="建议关联区县组件, 请合理设置关联字段" theme="light" placement="top">
         <span class="config-title">关联字段</span>
         <Input type="text"
-            v-model="relationValue.fieldNames"
-            @on-change="chgRelation"
+          v-model="relationValue.fieldNames"
+          @on-change="chgRelation"
         />
+        </Tooltip>
       </label>
     </div>
   </div>
 </template>
 
 <script>
-import deepcopy from 'deepcopy';
-import { DATA_TYPES } from '@/datatypes/index.js'; 
 import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
-import { Input, Select, Option, Tag, Switch, Icon, Button, Tooltip } from "iview";
+import { Input, Select, Option, Tooltip } from "iview";
 export default {
   data() {
     return {
@@ -51,11 +51,7 @@ export default {
     Select,
     Option,
     Input,
-    Tag,
-    Button,
-    Icon,
-    Tooltip,
-    'i-switch': Switch,
+    Tooltip
   },
   methods: {
     chgOptions() {

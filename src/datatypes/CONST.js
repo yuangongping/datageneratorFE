@@ -32,33 +32,13 @@ export const ALLOW_RELATIONS = {
   District: ['INDEPEND', 'COR_RELATION'],
   DistrictCode: ['INDEPEND', 'COR_RELATION'],
   IdentificationNumber: ['INDEPEND', 'COR_RELATION'],
-  Str2Number: ['INDEPEND', 'COR_RELATION'],
-  StrSplice: ['INDEPEND', 'COR_RELATION'],
-  StringSegmente:  ['COR_RELATION'],
-  Time: ['INDEPEND', 'GREATER']
-}
-
-export const SELECT_MODE_ENUM ={
-  City: {
-    CITY_RANDOM: {
-      EN: "CITY_RANDOM",
-      CN: "随机城市"
-    },
-    CITY_SELECTABLE: {
-      EN: "CITY_SELECTABLE",
-      CN: "自选城市"
-    }
-  },
-  District: {
-    DISTRICT_RANDOM: {
-      EN: "DISTRICT_RANDOM",
-      CN: "随机区县"
-    },
-    DISTRICT_SELECTABLE: {
-      EN: "DISTRICT_SELECTABLE",
-      CN: "自选区县"
-    }
-  }
+  Str2Number: ['COR_RELATION'],
+  StrConcat: ['COR_RELATION'],
+  StrSegment:  ['COR_RELATION'],
+  Time: ['INDEPEND', 'GREATER'],
+  RandomField: ['COR_RELATION'],
+  GeographCoordinates: ['INDEPEND', 'COR_RELATION'],
+  Occupation: ['INDEPEND', 'COR_RELATION']
 }
 
 export const OPTIONS_ENUM = {
@@ -86,6 +66,82 @@ export const OPTIONS_ENUM = {
         EN: "NUMBER",
         CN: "数字"
       },
+    }
+  },
+  City: {
+    CITY_RANDOM: {
+      EN: "CITY_RANDOM",
+      CN: "随机城市"
+    },
+    CITY_SELECTABLE: {
+      EN: "CITY_SELECTABLE",
+      CN: "自选城市"
+    }
+  },
+  District: {
+    DISTRICT_RANDOM: {
+      EN: "DISTRICT_RANDOM",
+      CN: "随机区县"
+    },
+    DISTRICT_SELECTABLE: {
+      EN: "DISTRICT_SELECTABLE",
+      CN: "自选区县"
+    }
+  },
+  DetailAddress: {
+    RANDOM_ADDRESS: {
+      EN: "RANDOM_ADDRESS",
+      CN: "城区/乡镇"
+    },
+    CITY_ADDRESS: {
+      EN: "CITY_ADDRESS",
+      CN: "城区"
+    },
+    VILLAGE_ADDRESS: {
+      EN: "VILLAGE_ADDRESS",
+      CN: "乡镇"
+    }
+  },  
+  Time: {
+    TIME_TYPE: {
+      RANDOMSING: {
+        EN: "RANDOMSING",
+        CN: "随机时刻"
+      },
+      FIX: {
+        EN: "FIX",
+        CN: "固定步长递增"
+      },
+      RANDOMINCREMENT: {
+        EN: "RANDOMINCREMENT",
+        CN: "随机递增"
+      }
+    },
+    TIME_STYLE: {
+      FORMAT_1: {
+        EN: "FORMAT_1",
+        CN: "yyyy-MM-dd HH:mm:ss"
+      },
+      FORMAT_2: {
+        EN: "FORMAT_2",
+        CN: "yyyy-MM-dd"
+      },
+      FORMAT_3: {
+        EN: "FORMAT_3",
+        CN: "年/月/日"
+      },
+      FORMAT_4: {
+        EN: "FORMAT_4",
+        CN: "年/月/日/时/分"
+      },
+      FORMAT_5: {
+        EN: "FORMAT_5",
+        CN: "yyyymmdd"
+      },
+      FORMAT_6: {
+        EN: "FORMAT_6",
+        CN: "yyyy-MM-dd HH:mm"
+      }
     }
   }
 }

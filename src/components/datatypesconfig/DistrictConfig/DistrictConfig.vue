@@ -1,48 +1,52 @@
 <template>
   <!-- 修改组件独立的样式时注意修改组件class -->
   <div class="district-config">
+
 		<div class="config-item relation-config">
-		  <Select
+      <Select
         v-model="relationValue.type" 
         style="width:200px"
         @on-change="chgRelation"
-		  >
+      >
         <Option 
           v-for="relation in allowRelations"
           :value="relation"
           :key="relation"
         >
-        {{ RELATION_ENUM[relation].CN }}
+          {{ RELATION_ENUM[relation].CN }}
         </Option>
-		  </Select>
+      </Select>
 		</div>
 
 		<div class="config-item" v-if="relationValue.type === RELATION_ENUM.COR_RELATION.EN">
 			<label>
+        <Tooltip max-width="200" content="建议关联城市组件, 请合理设置关联字段" theme="light" placement="top">
         <span class="config-title">关联字段</span>
         <Input type="text"
           v-model="relationValue.fieldNames"
           @on-change="chgRelation"
         />
+        </Tooltip>
 			</label>
 		</div>
 
     <div class="config-item" v-if="relationValue.type === RELATION_ENUM.INDEPEND.EN">
-      <div class="config-item">
+      <div>
           <RadioGroup v-model="optionsValue.Select_district_mode" @on-change="chgRadio" type="button" size="small">
             <Radio label="随机区县"></Radio>
             <Radio label="自选区县"></Radio>
           </RadioGroup>
       </div>
       
-      <div class="config-item" v-if="optionsValue.Select_district_mode == SELECT_MODE_ENUM.District.DISTRICT_SELECTABLE.CN" style="width: 300px">
+      <div class="select" v-if="optionsValue.Select_district_mode == OPTIONS_ENUM.District.DISTRICT_SELECTABLE.CN">
         <label>
           <span class="config-title">省份选择</span>
           <Select
             v-model="provinceChoice" 
             @on-change="chgProvinces"
             multiple
-            collapse-tags
+            :max-tag-count="1"
+            style="width:200px;"
           >
             <Option 
               v-for="province in allProvinces"
@@ -55,13 +59,15 @@
         </label>
       </div>
 
-      <div class="config-item" v-if="optionsValue.Select_district_mode == SELECT_MODE_ENUM.District.DISTRICT_SELECTABLE.CN" style="width: 300px">
+      <div class="select" v-if="optionsValue.Select_district_mode == OPTIONS_ENUM.District.DISTRICT_SELECTABLE.CN" >
         <label>
           <span class="config-title">城市选择</span>
           <Select
             v-model="cityChioce" 
             @on-change="chgcities"
             multiple
+            :max-tag-count="1"
+            style="width:200px;"
           >
             <Option 
               v-for="city in this.cities"
@@ -74,13 +80,15 @@
         </label>
       </div>
 
-      <div class="config-item" v-if="optionsValue.Select_district_mode == SELECT_MODE_ENUM.District.DISTRICT_SELECTABLE.CN" style="width: 550px">
+      <div class="select" v-if="optionsValue.Select_district_mode == OPTIONS_ENUM.District.DISTRICT_SELECTABLE.CN">
         <label>
           <span class="config-title">区县选择</span>
           <Select
             v-model="optionsValue.districts" 
             @on-change="chgdistricts"
             multiple
+            :max-tag-count="1"
+            style="width:200px;"
           >
             <Option 
               v-for="district in this.districts"
@@ -95,12 +103,17 @@
     </div>
   </div>
 </template>
+<style lang="scss">
+.select{
+  margin-left: 10px;
+}
+
+</style>
+
 
 <script>
-import deepcopy from 'deepcopy';
-import { DATA_TYPES } from '@/datatypes/index.js'; 
-import { RELATION_ENUM, ALLOW_RELATIONS, SELECT_MODE_ENUM } from '@/datatypes/CONST.js';
-import { Input, Select, Option, Tag, Switch, Icon, Button, Tooltip, Radio, RadioGroup } from "iview";
+import { RELATION_ENUM, ALLOW_RELATIONS, OPTIONS_ENUM } from '@/datatypes/CONST.js';
+import { Input, Select, Option, Radio, RadioGroup, Tooltip } from "iview";
 import OriginalData from '@/datatypes/COMMON_DATA/OriginalData_dict.js';
 export default {
   data() {
@@ -108,7 +121,7 @@ export default {
       optionsValue: JSON.parse(this.options),
       relationValue: JSON.parse(this.relation),
       RELATION_ENUM: RELATION_ENUM,
-      SELECT_MODE_ENUM: SELECT_MODE_ENUM,
+      OPTIONS_ENUM: OPTIONS_ENUM,
       allowRelations: ALLOW_RELATIONS[this.dataType],
       allProvinces: Object.keys(OriginalData),
       provinceChoice: [],
@@ -127,13 +140,10 @@ export default {
     Select,
     Option,
     Input,
-    Tag,
-    Button,
-    Icon,
-    Tooltip,
     Radio, 
     RadioGroup ,
-    'i-switch': Switch,
+    Tooltip
+
   },
   methods: {
     chgProvinces() {
@@ -166,7 +176,7 @@ export default {
       this.$emit('update:options', JSON.stringify(this.optionsValue));
     },
     chgRadio() {
-      if(this.optionsValue.Select_district_mode == SELECT_MODE_ENUM.District.DISTRICT_RANDOM.CN){
+      if(this.optionsValue.Select_district_mode == OPTIONS_ENUM.District.DISTRICT_RANDOM.CN){
         this.optionsValue.districts = [];
         this.cities = [];
         this.provinceChoice = [];
@@ -178,7 +188,7 @@ export default {
       if(this.relationValue.type==RELATION_ENUM.COR_RELATION.EN){ 
         this.cities = [];
         this.provinceChoice = [];
-        this.optionsValue.Select_district_mode = SELECT_MODE_ENUM.District.DISTRICT_RANDOM.CN;
+        this.optionsValue.Select_district_mode = OPTIONS_ENUM.District.DISTRICT_RANDOM.CN;
       }
       this.$emit('update:relation', JSON.stringify(this.relationValue));
     }

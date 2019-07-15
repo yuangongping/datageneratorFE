@@ -24,8 +24,8 @@
       <label>
         <Input 
           type="text"
-          v-model="address"
-          @on-change="chgRelationFieldNames"
+          v-model="relateFields[0]"
+          @on-change="chgRelateFields"
           placeholder="请填地址字段名"
         />
         <span class="config-title">地址关联字段</span>
@@ -36,8 +36,8 @@
       <label>
         <Input 
           type="text"
-          v-model="date"
-          @on-change="chgRelationFieldNames"
+          v-model="relateFields[1]"
+          @on-change="chgRelateFields"
           placeholder="请填时间字段名"
         />
         <span class="config-title">时间关联字段</span>
@@ -48,8 +48,8 @@
       <label>
         <Input 
           type="text"
-          v-model="sex"
-          @on-change="chgRelationFieldNames"
+          v-model="relateFields[2]"
+          @on-change="chgRelateFields"
           placeholder="请填性别字段名"
         />
         <span class="config-title">性别关联字段</span>
@@ -66,13 +66,6 @@ import { Input, Select, Option } from "iview";
 export default {
   data() {
     return {
-      // 地址组件关联字段
-      address:'',
-      // 时间组件关联字段
-      date: '',
-      // 性别组件关联字段
-      sex: '',
-      // 组件选项参数
       optionsValue: JSON.parse(this.options),
       // 关联组件配置参数
       relationValue: JSON.parse(this.relation),
@@ -80,6 +73,10 @@ export default {
       RELATION_ENUM: RELATION_ENUM,
       // 该组件的关联类型列表
       allowRelations: ALLOW_RELATIONS[this.dataType],
+      // 组件局部变量
+      relateFields: JSON.parse(this.relation).fieldNames.trim() == ''
+       ? ['', '', ''] 
+       : JSON.parse(this.relation).fieldNames.split(',')
     }
   },
   components: {
@@ -88,24 +85,23 @@ export default {
     Option
   },
   props: {
-    fieldName: String,
     dataType: String,
     options: String,
     relation: String,
   },
   methods: {
-    chgFieldName() {
-      this.$emit('update:fieldName', this.fieldNameValue);
-    },
     chgOptions() {
       this.$emit('update:options', JSON.stringify(this.optionsValue));
     },
     chgRelation() {
       this.$emit('update:relation', JSON.stringify(this.relationValue));
     },
-    chgRelationFieldNames(){
-      var data = [this.address, this.date, this.sex];
-      this.relationValue.fieldNames = data.join(',');
+    chgRelateFields(){
+      if (this.relateFields.indexOf('') > -1) {
+        this.relationValue.fieldNames = ''
+      } else {
+        this.relationValue.fieldNames = this.relateFields.join(',');
+      }
       this.$emit('update:relation', JSON.stringify(this.relationValue));
     }
   }

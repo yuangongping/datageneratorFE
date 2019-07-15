@@ -2,11 +2,11 @@
   <!-- 修改组件独立的样式时注意修改组件class -->
   <div class="city-config">
 		<div class="config-item relation-config">
-		  <Select
+      <Select
         v-model="relationValue.type" 
         style="width:200px"
         @on-change="chgRelation"
-		  >
+      >
         <Option 
           v-for="relation in allowRelations"
           :value="relation"
@@ -14,16 +14,18 @@
         >
         {{ RELATION_ENUM[relation].CN }}
         </Option>
-		  </Select>
+      </Select>
 		</div>
 
 		<div class="config-item" v-if="relationValue.type === RELATION_ENUM.COR_RELATION.EN">
 			<label>
+        <Tooltip max-width="200" content="建议关联省份组件, 请合理设置关联字段" theme="light" placement="top">
         <span class="config-title">关联字段</span>
         <Input type="text"
           v-model="relationValue.fieldNames"
           @on-change="chgRelation"
         />
+        </Tooltip>
 			</label>
 		</div>
 
@@ -35,14 +37,16 @@
           </RadioGroup>
         </div>
       
-        <div class="config-item" v-if="optionsValue.Select_city_mode == SELECT_MODE_ENUM.City.CITY_SELECTABLE.CN" style="width: 300px">
+        <div v-if="optionsValue.Select_city_mode == OPTIONS_ENUM.City.CITY_SELECTABLE.CN" >
           <label>
             <span class="config-title">省份选择</span>
             <Select
               v-model="optionsValue.provinceChoice" 
               @on-change="chgProvinces"
               multiple
+              :max-tag-count="1"
               collapse-tags
+              style="width:200px"
             >
               <Option 
                 v-for="province in allProvinces"
@@ -55,13 +59,15 @@
           </label>
         </div>
 
-        <div class="config-item" v-if="optionsValue.Select_city_mode == SELECT_MODE_ENUM.City.CITY_SELECTABLE.CN" style="width: 550px">
+        <div v-if="optionsValue.Select_city_mode == OPTIONS_ENUM.City.CITY_SELECTABLE.CN" style="margin-left:10px;">
           <label>
             <span class="config-title">城市选择</span>
             <Select
               v-model="optionsValue.cities" 
               @on-change="chgcities"
+              :max-tag-count="1"
               multiple
+              style="width:200px"
             >
               <Option 
                 v-for="city in this.cities"
@@ -78,10 +84,8 @@
 </template>
 
 <script>
-import deepcopy from 'deepcopy';
-import { DATA_TYPES } from '@/datatypes/index.js'; 
-import { RELATION_ENUM, ALLOW_RELATIONS, SELECT_MODE_ENUM } from '@/datatypes/CONST.js';
-import { Input, Select, Option, Tag, Switch, Icon, Button, Tooltip, Radio, RadioGroup } from "iview";
+import { RELATION_ENUM, ALLOW_RELATIONS, OPTIONS_ENUM } from '@/datatypes/CONST.js';
+import { Input, Select, Option, Radio, RadioGroup, Tooltip } from "iview";
 import OriginalData from '@/datatypes/COMMON_DATA/OriginalData_dict.js';
 export default {
   data() {
@@ -89,7 +93,7 @@ export default {
       optionsValue: JSON.parse(this.options),
       relationValue: JSON.parse(this.relation),
       RELATION_ENUM: RELATION_ENUM,
-      SELECT_MODE_ENUM: SELECT_MODE_ENUM,
+      OPTIONS_ENUM: OPTIONS_ENUM,
       allowRelations: ALLOW_RELATIONS[this.dataType],
       allProvinces: Object.keys(OriginalData),
       cities: []
@@ -104,13 +108,9 @@ export default {
     Select,
     Option,
     Input,
-    Tag,
-    Button,
-    Icon,
-    Tooltip,
     Radio, 
-    RadioGroup ,
-    'i-switch': Switch,
+    RadioGroup,
+    Tooltip
   },
   methods: {
     chgProvinces() {  // 选择省份时，将所选省份下属所有城市加入城市选择下拉框options里面
@@ -132,7 +132,7 @@ export default {
       this.$emit('update:options', JSON.stringify(this.optionsValue));
     },
     chgRadio() {
-      if(this.optionsValue.Select_city_mode == SELECT_MODE_ENUM.City.CITY_RANDOM.CN){
+      if(this.optionsValue.Select_city_mode == OPTIONS_ENUM.City.CITY_RANDOM.CN){
         this.optionsValue.cities = [];
         this.cities = [];
         this.optionsValue.provinceChoice = [];
@@ -143,7 +143,7 @@ export default {
       if(this.relationValue.type == RELATION_ENUM.COR_RELATION.EN){ 
         this.cities = [];
         this.optionsValue.provinceChoice = [];
-        this.optionsValue.Select_city_mode = SELECT_MODE_ENUM.City.CITY_RANDOM.CN;
+        this.optionsValue.Select_city_mode = OPTIONS_ENUM.City.CITY_RANDOM.CN;
       }
       this.$emit('update:relation', JSON.stringify(this.relationValue));
     }
