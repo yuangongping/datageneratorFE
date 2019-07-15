@@ -371,7 +371,7 @@ export default {
     },
     
     // ----------  下载
-    async download(filename, filetype) {
+    download(filename, filetype) {
       try{
         const data  = this.generate(this.exportForm.dataNum);
         const dataToDownload = JSON.stringify(data);

@@ -170,8 +170,8 @@ export class Generator {
                 // 得到生成结果
                 genResult = genFunc(options, relation);
                 // 判断生成的值是否已经存在，不存在则
-                if (dataFilter[fieldName].indexOf(genResult.data) < 0) {
-                    dataFilter[fieldName].push(genResult.data);
+                if (!dataFilter[fieldName][genResult.data]) {
+                    dataFilter[fieldName][genResult.data] = true;
                     failStat = false;
                     break;
                 }
