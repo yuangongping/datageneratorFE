@@ -13,7 +13,7 @@ import StrSpliceGenFunc from  '@/datatypes/StrSplice/StrSplice'
 import StrSegmenteGenFunc from '@/datatypes/StringSegmente/StringSegmente'
 import TextGenFunc from '@/datatypes/Text/Text';
 import RandomChoiceGenFunc from '@/datatypes/RandomChoice/RandomChoice';
-import TimeGenFunc from '@/datatypes/Time/Time';
+import TimeGenFunc from '@/datatypes/Time/Time';  
 
 export const DATA_TYPES = {
   Sex: {
@@ -86,7 +86,7 @@ export const DATA_TYPES = {
     genFunc: CityGenFunc,
     options: {
       Select_city_mode: SELECT_MODE_ENUM.City.CITY_RANDOM.CN,
-      cities: [""],
+      cities: [],
       provinceChoice: []
     },
     __unique: false, // 生成结果是否是唯一值
@@ -103,7 +103,7 @@ export const DATA_TYPES = {
     options: {
       Select_district_mode: SELECT_MODE_ENUM.District.DISTRICT_RANDOM.CN,
       cityChoice: '', //选中的城市， 关联字段时从该城市随机选取一个区县， 作为独立组件使用时，随机生成区县
-      districts: [""],
+      districts: [],
       districts_dict: {}
     },
     __unique: false, // 生成结果是否是唯一值

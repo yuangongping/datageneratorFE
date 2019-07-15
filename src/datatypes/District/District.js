@@ -40,6 +40,9 @@ export default (options, relation) => {
       });
     }
   }
+  if(districts.length === 0){
+    throw new Error("请选择区县!"); // 数组为空抛出异常
+  }
   districtChioce = randomChoice(districts)  
   // 将生成结果传递下去
   const deliver_options = {};
