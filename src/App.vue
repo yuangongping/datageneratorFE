@@ -29,6 +29,11 @@
 
 <style lang="scss">
 $mainColor: #2d8cf0;
+
+.shadow-box {
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+}
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
