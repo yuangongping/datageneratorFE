@@ -11,7 +11,7 @@
         </div>
 
         <div class="content">
-          <div class="fields">
+          <div class="suggestion">
             {{ suggestionItem.content }}
           </div>
 
@@ -24,23 +24,14 @@
               {{ suggestionItem.pubTime  | getDate}}
             </div>
 
-            <div class="action-num">
-              <Icon type="md-eye" /> 
-              阅读
-              {{ suggestionItem.readNum }}
-            </div>
-            <!-- <div class="action-num">
-              <Icon type="md-heart" />
-              赞
-              {{ suggestionItem.likeNum }}
-            </div> -->
           </div>
         </div>
         
         
       </div>
+
       <div class="add-suggestion" >
-        <Button icon="md-add" @click="suggestionFlag = true">建议</Button>  
+        <Button class="suggest-btn" icon="md-add" @click="suggestionFlag = true">建议</Button>  
         <Modal
           title="提意见"
           v-model="suggestionFlag"
@@ -78,7 +69,7 @@
     .content {
       padding-left: 10px;
 
-      .fields {
+      .suggestion {
         padding: 5px 0;
         font-size: 12px;
       }
@@ -91,15 +82,10 @@
         div {
           margin-right: 20px;
         }
+      }
 
-        .action-num {
-          display: flex;
-          align-items: center;
-          cursor: pointer;
-          i {
-            margin-right: 5px;
-          }
-        }
+      .suggest-btn {
+        margin-top: 20px;
       }
     }
   }

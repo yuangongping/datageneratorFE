@@ -106,10 +106,11 @@
       <Preview :tableHead="tableHead" :data="dataPreview" />
     </Modal>
 
-    <div class="button" v-if="dataTypeConfigs.length > 0">
+    <div class="preview-save" v-if="dataTypeConfigs.length > 0">
       <Button @click="preview"  type="primary" icon="md-eye"> 预览 </Button>
+      <Button @click="downloadFlag=true"  type="primary" icon="md-share"> 保存并分享数据</Button>
+      <span>保存数据以便于下次生成使用，同时推荐您将结果分享到社区，共享生成配置</span>
       <Button @click="downloadFlag=true"  type="primary" icon="md-download"> 导出 </Button>
-      <Button @click="downloadFlag=true"  type="primary" icon="md-share"> 分享保存数据模型 </Button>
     </div>
 
     <div class="export">
@@ -131,8 +132,6 @@
         </RadioGroup><br />
         <span class='text_label'>文件名</span>
         <Input v-model="defaultFilename" placeholder="文件名"  style="width: 200px" />
-
-       
       </Modal>
     </div>
   </div>
@@ -169,7 +168,7 @@ export default {
       tableHead: [],
       // 预览数据量, 预览10条
       previewDataNum: 10, 
-      downlaodDataNum: 100000,
+      downlaodDataNum: 100,
       // 文件下载默认类型
       downloadFileType: 'JSON',
       // 默认导出文件名
@@ -371,10 +370,16 @@ export default {
 </script>
 
 <style lang="scss">
+.flip-list-move {
+  transition: transform 1s;
+}
 
-.button { 
-  Button{
-    margin:1% 1% 0% 0%; 
+.preview-save { 
+  button{
+    margin: 10px;
+    &:nth-child(1) {
+      margin-left: 0;
+    }
   }
 }
 .ivu-modal-body {
@@ -448,6 +453,7 @@ export default {
   }
   .field-type {
     width: 70px;
+    padding-left: 5px;
     margin-right: 10px;
   }
   .field-name {
