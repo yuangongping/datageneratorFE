@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
+import Case from './views/Case.vue'
+import Suggestion from './views/Suggestion.vue'
 
 Vue.use(Router)
 
@@ -17,7 +19,20 @@ export default new Router({
     {
       path: '/community',
       name: 'community',
+      redirect: '/community/case',
       component: () => import(/* webpackChunkName: "community" */ './views/Community.vue'),
+      children: [
+        {
+          path: 'case',
+          name: 'case',
+          component: Case
+        },
+        {
+          path: 'suggestion',
+          name: 'suggestion',
+          component: Suggestion
+        }
+      ]
     },
 
     {

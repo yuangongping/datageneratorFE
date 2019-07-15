@@ -9,7 +9,7 @@
           <span class="text">首页</span>
         </router-link>
 
-        <router-link to="/community">
+        <router-link to="/community/case">
           <Icon type="ios-people"  size="22"  class="icon"/>
           <span class="text">社区</span>
         </router-link>
@@ -96,6 +96,7 @@ footer {
   justify-content: flex-start !important;
   justify-items: column !important;
 }
+
 </style>
 
 <script>

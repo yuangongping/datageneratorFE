@@ -103,51 +103,51 @@
       v-model="previewFlag"
       :mask-closable="false"
     >
-      <Preview :tableHead="tableHead" :data="dataGened" />
+      <Preview :tableHead="tableHead" :data="dataPreview" />
     </Modal>
 
-    <div class="button" v-if="dataTypeConfigs.length > 0">
+    <div class="preview-save" v-if="dataTypeConfigs.length > 0">
       <Button @click="preview"  type="primary" icon="md-eye"> 预览 </Button>
+      <Button @click="shareFlag=true"  type="primary" icon="md-share"> 保存并分享数据</Button>
+      <span>保存数据以便于下次生成使用，同时推荐您将结果分享到社区，共享生成配置</span>
       <Button @click="downloadFlag=true"  type="primary" icon="md-download"> 导出 </Button>
-      <Button @click="shareFlag = true"  type="primary" icon="md-share"> 分享保存数据模型 </Button>
     </div>
 
     <Modal
-      title="数据导出"
-      v-model="downloadFlag"
-      :mask-closable="false"
-      ok-text='导出'
-      cancel-text=''
-      @on-ok="exportData"
-      
-    > 
-      <span class='text_label'>数据量</span>
-      <InputNumber :max="100000" :min="1" v-model="downlaodDataNum"></InputNumber><br />
-      <span class='text_label'>文件类型</span>
-      <RadioGroup v-model="downloadFileType">
-        <Radio label="JSON" ></Radio>
-        <Radio label="CSV"></Radio>
-        <Radio label="XML"></Radio>
-      </RadioGroup><br />
-      <span class='text_label'>文件名</span>
-      <Input v-model="defaultFilename" placeholder="文件名"  style="width: 200px" />
-    </Modal>
-
-     <Modal
-      title="分享保存数据模型"
+      title="保存并分享模型"
       v-model="shareFlag"
+      ok-text="分享"
+      cancel-text=""
       :mask-closable="false"
-      ok-text='分享'
-      cancel-text=''
-      @on-ok="exportData"
-      
-    > 
-      <span class='text_label'>昵称</span>
-      <Input v-model="downlaodDataNum"  style="width: 200px"/><br />
-      <span class='text_label'>数据模型</span>
-      <Input v-model="defaultFilename" style="width: 200px" />
+      @on-ok="shareModle"
+    >
+      <span class='text_label'>昵称 </span>
+      <Input v-model="nickName"   clearable required style="width: 200px" /><br />
+      <span class='text_label'>表名 </span>
+      <Input v-model="tableName" clearable  required style="width: 200px"/><br />
     </Modal>
 
+    <div class="export">
+      <Modal
+        title="数据导出"
+        v-model="downloadFlag"
+        :mask-closable="false"
+        ok-text='导出'
+        cancel-text=''
+        @on-ok="exportData"
+      >  
+        <span class='text_label'>数据量</span>
+        <InputNumber :max="100000" :min="1" v-model="downlaodDataNum"></InputNumber><br />
+        <span class='text_label'>文件类型</span>
+        <RadioGroup v-model="downloadFileType">
+          <Radio label="JSON" ></Radio>
+          <Radio label="CSV"></Radio>
+          <Radio label="XML"></Radio>
+        </RadioGroup><br />
+        <span class='text_label'>文件名</span>
+        <Input v-model="defaultFilename" placeholder="文件名"  style="width: 200px" />
+      </Modal>
+    </div>
   </div>
 
 </template>
@@ -172,6 +172,9 @@ import { SexConfig, NameConfig, CounterConfig,
          RandomFieldConfig, DetailAddressConfig, GeographCoordinatesConfig,
          OccupationConfig} from '@/components/datatypesconfig/index.js';  
 import { DATA_TYPES } from '@/datatypes/index.js';
+import { apiInsertRecord } from '../api/api.js'
+
+
 export default {
   name: 'home',
   data() {
@@ -179,10 +182,12 @@ export default {
       previewFlag: false,
       downloadFlag: false,
       shareFlag: false,
+      nickName: '爱我中华',
+      tableName: '',
       tableHead: [],
       // 预览数据量, 预览10条
       previewDataNum: 10, 
-      downlaodDataNum: 1,
+      downlaodDataNum: 100,
       // 文件下载默认类型
       downloadFileType: 'JSON',
       // 默认导出文件名
@@ -192,7 +197,7 @@ export default {
       ],
       dataTypeToAdd: 'Sex',
       // 数据生成结果
-      dataGened: []
+      dataPreview: []
     }
   },
   components: {
@@ -267,13 +272,13 @@ export default {
 
     // 预览函数
     preview(){
-      this.dataGened = [];
+      this.dataPreview = [];
       try {
-        this.dataGened = this.generate(this.previewDataNum);
+        this.dataPreview = this.generate(this.previewDataNum);
         // 设置对话框为可见状态
         this.previewFlag = true;
         // 获取数据的所有keys
-        const keys = Object.keys(this.dataGened[0]);
+        const keys = Object.keys(this.dataPreview[0]);
         // 重置数据表头
         this.tableHead = [];
         for(var i = 0; i < keys.length; i++ ){
@@ -292,17 +297,70 @@ export default {
       }
       
     },
+    // 数据类型保存为csv格式
+    formatXml(datas){
+      var xml = '<?xml version="1.0" encoding="utf-8"?>'+"\n";
+      xml += '<tabledata>'+"\n";
+      // 遍历每条记录
+      datas.forEach((data) => {
+        xml += "    <Item>"+"\n";
+        // 遍历每条记录的key
+        for (var key in data) {
+          xml += "        <Name>" + key + "</Name>"+"\n";
+          xml += "        <Value>" + data[key] + "</Value>"+"\n";
+        }
+        xml += "    </Item>"+"\n";
+      });
+      xml += '</tabledata>'+"\n";
+      return new Blob([xml], { type: "application/xml;charset=utf-8" })
+    },
     
+    // 数据保存为csv格式
+    formatCsv(datas){
+      var csvData = "";
+      var trData = '';
+
+      // 获取表头数据
+      for (var key in datas[0]) {
+        trData += key +',';
+      }
+      csvData += trData + '\n';
+      // 遍历待保存数据
+      datas.forEach((data) => {
+        var temp = '';
+        // 遍历每条记录的key
+        for (var key in data) {
+          temp += data[key] + ',';
+        }
+        csvData += temp + '\n';
+       
+      });
+      
+      return new Blob(
+        [ '\ufeff' + csvData ], 
+        { type: "text/" + 'csv' + ";charset=utf-8" }
+      );
+    },
     // 导出模态框的下载函数
     async download(filename, filetype) {
+      var blob;
       try{
-        const data  = JSON.stringify(this.generate(this.downlaodDataNum));
-        if (data == "" || filename == "" || filetype == "") {
+        const datas = this.generate(this.downlaodDataNum);
+        if (filetype === 'JSON'){
+          const temp = JSON.stringify(datas);
+          blob  = new Blob( [temp] );
+        } else if (filetype === 'XML'){
+          blob  = this.formatXml(datas);
+        } else {
+          blob  = this.formatCsv(datas);
+        }
+       
+        if (datas == "" || filename == "" || filetype == "") {
           throw new Error("下载组件存在非空属性")
         }
         const $aNode = document.createElement("a");
-        $aNode.download = filename + '.' + filetype;
-        $aNode.href = (window.URL ? URL : window.webkitURL).createObjectURL( new Blob([data]));
+        $aNode.download = filename + '.' + filetype.toLowerCase();
+        $aNode.href = (window.URL ? URL : window.webkitURL).createObjectURL(blob);
         document.body.appendChild($aNode);
         $aNode.click();
         document.body.removeChild($aNode);
@@ -380,18 +438,38 @@ export default {
     },
 
     // 分享保存数据模型
-    shareModle(){
-
+    async shareModle(){
+      try {
+        const comfigs={
+          nick_name: this.nickName,
+          table_name: this.tableName,
+          config: this.dataTypeConfigs
+        }
+        const res = await apiInsertRecord(comfigs)
+        if (res.code === 200){
+          this.$Message.success('分享成功');
+        } else {
+          this.$Message.error("数据无法保存，请检查！"); 
+        }
+      } catch (e) {
+        this.$Message.error(e); 
+      }
     }
   }
 }
 </script>
 
 <style lang="scss">
+.flip-list-move {
+  transition: transform 1s;
+}
 
-.button { 
-  Button{
-    margin:1% 1% 0% 0%; 
+.preview-save { 
+  button{
+    margin: 10px;
+    &:nth-child(1) {
+      margin-left: 0;
+    }
   }
 }
 .ivu-modal-body {
@@ -465,6 +543,7 @@ export default {
   }
   .field-type {
     width: 70px;
+    padding-left: 5px;
     margin-right: 10px;
   }
   .field-name {

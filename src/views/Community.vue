@@ -1,46 +1,56 @@
 <template>
     <div class="community">
-        <Modal
-            title=""
-            v-model="downloadFlag"
-            ok-text=''
-            cancel-text=''
-            :closable="false">
-            <img src="./../assets/images/gif.gif" width="100px">
-        </Modal>
+      <div class="menu">
+        <Menu  mode="horizontal"  @on-select="toSelect" active-name="case" >
+          <MenuItem name="case" >
+              <Icon type="ios-briefcase" />
+              案例
+          </MenuItem>
+          <MenuItem name="suggestion"  > 
+              <Icon type="ios-chatbubbles" />
+              意见            
+          </MenuItem>
+        </Menu>
+        <router-view class="router-view"/>  
+      </div>
+
     </div>
 </template>
 <style lang="scss">
+
 .community{
   display: flex;
-  margin: 2% 16% 2% 16%;
+  flex-direction: column;
+  margin: 0 20px;
   padding: 20px;
   box-shadow: 0 10px 30px 0 rgba(0,0,0,.1);
   
+
+  .router-view {
+    padding: 10px 0 0 0;
+  }
 }
+
 </style>
 <script>
-import {  Modal } from 'iview';
+import { MenuItem, Menu, Icon } from 'iview';
 export default {
-    data(){
-        return {
-            downloadFlag: true,
-        }
+  data(){
+      return {
+        name:"case"
+      }
     },
-    components: {
-        Modal
-    },
-    // created() {
-    //     this.getData();
-    // },
-    methods:{
-        // getData(){
-        //     // 向后端发起请求
-        //     const data = ''  
-        // }
-    },
-   
-    
+  components: {
+    MenuItem,
+    Menu,
+    Icon
+  },
+  methods: {
+    toSelect(name) {
+      this.$router.push(name)
+    }
+  } 
+
 }
 </script>
 

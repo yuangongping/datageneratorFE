@@ -45,7 +45,7 @@
           v-model="relationValue.fieldNames"
           @on-change="chgRelation"
           style="width: 200px"
-          placeholder="只能关联时间字段, 用于计算年龄"
+          placeholder="只能关联年龄字段"
         />
 			</label>
 		</div>

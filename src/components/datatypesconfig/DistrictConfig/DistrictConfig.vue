@@ -20,11 +20,13 @@
 
 		<div class="config-item" v-if="relationValue.type === RELATION_ENUM.COR_RELATION.EN">
 			<label>
+        <Tooltip max-width="200" content="建议关联城市组件, 请合理设置关联字段" theme="light" placement="top">
         <span class="config-title">关联字段</span>
         <Input type="text"
           v-model="relationValue.fieldNames"
           @on-change="chgRelation"
         />
+        </Tooltip>
 			</label>
 		</div>
 
@@ -111,7 +113,7 @@
 
 <script>
 import { RELATION_ENUM, ALLOW_RELATIONS, OPTIONS_ENUM } from '@/datatypes/CONST.js';
-import { Input, Select, Option, Radio, RadioGroup } from "iview";
+import { Input, Select, Option, Radio, RadioGroup, Tooltip } from "iview";
 import OriginalData from '@/datatypes/COMMON_DATA/OriginalData_dict.js';
 export default {
   data() {
@@ -140,6 +142,7 @@ export default {
     Input,
     Radio, 
     RadioGroup ,
+    Tooltip
 
   },
   methods: {

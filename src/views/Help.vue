@@ -17,7 +17,7 @@
         <p>提供数据下载功能，支持自定义数据量、导出文件类型以及自定义文件名。</p>
         <br>
         <p>注：该系统对下载数据量没有明确要求,为保证用户更好的体验，建议分批次下载数据,单次下载量不超过10万条！</p>
-        <a class="bottom" href="./responsibility">免责申明</a>
+        <a class="responsibility" href="./responsibility">免责申明</a>
       </div>
       <div class="right">
         <h6>常见问题</h6>
@@ -31,8 +31,8 @@
         <p>答：直接点击基础配置或快捷配置下的对应字段按钮，即可添加。</p>
 
         <li class="questions">什么是数字表达式？怎么填写？</li>
-        <p>数字表达式即字段的值需通过表达式运算生成时，填写的表达式。</p>
-        <p>图中表达式的填写只能是${DATA}或${RELATE}，其中${RELATE}代表关联字段的值，${DATA}代表本字段的值，运算关系可以任意选择。例如图中数字表达式为Y=X^2， Z=X+Y。</p>
+        <p>数字表达式即字段的值需通过表达式运算生成时，填写的表达式。例如年龄计算为2019减去出生年龄, 出生年龄为关联字段, 则年龄的数字表达式为2019-${RELATE}</p>
+        <p>例如图中数字表达式为Y=X^2， Z=X+Y。${RELATE}代表关联字段的值，${DATA}代表本字段的值，运算关系可以任意选择。</p>
         <img src="../assets/images/express.png" alt="" width="90%" style="margin-left:30px;">
         
       </div>
@@ -80,10 +80,9 @@
     width: 30%;
     padding-right: 20px;
     border-right: 1px solid #f0f0f0;
-    .bottom{
-      position: fixed;
-      bottom: 200px;
-      font-size: 10px;
+    .responsibility{
+      display: inline-block;
+      margin-top: 20px;
     }
   }
   .right{

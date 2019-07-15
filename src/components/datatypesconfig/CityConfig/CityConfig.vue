@@ -19,11 +19,13 @@
 
 		<div class="config-item" v-if="relationValue.type === RELATION_ENUM.COR_RELATION.EN">
 			<label>
+        <Tooltip max-width="200" content="建议关联省份组件, 请合理设置关联字段" theme="light" placement="top">
         <span class="config-title">关联字段</span>
         <Input type="text"
           v-model="relationValue.fieldNames"
           @on-change="chgRelation"
         />
+        </Tooltip>
 			</label>
 		</div>
 
@@ -83,7 +85,7 @@
 
 <script>
 import { RELATION_ENUM, ALLOW_RELATIONS, OPTIONS_ENUM } from '@/datatypes/CONST.js';
-import { Input, Select, Option, Radio, RadioGroup } from "iview";
+import { Input, Select, Option, Radio, RadioGroup, Tooltip } from "iview";
 import OriginalData from '@/datatypes/COMMON_DATA/OriginalData_dict.js';
 export default {
   data() {
@@ -107,7 +109,8 @@ export default {
     Option,
     Input,
     Radio, 
-    RadioGroup
+    RadioGroup,
+    Tooltip
   },
   methods: {
     chgProvinces() {  // 选择省份时，将所选省份下属所有城市加入城市选择下拉框options里面
