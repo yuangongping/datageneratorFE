@@ -222,7 +222,7 @@ export const DATA_TYPES = {
             fieldNames: "",
             type: RELATION_ENUM.COR_RELATION.EN,
             expresion: '',
-            allowTypes: ['*'],
+            allowTypes: "ALL",
         },
     },
     StrSegment: {
@@ -239,7 +239,7 @@ export const DATA_TYPES = {
         relation: {
             fieldNames: "",
             type: RELATION_ENUM.COR_RELATION.EN,
-            allowTypes: ["*"],
+            allowTypes: "ALL",
         }
     },
 
@@ -270,7 +270,7 @@ export const DATA_TYPES = {
             minInterval: 0,
             maxInterval: 1,
             type: RELATION_ENUM.INDEPEND.EN,
-            allowTypes: ["Time"],
+            allowTypes: "ALL",
         }
     },
     DetailAddress: {
