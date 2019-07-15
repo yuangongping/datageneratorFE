@@ -109,32 +109,45 @@
     <div class="button" v-if="dataTypeConfigs.length > 0">
       <Button @click="preview"  type="primary" icon="md-eye"> 预览 </Button>
       <Button @click="downloadFlag=true"  type="primary" icon="md-download"> 导出 </Button>
-      <Button @click="downloadFlag=true"  type="primary" icon="md-share"> 分享保存数据模型 </Button>
+      <Button @click="shareFlag = true"  type="primary" icon="md-share"> 分享保存数据模型 </Button>
     </div>
 
-    <div class="export">
-      <Modal
-        title="数据导出"
-        v-model="downloadFlag"
-        :mask-closable="false"
-        ok-text='导出'
-        cancel-text=''
-        @on-ok="ok"
-        
-      > 
-        <span class='text_label'>数据量</span>
-        <InputNumber :max="100000" :min="1" v-model="downlaodDataNum"></InputNumber><br />
-        <span class='text_label'>文件类型</span>
-        <RadioGroup v-model="downloadFileType">
-          <Radio label="JSON" ></Radio>
-          <Radio label="CSV"></Radio>
-          <Radio label="XML"></Radio>
-        </RadioGroup><br />
-        <span class='text_label'>文件名</span>
-        <Input v-model="defaultFilename" placeholder="文件名"  style="width: 200px" />
+    <Modal
+      title="数据导出"
+      v-model="downloadFlag"
+      :mask-closable="false"
+      ok-text='导出'
+      cancel-text=''
+      @on-ok="exportData"
+      
+    > 
+      <span class='text_label'>数据量</span>
+      <InputNumber :max="100000" :min="1" v-model="downlaodDataNum"></InputNumber><br />
+      <span class='text_label'>文件类型</span>
+      <RadioGroup v-model="downloadFileType">
+        <Radio label="JSON" ></Radio>
+        <Radio label="CSV"></Radio>
+        <Radio label="XML"></Radio>
+      </RadioGroup><br />
+      <span class='text_label'>文件名</span>
+      <Input v-model="defaultFilename" placeholder="文件名"  style="width: 200px" />
+    </Modal>
 
-      </Modal>
-    </div>
+     <Modal
+      title="分享保存数据模型"
+      v-model="shareFlag"
+      :mask-closable="false"
+      ok-text='分享'
+      cancel-text=''
+      @on-ok="exportData"
+      
+    > 
+      <span class='text_label'>昵称</span>
+      <Input v-model="downlaodDataNum"  style="width: 200px"/><br />
+      <span class='text_label'>数据模型</span>
+      <Input v-model="defaultFilename" style="width: 200px" />
+    </Modal>
+
   </div>
 
 </template>
@@ -165,8 +178,7 @@ export default {
     return {
       previewFlag: false,
       downloadFlag: false,
-      loadingGif: false,
-      loading: false,
+      shareFlag: false,
       tableHead: [],
       // 预览数据量, 预览10条
       previewDataNum: 10, 
@@ -288,10 +300,9 @@ export default {
         if (data == "" || filename == "" || filetype == "") {
           throw new Error("下载组件存在非空属性")
         }
-        const $aNode = document.createElement("a"),
-        blob = new Blob([data]);
+        const $aNode = document.createElement("a");
         $aNode.download = filename + '.' + filetype;
-        $aNode.href = (window.URL ? URL : window.webkitURL).createObjectURL(blob);
+        $aNode.href = (window.URL ? URL : window.webkitURL).createObjectURL( new Blob([data]));
         document.body.appendChild($aNode);
         $aNode.click();
         document.body.removeChild($aNode);
@@ -359,15 +370,18 @@ export default {
       }
     },
     // 模态对话框确认监听函数
-    ok () {
-      this.loading = true;
+    exportData () {
       this.download(this.defaultFilename, this.downloadFileType);
-      this.loading = false;
     },
 
     // 清空配置
     emptyConfigs() {
       this.dataTypeConfigs = [];
+    },
+
+    // 分享保存数据模型
+    shareModle(){
+
     }
   }
 }
