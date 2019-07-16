@@ -6,26 +6,32 @@
         :key="caseItem.id"
         
       >
-        <div class="head-img">
-          {{ caseItem.name | headText }}
-        </div>
-
         <div class="content">
           <div class="title">
             {{ caseItem.name }}
           </div>
 
-          <div class="fields">
-            <span v-for="field in caseItem.fields"
-              :key="field.fieldName"
-            >
-              {{ field.fieldName }}
-            </span>
+          <div class="fields-data">
+            <div class="flex-row">
+              <span class="fields" v-for="field in caseItem.fields"
+                :key="field.fieldName"
+              >
+                {{ field.fieldName }}
+              </span>
+            </div>
+
+            <div class="flex-row">
+              <span v-for="(value, name) in caseItem.data"
+                :key="name"
+              >
+                {{ value }}
+              </span>
+            </div>
           </div>
 
           <div class="share-meta">
-            <div class="sharer">
-              来自 {{ caseItem.sharer }}
+            <div>
+              来自 <span class="sharer">{{ caseItem.sharer }}</span>
             </div>
             
             <div class="share-time">
@@ -61,26 +67,32 @@
     flex-direction: row;
     align-items: center;
 
-    .head-img {
-      width: 60px;
-      height: 60px;
-      background: #5B95F9;
-      text-align: center;
-      line-height: 60px;
-      color: #ffffff;
-      border-radius: 30px;
-      font-size: 20px;
-    }
-
     .content {
       padding-left: 5px;
       .title {
         font-size: 16px;
         color: #1269db;
+        font-weight: 700;
       }
 
-      .fields {
-        padding: 5px 0;
+      .fields-data {
+        margin: 10px 0;
+        span {
+          border: 1px solid #888888;
+          &:nth-child(n + 2) {
+            border-left: none;
+          }
+          display: inline-block;
+          padding: 2px 0;
+          width: 80px;
+          text-align: center;
+        }
+
+        .fields {
+          background-color: #f2f2f2;
+          border-bottom: none;
+          font-weight: 700;
+        }
       }
 
       .share-meta {
@@ -92,6 +104,10 @@
           margin-right: 20px;
         }
 
+        .sharer {
+          color: #1269db;
+        }
+        
         .action-num {
           display: flex;
           align-items: center;
@@ -115,12 +131,10 @@ export default {
     }
   },
   components: {
-    Icon
+    Icon,
+    Button
   },
   filters: {
-    headText(name) {
-      return name.slice(0, 1);
-    },
     getDate(dateTimeStamp){
 			if(dateTimeStamp==undefined){
 				return false;
@@ -209,6 +223,7 @@ export default {
           likeNum: _case.like_num,
           quoteNum: _case.quote_num,
           fields: fields,
+          data: data,
         })
       })
       return _cases;

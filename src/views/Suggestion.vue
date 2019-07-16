@@ -23,11 +23,9 @@
             <div class="publish-time">
               {{ suggestionItem.date_created  | getDate}}
             </div>
-
           </div>
+
         </div>
-        
-        
       </div>
 
       <div class="add-suggestion" >
@@ -43,7 +41,6 @@
           <Input v-model="content" type="textarea" :rows="3" placeholder="请输入您的意见..." />
         </Modal>
          
-      </div>
     </div>
     
 </template>
@@ -64,12 +61,13 @@
       text-align: center;
       line-height: 60px;
       color: #ffffff;
-      border-radius: 30px;
+      border-radius: 60px;
       font-size: 20px;
     }
 
     .content {
       padding-left: 10px;
+      flex: 1;
 
       .suggestion {
         padding: 5px 0;
@@ -85,13 +83,10 @@
           margin-right: 20px;
         }
       }
-
-      .suggest-btn {
-        margin-top: 20px;
-      }
-  
-      
     }
+  }
+  .suggest-btn {
+    margin-top: 20px;
   }
 }
 .ivu-modal-body{
