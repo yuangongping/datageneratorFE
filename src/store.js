@@ -7,13 +7,22 @@ export default new Vuex.Store({
     state: {
         storeConfigs: [],
         storeQuote: null,
+        casePage: 1,
+        numPerPage: 5,
+        suggestionPage:1
     },
     mutations: {
-        SET_STORE_CONFIGS: (state, configs) => {
+        SET_CONFIGS: (state, configs) => {
             state.storeConfigs = configs;
         },
-        SET_STORE_QUOTE: (state, quote) => {
+        SET_QUOTE: (state, quote) => {
             state.storeQuote = quote;
+        },
+        SET_CASE_PAGE: (state, casePage) => {
+            state.casePage = casePage;
+        },
+        SET_SUGGESTION_PAGE: (state, suggestionPage) => {
+            state.suggestionPage = suggestionPage;
         }
     },
     actions: {
@@ -26,5 +35,14 @@ export default new Vuex.Store({
         storeQuote: state => {
             return state.storeQuote;
         },
+        storeCasePage: state => {
+            return state.casePage;
+        },
+        storeSuggestionPage: state => {
+            return state.suggestionPage;
+        },
+        storeNumPerPage: state => {
+            return state.numPerPage;
+        }
     }
 })

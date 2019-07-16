@@ -7,7 +7,8 @@
       </BasicConfig>
 
       <FastConfig 
-        @fast-config="fastConfig">
+        @fast-config="fastConfig"
+      >
       </FastConfig>
     </div>
 
@@ -308,7 +309,7 @@ export default {
   },
   watch: {
     dataTypeConfigs: function (newVal, oldVal) {
-      this.$store.commit('SET_STORE_CONFIGS', deepcopy(newVal))
+      this.$store.commit('SET_CONFIGS', deepcopy(newVal))
       if (this.dataTypeConfigs.length == 0) {
         this.exportForm.show = false;
         this.saveForm.show = false;
@@ -474,9 +475,11 @@ export default {
 
         // 只保存
         if (!this.saveForm.wantShare) {
+          console.log('##############')
 
         } else {
         // 保存并分享
+          console.log('##############')
 
         }
       } catch (e) {
