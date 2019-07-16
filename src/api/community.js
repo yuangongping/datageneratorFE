@@ -1,7 +1,21 @@
 import request from '../utils/request.js';
 const querystring = require('querystring')
 
-export function apiInsertCase(params) {
+
+export function totalSuggestion() {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/totalsuggestion',
+      method: 'get'
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+export function addCase(params) {
     return new Promise((resolve, reject) => {
       request({
         url: '/addcase',
@@ -20,7 +34,7 @@ export function apiInsertCase(params) {
   }
 
   
-export function apiInsertSuggestion(params) {
+export function addSuggestion(params) {
   return new Promise((resolve, reject) => {
     request({
       url: '/addsuggestion',
@@ -37,10 +51,27 @@ export function apiInsertSuggestion(params) {
   })
 }
 
-export function apiListSuggestion() {
+export function listSuggestion(params) {
   return new Promise((resolve, reject) => {
     request({
       url: '/listsuggestion',
+      method: 'post',
+      data: querystring.stringify({
+        page: params.page,
+        num: params.num
+      })
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+export function totalCase() {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/totalcase',
       method: 'get'
     }).then((res) => {
       resolve(res)
@@ -50,11 +81,15 @@ export function apiListSuggestion() {
   })
 }
 
-export function apiListCase() {
+export function listCase(params) {
   return new Promise((resolve, reject) => {
     request({
       url: '/listcase',
-      method: 'get'
+      method: 'post',
+      data: querystring.stringify({
+        page: params.page,
+        num: params.num
+      })
     }).then((res) => {
       resolve(res)
     }).catch((e) => {
@@ -63,16 +98,14 @@ export function apiListCase() {
   })
 }
 
-export function apiUpdateCase(params) {
-  const num = params.islike == true ? params.like_num: params.quote_num;
+export function updateCase(params) {
   return new Promise((resolve, reject) => {
     request({
       url: '/updatecase',
       method: 'post',
       data: querystring.stringify({
         id: params.id,
-        num: num,
-        islike: params.islike
+        type: params.type
       })
     }).then((res) => {
       resolve(res)

@@ -7,25 +7,10 @@
       </BasicConfig>
 
       <FastConfig 
-        @fast-config="fastConfig">
+        @fast-config="fastConfig"
+      >
       </FastConfig>
     </div>
-<<<<<<< HEAD
-    <div class="field-list"  v-if="dataTypeConfigs.length > 0">
-      <Scroll height="650">
-        <div class="field-title">
-          <span>
-            配置项
-          </span>
-          <Poptip
-            confirm
-            title="确定清空配置吗？"
-            @on-ok="emptyConfigs"
-            class="empty-config"
-          >
-            <span>清空</span>
-          </Poptip>
-=======
 
     <div class="field-list shadow-box"  v-if="dataTypeConfigs.length > 0">
       <div class="field-title">
@@ -63,7 +48,6 @@
               <span class="config-title">字段名</span>
             </label>
           </div>
->>>>>>> 7903f69d83c90f97cb84ded5b82580a129986161
           
         <!-- 字段配置组件区域 -->
         <div
@@ -325,7 +309,7 @@ export default {
   },
   watch: {
     dataTypeConfigs: function (newVal, oldVal) {
-      this.$store.commit('SET_STORE_CONFIGS', deepcopy(newVal))
+      this.$store.commit('SET_CONFIGS', deepcopy(newVal))
       if (this.dataTypeConfigs.length == 0) {
         this.exportForm.show = false;
         this.saveForm.show = false;
@@ -491,9 +475,11 @@ export default {
 
         // 只保存
         if (!this.saveForm.wantShare) {
+          console.log('##############')
 
         } else {
         // 保存并分享
+          console.log('##############')
 
         }
       } catch (e) {

@@ -21,7 +21,7 @@
             </div>
             
             <div class="publish-time">
-              {{ suggestionItem.date_created  | getDate}}
+              {{ suggestionItem.date_created | timeToAgo}}
             </div>
           </div>
 
@@ -40,9 +40,18 @@
           <Input v-model="nickname" type="text"  style="width: 200px" placeholder="请输入您的昵称..." /><br>
           <Input v-model="content" type="textarea" :rows="3" placeholder="请输入您的意见..." />
         </Modal>
-         
+       </div>
+
+       <Page
+        class="page"
+        size="small"
+        :page-size="storeNumPerPage"
+        show-total
+        :total="totalNum"
+        :current="storeSuggestionPage"
+        @on-change="pageChange"
+      />
     </div>
-    
 </template>
 
 <style lang="scss">
@@ -99,13 +108,20 @@
     text-align-last: justify;
   }
 }
+.page {
+  margin-top: 20px;
+}
 </style>
 <script>
-import { Icon, Modal, Input, Button } from 'iview';
-import { apiInsertSuggestion, apiListSuggestion } from '@/api/api.js'
+import { Icon, Modal, Input, Button, Page } from 'iview';
+import api from '@/api/index.js';
+import { timeToAgo } from "@/utils/functions";
+import { mapGetters } from 'vuex';
+
 export default { 
   data() {
     return {
+      totalNum: 0,
       suggestionList: [],
       suggestionFlag: false,
       content: '',
@@ -116,53 +132,47 @@ export default {
     Icon,
     Input,
     Modal,
-    Button
+    Button,
+    Page
   },
-  created() {
-    this.listSuggestion()
+  mounted() {
+    this.totalSuggestion();
+    this.listSuggestion();
   },
- 
+  computed: {
+    ...mapGetters(['storeSuggestionPage', 'storeNumPerPage'])
+  },
   filters: {
     headText(nick_name) {
       return nick_name.slice(0, 1);
     },
-     getDate(dateTimeStamp){
-			if(dateTimeStamp==undefined){
-				return false;
-			}else{
-        if (dateTimeStamp.indexOf("-") != -1){
-          var diffValue = new Date().getTime() - new Date(dateTimeStamp.replace(/\-/g, "/")).getTime();		
-          if(diffValue < 0){
-            console.log("结束日期不能小于开始日期！");
-          }
-          var dayC =diffValue/(1000 * 60 * 60 * 24);
-          var hourC =diffValue/(1000 * 60 * 60 );
-          var minC =diffValue/(1000 * 60 );
-          if(dayC>3){
-          return dateTimeStamp;
-          }else if(dayC>=1 && dayC<=3){
-          return parseInt(dayC) +"天前";
-          }else if(hourC>=1){
-          return parseInt(hourC) +"小时前";
-          }else if(minC>=1){
-          return parseInt(minC) +"分钟前";
-          }else{
-          return "刚刚";
-          }
-        }
-			}	
-		}
+    timeToAgo
   },
   methods: {
+    async totalSuggestion(){
+      try {
+        const res = await api.totalSuggestion();
+        if (res.code === 200) {
+          this.totalNum = res.data;
+        } else {
+          console.error(res);
+          this.$Message.error("获取总页码错误");
+        }
+      } catch (e) {
+        console.error(e);
+        this.$Message.error(e);
+      }
+    },
+
     async addSuggestion() {
        try {
         const params={
           nick_name: this.nickname,
           content: this.content,
         }
-        const res = await apiInsertSuggestion(params)
+        const res = await api.addSuggestion(params)
         if (res.code === 200){
-          this.$Message.success('添加建议成功');
+          this.$Message.success('添加建议成功, 等待后台审核');
           this.listSuggestion()
         } else {
           this.$Message.error("数据无法保存，请检查！"); 
@@ -173,15 +183,25 @@ export default {
     },
     async listSuggestion() {
       try{
-        const res = await apiListSuggestion();
+        console.log(this.storeSuggestionPage, this.storeNumPerPage)
+        const res = await api.listSuggestion({
+          page: this.storeSuggestionPage,
+          num: this.storeNumPerPage
+        });
         if (res.code === 200){
           this.suggestionList = res.data
         } else {
+          console.error(res);
           this.$Message.error("数据获取错误，请检查！"); 
         }
       } catch(e) {
+        console.error(e);
         this.$Message.error(e);
       }
+    },
+    pageChange(num) {
+      this.$store.commit('SET_SUGGESTION_PAGE', num);
+      this.listSuggestion();
     }
   }
 }
