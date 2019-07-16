@@ -31,7 +31,6 @@
 
 <script>
 import api from '@/api/index.js'
-import { FAST_TYPES } from './fastconfig.js';
 import { ButtonGroup, Button, Tooltip } from 'iview';
 import { mapGetters } from 'vuex';
 
@@ -39,7 +38,6 @@ export default {
   name: 'fastconfig',
   data() {
     return {
-      FAST_TYPES: FAST_TYPES,
       fastConfigs: []
     }
   },
