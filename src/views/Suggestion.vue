@@ -2,12 +2,12 @@
     <div class="suggestion">
       <div
         class="suggestion-item" 
-        v-for="suggestionItem in suggestion" 
+        v-for="suggestionItem in suggestionList" 
         :key="suggestionItem.id"
         
       >
         <div class="head-img">
-          {{ suggestionItem.opinioner | headText }}
+          {{ suggestionItem.nick_name | headText }}
         </div>
 
         <div class="content">
@@ -17,11 +17,11 @@
 
           <div class="opinion-meta">
             <div class="opinion">
-              来自 {{ suggestionItem.opinioner }}
+              来自 {{ suggestionItem.nick_name }}
             </div>
             
             <div class="publish-time">
-              {{ suggestionItem.pubTime  | getDate}}
+              {{ suggestionItem.date_created  | getDate}}
             </div>
 
           </div>
@@ -38,7 +38,9 @@
           :mask-closable="false"
           @on-ok="addSuggestion"
         >
-          <Input v-model="content" type="textarea" :rows="2" placeholder="请输入您的意见..." />
+          <span class='input_label'>用户名</span>
+          <Input v-model="nickname" type="text"  style="width: 200px" placeholder="请输入您的昵称..." /><br>
+          <Input v-model="content" type="textarea" :rows="3" placeholder="请输入您的意见..." />
         </Modal>
          
       </div>
@@ -87,37 +89,32 @@
       .suggest-btn {
         margin-top: 20px;
       }
+  
+      
     }
+  }
+}
+.ivu-modal-body{
+  .input_label {
+    width: 50px;
+    display: inline-block;
+    font-size: 14px;
+    margin: 15px 20px 30px 10px;
+    text-align:justify;
+    text-align-last: justify;
   }
 }
 </style>
 <script>
 import { Icon, Modal, Input, Button } from 'iview';
+import { apiInsertSuggestion, apiListSuggestion } from '@/api/api.js'
 export default { 
   data() {
     return {
-      suggestionList: [{
-        id: 1,
-        opinioner : '胖胖的小可爱',
-        content: "学习起点高、难度大，市面上只有很少的培训机构在做。对应岗位：数据科学家、数据挖掘工程师、机器学习工程师等学习起点高、\
-        学习起点高、难度大，市面上只有很少的培训机构在做。对应岗位：数据科学家、数据挖掘工程师、机器学习工程师等难度大，市面上只有很少的\
-        培训机构在做。对应岗位：数据科学家、数据挖掘工程师、机器学习工程师等",
-        pubTime: '2019-07-11 18:20:20',
-        likeNum: 0,
-        readNum: 0
-      },
-      {
-        id: 2,
-        opinioner : 'widaodao',
-        content: "学习起点高、难度大，市面上只有很少的培训机构在做。对应岗位：数据科学家、数据挖掘工程师、机器学习工程师等学习起点高、\
-        学习起点高、难度大，市面上只有很少的培训机构在做。对应岗位：数据科学家、数据挖掘工程师、机器学习工程师等难度大，市面上只有很少的\
-        培训机构在做。对应岗位：数据科学家、数据挖掘工程师、机器学习工程师等",
-        pubTime: '2019-07-11 18:20:20',
-        // likeNum: 0,
-        readNum: 0
-      }],
+      suggestionList: [],
       suggestionFlag: false,
-      content: ''
+      content: '',
+      nickname: ''
     }
   },
   components: {
@@ -126,25 +123,13 @@ export default {
     Modal,
     Button
   },
-  computed: {
-    suggestion() {
-      const _suggestion = []
-      this.suggestionList.forEach(suggestion => {
-        _suggestion.push({
-          opinioner: suggestion.opinioner,
-          pubTime: suggestion.pubTime,
-          // likeNum: suggestion.likeNum,
-          readNum: suggestion.readNum,
-          content: suggestion.content,
-        })
-      })
-
-      return _suggestion;
-    }
+  created() {
+    this.listSuggestion()
   },
+ 
   filters: {
-    headText(opinioner) {
-      return opinioner.slice(0, 1);
+    headText(nick_name) {
+      return nick_name.slice(0, 1);
     },
      getDate(dateTimeStamp){
 			if(dateTimeStamp==undefined){
@@ -174,15 +159,34 @@ export default {
 		}
   },
   methods: {
-    addSuggestion() {
-      this.suggestionList.push({
-         id: 2,
-        opinioner : 'test',
-        content: this.content,
-        pubTime: '2019-07-12 8:00:20',
-        likeNum: 0,
-        readNum: 0
-      })
+    async addSuggestion() {
+       try {
+        const params={
+          nick_name: this.nickname,
+          content: this.content,
+        }
+        const res = await apiInsertSuggestion(params)
+        if (res.code === 200){
+          this.$Message.success('添加建议成功');
+          this.listSuggestion()
+        } else {
+          this.$Message.error("数据无法保存，请检查！"); 
+        }
+      } catch (e) {
+        this.$Message.error(e); 
+      }
+    },
+    async listSuggestion() {
+      try{
+        const res = await apiListSuggestion();
+        if (res.code === 200){
+          this.suggestionList = res.data
+        } else {
+          this.$Message.error("数据获取错误，请检查！"); 
+        }
+      } catch(e) {
+        this.$Message.error(e);
+      }
     }
   }
 }

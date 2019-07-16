@@ -10,7 +10,6 @@
         @fast-config="fastConfig">
       </FastConfig>
     </div>
-
     <div class="field-list"  v-if="dataTypeConfigs.length > 0">
       <Scroll height="650">
         <div class="field-title">

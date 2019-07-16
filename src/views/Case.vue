@@ -2,7 +2,7 @@
     <div class="case">
       <div
         class="case-item" 
-        v-for="caseItem in caseList" 
+        v-for="(caseItem, index) in caseList" 
         :key="caseItem.id"
         
       >
@@ -32,13 +32,13 @@
               {{ caseItem.shareTime | getDate }}
             </div>
 
-            <div class="action-num">
+            <div class="action-num" @click="quote(index)">
               <Icon type="md-share" />
               引用
               {{ caseItem.quoteNum }}
             </div>
 
-            <div class="action-num" @click="addHeart(caseItem.id)">
+            <div class="action-num" @click="like(index)">
               <Icon type="md-heart" />
               赞
               {{ caseItem.likeNum }}
@@ -107,6 +107,7 @@
 </style>
 <script>
 import { Icon } from 'iview';
+import { apiUpdateCase, apiListCase } from '@/api/api.js'
 export default { 
   data() {
     return {
@@ -145,40 +146,54 @@ export default {
 			}	
 		}
   },
-  mounted() {
-    const data = [{
-        id: 1,
-        name: '法人库',
-        sharer: '胖胖的小可爱',
-        likeNum: 0,
-        quoteNum: 0,
-        config: '[{"component": "NameConfig","id": "1562834639872","fieldName": "name","dataType": "Name","options": {"sex": "random","__unique": false,"__display": true,"__fieldName": "name"},"relation": {"fieldNames": "sex","type": "COR_RELATION","allowTypes": ["Sex"]},"__unique": false,"__display": true},{"component": "SexConfig","id": "1562834640306","fieldName": "sex","dataType": "Sex","options": {"manAlias": "男","womanAlias": "女","sex": "random","__unique": false,"__display": true,"__fieldName": "sex"},"relation": null,"__unique": false,"__display": true}]',
-        shareTime: '2019-07-08 18:20:20'
-      },
-      {
-        id: 2,
-        name: '人口信息库',
-        sharer: '胖胖的小可爱',
-        likeNum: 0,
-        quoteNum: 0,
-        config: '[{"component": "NameConfig","id": "1562834639872","fieldName": "name","dataType": "Name","options": {"sex": "random","__unique": false,"__display": true,"__fieldName": "name"},"relation": {"fieldNames": "sex","type": "COR_RELATION","allowTypes": ["Sex"]},"__unique": false,"__display": true},{"component": "SexConfig","id": "1562834640306","fieldName": "sex","dataType": "Sex","options": {"manAlias": "男","womanAlias": "女","sex": "random","__unique": false,"__display": true,"__fieldName": "sex"},"relation": null,"__unique": false,"__display": true}]',
-        shareTime: '2019-07-12 11:58:20'
-      }];
-    this.caseList = this.parseCases(data);
+  created() {
+    this.listCase()
   },
   methods: {
-    addHeart(id) {
-       this.caseList.forEach(_case => {
-          if (_case.id == id) {
-            _case.likeNum ++
-          }
-       })
+    async like(index) {
+      const params = {'id': this.caseList[index].id, 'like_num': this.caseList[index].likeNum + 1, 'islike': true};
+      try {
+        const apiLike = await apiUpdateCase(params);
+        if (apiLike.code === 200){
+          this.caseList[index].likeNum ++ ;
+        } else {
+          this.$Message.error("数据更新错误，请检查！"); 
+        }
+      } catch(e) {
+        this.$Message.error(e);
+      }
     },
+    async quote(index) {
+      const params = {'id': this.caseList[index].id, 'quote_num': this.caseList[index].quoteNum + 1, 'islike': false};
+      try {
+        const apiQuote = await apiUpdateCase(params);
+        if (apiQuote.code === 200){
+           this.caseList[index].quoteNum += 1
+        } else {
+          this.$Message.error("数据更新错误，请检查！"); 
+        }
+      } catch(e) {
+        this.$Message.error(e);
+      }
+    },
+    async listCase() {
+      try{
+        const res = await apiListCase();
+        if (res.code === 200){
+          this.caseList = this.parseCases(res.data)
+        } else {
+          this.$Message.error("数据获取错误，请检查！"); 
+        }
+      } catch(e) {
+        this.$Message.error(e);
+      }
+    },
+
     parseCases(caseData) {
       const _cases = []
       caseData.forEach(_case => {
         const fields = []
-        const configs = JSON.parse(_case.config);
+        const configs = JSON.parse(_case.configs);
         configs.forEach(config => {
           if (config.__display) {
             fields.push({
@@ -186,18 +201,16 @@ export default {
             })
           }
         })
-
         _cases.push({
           id:_case.id,
-          sharer: _case.sharer,
-          name: _case.name,
-          shareTime: _case.shareTime,
-          likeNum: _case.likeNum,
-          quoteNum: _case.quoteNum,
+          sharer: _case.nick_name,
+          name: _case.table_name,
+          shareTime: _case.date_created,
+          likeNum: _case.like_num,
+          quoteNum: _case.quote_num,
           fields: fields,
         })
       })
-
       return _cases;
     }
   }

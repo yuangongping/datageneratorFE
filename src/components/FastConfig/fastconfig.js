@@ -5,7 +5,7 @@ var timelist = [String(date.getFullYear()), String(date.getMonth() + 1), String(
       timelist[i] = '0' + timelist[i];
     }
   }
-const localhost = timelist[0] + '-' + timelist[1] + '-' + timelist[2] + 'T16:00:00.000Z';
+const localtime = timelist[0] + '-' + timelist[1] + '-' + timelist[2] + 'T16:00:00.000Z';
 const starttime = String(parseInt(timelist[0])- 100) + '-' + timelist[1] + '-' + timelist[2] + 'T16:00:00.000Z';
 
 export const FAST_TYPES = {
@@ -107,7 +107,7 @@ export const FAST_TYPES = {
         "id": "15623135567596",
         "fieldName": "birthday",
         "dataType": "Time",
-        "options": {"timeStamp":0,"__lastTimeValue":0,"minStep":0,"maxStep":1,"initialTime":[starttime,localhost],"timeCategory":"RANDOMSING","timeFormat":"FORMAT_5"},
+        "options": {"timeStamp":0,"__lastTimeValue":0,"minStep":0,"maxStep":1,"initialTime":[starttime,localtime],"timeCategory":"RANDOMSING","timeFormat":"FORMAT_5"},
         "relation": {"fieldNames":"","minInterval":0,"maxInterval":1,"type":"INDEPEND","allowTypes":["Time"]},
         "__unique": false,
         "__display": false
