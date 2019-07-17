@@ -1,72 +1,81 @@
 <template>
-    <div class="case">
-      <div class="filter">
+  <div class="case">
+    <div class="filter">
         <div v-if="filterFlag">
            <!-- <span>为您提供相关结果26161616个</span> -->
           <a @click="filterFlag=false"><Icon type="ios-funnel-outline" />筛选工具</a>
         </div>
         <div v-else>
           <Select v-model="filter" class="select">
-            <Option value="查看所有" >查看所有</Option>
-            <Option value="仅看自己" >仅看自己</Option>
+            <Option value="社区案例" >社区案例</Option>
+            <Option value="我的案例" >我的案例</Option>
           </Select>
           <a @click="filterFlag=true"><Icon type="ios-arrow-up" />收起工具</a>
         </div>
-      </div>
+    </div>
+    
+    <div class="case-item" v-for="(caseItem, index) in caseList" :key="caseItem.id">
+      <div class="content">
+        <div class="title">
+          {{ caseItem.table_name }}
+          <Tooltip v-if="caseItem.fast_config > 0" class="recommend" max-width="300" content="已被推荐为快捷配置, 在首页进行展示" theme="light" placement="top">
+            <Icon
+              v-for="i in caseItem.fast_config"
+              :key="i"
+              type="ios-star"
+            />
+          </Tooltip>
+        </div>
 
-      <div
-        class="case-item" 
-        v-for="caseItem in caseList" 
-        :key="caseItem.id"
-        >
-        <div class="content">
-          <div class="title">
-            {{ caseItem.name }}
+        <div class="fields-data">
+          <div class="flex-row">
+            <span
+              class="fields"
+              v-for="field in caseItem.fields"
+              :key="field.fieldName"
+            >{{ field.fieldName }}</span>
           </div>
 
-          <div class="fields-data">
-            <div class="flex-row">
-              <span class="fields" v-for="field in caseItem.fields"
-                :key="field.fieldName"
-              >
-                {{ field.fieldName }}
-              </span>
-            </div>
+          <div class="flex-row">
+            <span v-for="(value, name) in caseItem.data" :key="name">{{ value }}</span>
+          </div>
+        </div>
 
-            <div class="flex-row">
-              <span v-for="(value, name) in caseItem.data"
-                :key="name"
-              >
-                {{ value }}
-              </span>
-            </div>
+        <div class="share-meta flex-row">
+          <div>
+            #来自
+            <span class="sharer"> {{ caseItem.nick_name }}</span>
           </div>
 
-          <div class="share-meta">
-            <div>
-              来自 <span class="sharer">{{ caseItem.sharer }}</span>
-            </div>
-            
-            <div class="share-time">
-              {{ caseItem.shareTime | getDate }}
-            </div>
+          <div class="share-time">{{ caseItem.shareTime | timeToAgo }}</div>
 
-            <div class="action-num">
-              <Icon type="md-share" />
-              引用
-              {{ caseItem.quoteNum }}
-            </div>
-
-            <div class="action-num" @click="addHeart(caseItem.id)">
-              <Icon type="md-heart" />
-              赞
-              {{ caseItem.likeNum }}
-            </div>
+          <div class="action-num" @click="quote(index)"  :class="{picked: caseItem.quoted}">
+            <Icon type="md-share"/>
+            引用
+            {{ caseItem.quoteNum }}
           </div>
+
+          <div class="action-num" @click="like(index)" :class="{picked: caseItem.liked}">
+            <Icon type="ios-thumbs-up" />
+            赞
+            {{ caseItem.likeNum }}
+          </div>
+
+          
         </div>
       </div>
     </div>
-    
+
+    <Page
+      class="page"
+      size="small"
+      :page-size="storeNumPerPage"
+      show-total
+      :total="totalNum"
+      :current="storeCasePage"
+      @on-change="pageChange"
+    />
+  </div>
 </template>
 
 <style lang="scss">
@@ -76,7 +85,9 @@
   }
   .select{
     width: 100px;
-    border: 0px solid red;
+  }
+  .ivu-select-selection{
+    border: 0px solid #dcdee2;
   }
 }
 .case {
@@ -93,6 +104,16 @@
         font-size: 16px;
         color: #1269db;
         font-weight: 700;
+
+        .recommend {
+          margin-left: 5px;
+          .ivu-icon {
+            font-size: 12px;
+            color: #ff3d3d;
+            cursor: pointer;
+             margin-bottom: 3px;
+          }
+        }
       }
 
       .fields-data {
@@ -105,6 +126,8 @@
           display: inline-block;
           padding: 2px 0;
           width: 80px;
+          height: 24px;
+          overflow: hidden;
           text-align: center;
         }
 
@@ -116,8 +139,6 @@
       }
 
       .share-meta {
-        display: flex;
-        flex-direction: row;
         color: #888;
 
         div {
@@ -127,7 +148,11 @@
         .sharer {
           color: #1269db;
         }
-        
+
+        .picked {
+          color: #ff3d3d;
+        }
+
         .action-num {
           display: flex;
           align-items: center;
@@ -139,117 +164,170 @@
       }
     }
   }
+
+  .page {
+    margin-top: 20px;
+  }
 }
 </style>
 <script>
-import { Generator } from '@/generator/index';
-import { Icon, Button, Select, Option  } from 'iview';
-export default { 
+import api from '@/api/index.js';
+import { Generator } from "@/generator/index";
+import { Icon, Button, Page, Tag, Tooltip, Rate, Select, Option  } from "iview";
+import { timeToAgo } from "@/utils/functions";
+import { mapGetters } from 'vuex';
+
+export default {
   data() {
     return {
       filterFlag: false,
-      filter: '查看所有',
-      caseList: [],
-    }
+      filter: '社区案例',
+      totalNum: 0,
+      caseList: []
+    };
   },
   components: {
     Icon,
     Button,
     Select,
-    Option 
+    Option,
+    Page,
+    Tag,
+    Tooltip,
+    Rate
+  },
+  computed: {
+    ...mapGetters(['storeCasePage', 'storeNumPerPage'])
   },
   filters: {
-    getDate(dateTimeStamp){
-			if(dateTimeStamp==undefined){
-				return false;
-			}else{
-				var diffValue = new Date().getTime() - new Date(dateTimeStamp.replace(/\-/g, "/")).getTime();		
-				if(diffValue < 0){
-					console.log("结束日期不能小于开始日期！");
-				}
-				var dayC =diffValue/(1000 * 60 * 60 * 24);
-				var hourC =diffValue/(1000 * 60 * 60 );
-				var minC =diffValue/(1000 * 60 );
-				if(dayC>3){
-				return dateTimeStamp;
-				}else if(dayC>=1 && dayC<=3){
-				return parseInt(dayC) +"天前";
-				}else if(hourC>=1){
-				return parseInt(hourC) +"小时前";
-				}else if(minC>=1){
-				return parseInt(minC) +"分钟前";
-				}else{
-				return "刚刚";
-				}
-			}	
-		}
+    timeToAgo
   },
   mounted() {
-    const data = [{
-        id: 1,
-        name: '法人库',
-        sharer: '胖胖的小可爱',
-        likeNum: 0,
-        quoteNum: 0,
-        config: '[{"component": "NameConfig","id": "1562834639872","fieldName": "name","dataType": "Name","options": {"sex": "random","__unique": false,"__display": true,"__fieldName": "name"},"relation": {"fieldNames": "sex","type": "COR_RELATION","allowTypes": ["Sex"]},"__unique": false,"__display": true},{"component": "SexConfig","id": "1562834640306","fieldName": "sex","dataType": "Sex","options": {"manAlias": "男","womanAlias": "女","sex": "random","__unique": false,"__display": true,"__fieldName": "sex"},"relation": null,"__unique": false,"__display": true}]',
-        shareTime: '2019-07-08 18:20:20'
-      },
-      {
-        id: 2,
-        name: '人口信息库',
-        sharer: '胖胖的小可爱',
-        likeNum: 0,
-        quoteNum: 0,
-        config: '[{"component": "NameConfig","id": "1562834639872","fieldName": "name","dataType": "Name","options": {"sex": "random","__unique": false,"__display": true,"__fieldName": "name"},"relation": {"fieldNames": "sex","type": "COR_RELATION","allowTypes": ["Sex"]},"__unique": false,"__display": true},{"component": "SexConfig","id": "1562834640306","fieldName": "sex","dataType": "Sex","options": {"manAlias": "男","womanAlias": "女","sex": "random","__unique": false,"__display": true,"__fieldName": "sex"},"relation": null,"__unique": false,"__display": true}]',
-        shareTime: '2019-07-14 11:58:20'
-      }];
-    this.caseList = this.parseCases(data);
+    // 获取数据总条数
+    this.totalCase();
+    // 获取数据
+    this.listCase();
   },
   methods: {
-    addHeart(id) {
-       this.caseList.forEach(_case => {
-          if (_case.id == id) {
-            _case.likeNum ++
-          }
-       })
+    // 获取数据总量
+    async totalCase() {
+      try {
+        const res = await api.totalCase();
+        if (res.code === 200) {
+          this.totalNum = res.data;
+        } else {
+          console.error(res);
+          this.$Message.error("获取总页码错误");
+        }
+      } catch (e) {
+        console.error(e);
+        this.$Message.error(e);
+      }
     },
+    async like(index) {
+      try {
+        const res = await api.updateCase({
+          id: this.caseList[index].id,
+          type: 'like'
+        });
+
+        if (res.code === 200) {
+          this.caseList[index].likeNum++;
+          this.caseList[index].liked = true;
+        } else {
+          console.error(res);
+          this.$Message.error("数据更新错误，请检查！");
+        }
+      } catch (e) {
+        console.error(e);
+        this.$Message.error(e);
+      }
+    },
+    async quote(index) {
+      try {
+        const res = await api.updateCase({
+          id: this.caseList[index].id,
+          type: 'quote'
+        });
+
+        if (res.code === 200) {
+          this.caseList[index].quoteNum += 1;
+          this.caseList[index].quoted = true;
+          this.$store.commit('SET_QUOTE', this.caseList[index])
+        } else {
+          console.error(res);
+          this.$Message.error("数据更新错误，请检查！");
+        }
+      } catch (e) {
+        console.error(e);
+        this.$Message.error(e);
+      }
+    },
+    async listCase() {
+      try {
+        const res = await api.listCase({
+          page: this.storeCasePage,
+          num: this.storeNumPerPage
+        });
+        if (res.code === 200) {
+          this.caseList = this.parseCases(res.data);
+          const ss = localStorage.getItem('case');
+          console.log(ss);
+
+        } else {
+          this.$Message.error("数据获取错误，请检查！");
+        }
+      } catch (e) {
+        console.log('e')
+        this.$Message.error(e);
+      }
+    },
+
+    pageChange(num) {
+      this.$store.commit('SET_CASE_PAGE', num);
+      this.listCase();
+    },
+
     parseCases(caseData) {
-      const _cases = []
+      const _cases = [];
       caseData.forEach(_case => {
         const fields = [];
-        const configs = JSON.parse(_case.config);
-        const generator = new Generator(configs, 1);
+        const configs = JSON.parse(_case.configs);
 
         configs.forEach(config => {
           if (config.__display) {
             fields.push({
-              fieldName: config.fieldName,
-            })
+              fieldName: config.fieldName
+            });
           }
-        })
+        });
 
         let data = {};
+        const generator = new Generator(configs, 1);
         try {
-          data = generator.generate()[0]
+          data = generator.generate()[0];
         } catch (e) {
           console.log(e);
         }
         _cases.push({
-          id:_case.id,
-          sharer: _case.sharer,
-          name: _case.name,
-          shareTime: _case.shareTime,
-          likeNum: _case.likeNum,
-          quoteNum: _case.quoteNum,
+          id: _case.id,
+          nick_name: _case.nick_name,
+          table_name: _case.table_name,
+          shareTime: _case.date_created,
+          likeNum: _case.like_num,
+          quoteNum: _case.quote_num,
+          fast_config: _case.fast_config % 10,
+          liked: false,
+          quoted: false,
+          configs: configs,
           fields: fields,
-          data: data,
-        })
-      })
-
+          data: data
+        });
+      });
       return _cases;
     }
   }
-}
+};
 </script>
 
 

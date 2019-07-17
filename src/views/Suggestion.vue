@@ -2,12 +2,12 @@
     <div class="suggestion">
       <div
         class="suggestion-item" 
-        v-for="suggestionItem in suggestion" 
+        v-for="suggestionItem in suggestionList" 
         :key="suggestionItem.id"
         
       >
         <div class="head-img">
-          {{ suggestionItem.opinioner | headText }}
+          {{ suggestionItem.nick_name | headText }}
         </div>
 
         <div class="content">
@@ -17,29 +17,41 @@
 
           <div class="opinion-meta">
             <div class="opinion">
-              来自 {{ suggestionItem.opinioner }}
+              来自 {{ suggestionItem.nick_name }}
             </div>
             
             <div class="publish-time">
-              {{ suggestionItem.pubTime  | getDate}}
+              {{ suggestionItem.date_created | timeToAgo}}
             </div>
           </div>
 
         </div>
       </div>
 
-      <Button class="suggest-btn" icon="md-add" @click="suggestionFlag = true">建议</Button>  
-      <Modal
-        title="提意见"
-        v-model="suggestionFlag"
-        :mask-closable="false"
-        @on-ok="addSuggestion"
-      >
-        <Input v-model="content" type="textarea" :rows="2" placeholder="请输入您的意见..." />
-      </Modal>
-         
+      <div class="add-suggestion" >
+        <Button class="suggest-btn" icon="md-add" @click="suggestionFlag = true">建议</Button>  
+        <Modal
+          title="提意见"
+          v-model="suggestionFlag"
+          :mask-closable="false"
+          @on-ok="addSuggestion"
+        >
+          <span class='input_label'>用户名</span>
+          <Input v-model="nickname" type="text"  style="width: 200px" placeholder="请输入您的昵称..." /><br>
+          <Input v-model="content" type="textarea" :rows="3" placeholder="请输入您的意见..." />
+        </Modal>
+       </div>
+
+       <Page
+        class="page"
+        size="small"
+        :page-size="storeNumPerPage"
+        show-total
+        :total="totalNum"
+        :current="storeSuggestionPage"
+        @on-change="pageChange"
+      />
     </div>
-    
 </template>
 
 <style lang="scss">
@@ -86,99 +98,110 @@
     margin-top: 20px;
   }
 }
+.ivu-modal-body{
+  .input_label {
+    width: 50px;
+    display: inline-block;
+    font-size: 14px;
+    margin: 15px 20px 30px 10px;
+    text-align:justify;
+    text-align-last: justify;
+  }
+}
+.page {
+  margin-top: 20px;
+}
 </style>
 <script>
-import { Icon, Modal, Input, Button } from 'iview';
+import { Icon, Modal, Input, Button, Page } from 'iview';
+import api from '@/api/index.js';
+import { timeToAgo } from "@/utils/functions";
+import { mapGetters } from 'vuex';
+
 export default { 
   data() {
     return {
-      suggestionList: [{
-        id: 1,
-        opinioner : '胖胖的小可爱',
-        content: "学习起点高、难度大，市面上只有很少的培训机构在做。对应岗位：数据科学家、数据挖掘工程师、机器学习工程师等学习起点高、\
-        学习起点高、难度大，市面上只有很少的培训机构在做。对应岗位：数据科学家、数据挖掘工程师、机器学习工程师等难度大，市面上只有很少的\
-        培训机构在做。对应岗位：数据科学家、数据挖掘工程师、机器学习工程师等",
-        pubTime: '2019-07-11 18:20:20',
-        likeNum: 0,
-        readNum: 0
-      },
-      {
-        id: 2,
-        opinioner : 'widaodao',
-        content: "学习起点高、难度大，市面上只有很少的培训机构在做。对应岗位：数据科学家、数据挖掘工程师、机器学习工程师等学习起点高、\
-        学习起点高、难度大，市面上只有很少的培训机构在做。对应岗位：数据科学家、数据挖掘工程师、机器学习工程师等难度大，市面上只有很少的\
-        培训机构在做。对应岗位：数据科学家、数据挖掘工程师、机器学习工程师等",
-        pubTime: '2019-07-11 18:20:20',
-        // likeNum: 0,
-        readNum: 0
-      }],
+      totalNum: 0,
+      suggestionList: [],
       suggestionFlag: false,
-      content: ''
+      content: '',
+      nickname: ''
     }
   },
   components: {
     Icon,
     Input,
     Modal,
-    Button
+    Button,
+    Page
+  },
+  mounted() {
+    this.totalSuggestion();
+    this.listSuggestion();
   },
   computed: {
-    suggestion() {
-      const _suggestion = []
-      this.suggestionList.forEach(suggestion => {
-        _suggestion.push({
-          opinioner: suggestion.opinioner,
-          pubTime: suggestion.pubTime,
-          // likeNum: suggestion.likeNum,
-          readNum: suggestion.readNum,
-          content: suggestion.content,
-        })
-      })
-
-      return _suggestion;
-    }
+    ...mapGetters(['storeSuggestionPage', 'storeNumPerPage'])
   },
   filters: {
-    headText(opinioner) {
-      return opinioner.slice(0, 1);
+    headText(nick_name) {
+      return nick_name.slice(0, 1);
     },
-     getDate(dateTimeStamp){
-			if(dateTimeStamp==undefined){
-				return false;
-			}else{
-        if (dateTimeStamp.indexOf("-") != -1){
-          var diffValue = new Date().getTime() - new Date(dateTimeStamp.replace(/\-/g, "/")).getTime();		
-          if(diffValue < 0){
-            console.log("结束日期不能小于开始日期！");
-          }
-          var dayC =diffValue/(1000 * 60 * 60 * 24);
-          var hourC =diffValue/(1000 * 60 * 60 );
-          var minC =diffValue/(1000 * 60 );
-          if(dayC>3){
-          return dateTimeStamp;
-          }else if(dayC>=1 && dayC<=3){
-          return parseInt(dayC) +"天前";
-          }else if(hourC>=1){
-          return parseInt(hourC) +"小时前";
-          }else if(minC>=1){
-          return parseInt(minC) +"分钟前";
-          }else{
-          return "刚刚";
-          }
-        }
-			}	
-		}
+    timeToAgo
   },
   methods: {
-    addSuggestion() {
-      this.suggestionList.push({
-         id: 2,
-        opinioner : 'test',
-        content: this.content,
-        pubTime: '2019-07-12 8:00:20',
-        likeNum: 0,
-        readNum: 0
-      })
+    async totalSuggestion(){
+      try {
+        const res = await api.totalSuggestion();
+        if (res.code === 200) {
+          this.totalNum = res.data;
+        } else {
+          console.error(res);
+          this.$Message.error("获取总页码错误");
+        }
+      } catch (e) {
+        console.error(e);
+        this.$Message.error(e);
+      }
+    },
+
+    async addSuggestion() {
+       try {
+        const params={
+          nick_name: this.nickname,
+          content: this.content,
+        }
+        const res = await api.addSuggestion(params)
+        if (res.code === 200){
+          this.$Message.success('添加建议成功, 等待后台审核');
+          this.listSuggestion()
+        } else {
+          this.$Message.error("数据无法保存，请检查！"); 
+        }
+      } catch (e) {
+        this.$Message.error(e); 
+      }
+    },
+    async listSuggestion() {
+      try{
+        console.log(this.storeSuggestionPage, this.storeNumPerPage)
+        const res = await api.listSuggestion({
+          page: this.storeSuggestionPage,
+          num: this.storeNumPerPage
+        });
+        if (res.code === 200){
+          this.suggestionList = res.data
+        } else {
+          console.error(res);
+          this.$Message.error("数据获取错误，请检查！"); 
+        }
+      } catch(e) {
+        console.error(e);
+        this.$Message.error(e);
+      }
+    },
+    pageChange(num) {
+      this.$store.commit('SET_SUGGESTION_PAGE', num);
+      this.listSuggestion();
     }
   }
 }

@@ -170,8 +170,8 @@ export class Generator {
                 // 得到生成结果
                 genResult = genFunc(options, relation);
                 // 判断生成的值是否已经存在，不存在则
-                if (dataFilter[fieldName].indexOf(genResult.data) < 0) {
-                    dataFilter[fieldName].push(genResult.data);
+                if (!dataFilter[fieldName][genResult.data]) {
+                    dataFilter[fieldName][genResult.data] = true;
                     failStat = false;
                     break;
                 }
@@ -185,8 +185,11 @@ export class Generator {
         return genResult;
     }
 
-    generate() {
+    generate(percentCallback) {
         const { jsonTemplate, nrows } = this;
+
+        let lastPecent = 0;
+        const percentDeno = (nrows - 1) / 100;
         const data = [];
         // 依据需要生成的数据量进行循环
         const sortedDataTypes = this.getSortedDataTypes();
@@ -227,6 +230,12 @@ export class Generator {
             }
 
             data.push(templateRow);
+
+            const percent = parseInt(i / percentDeno);
+            if (percent % 5 == 0 && percent != lastPecent) {
+                percentCallback(percent)
+                lastPecent = percent;
+            }
         }
 
         return data;

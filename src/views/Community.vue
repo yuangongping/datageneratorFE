@@ -21,7 +21,7 @@
 .community{
   display: flex;
   flex-direction: column;
-  margin: 0 20px;
+  margin: 0 20px 40px 20px;
   padding: 20px;
   box-shadow: 0 10px 30px 0 rgba(0,0,0,.1);
   

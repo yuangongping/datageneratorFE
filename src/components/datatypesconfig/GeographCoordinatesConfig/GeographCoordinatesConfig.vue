@@ -19,7 +19,7 @@
 
     <div class="config-item" v-if="relationValue.type !== RELATION_ENUM.INDEPEND.EN">
       <label>
-        <Tag>
+
         <Tooltip max-width="200" content="建议关联区县组件, 请合理设置关联字段" theme="light" placement="top">
         
         <span class="config-title">关联字段</span>
@@ -28,7 +28,6 @@
           @on-change="chgRelation"
         />
         </Tooltip>
-        </Tag>
       </label>
     </div>
   </div>
@@ -44,7 +43,7 @@
 
 <script>
 import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
-import { Input, Select, Option, Tooltip, Tag } from "iview";
+import { Input, Select, Option, Tooltip } from "iview";
 
 
 export default {
@@ -65,8 +64,7 @@ export default {
     Select,
     Option,
     Input,
-    Tooltip,
-    Tag
+    Tooltip
   },
   methods: {
     chgRelation() {

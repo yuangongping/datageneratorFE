@@ -1,14 +1,15 @@
 <template>
   <!-- TODO: 解释、例子、预览 -->
   <div class="home">
-    <div class="content">
+    <div class='content'>
       <div class="action-area">
         <BasicConfig 
           @basic-config="basicConfig">
         </BasicConfig>
 
         <FastConfig 
-          @fast-config="fastConfig">
+          @fast-config="fastConfig"
+        >
         </FastConfig>
       </div>
 
@@ -115,7 +116,7 @@
               <div class="title">数据集名称/表名</div><Input v-model="saveForm.table_name" :maxlength="20" />
             </div>
             <div class="flex-row" v-if="saveForm.wantShare">
-              <div class="title">分享来自于</div><Input v-model="saveForm.sharer" :maxlength="15" />
+              <div class="title">分享来自于</div><Input v-model="saveForm.nick_name" :maxlength="15" />
             </div>
             <Button type="primary" @click="saveShare">
               <span v-if="saveForm.wantShare">
@@ -155,14 +156,14 @@
 
             <Tooltip
               max-width="400"
-              content="数据量大于10万，数据生成所需时间长，内存占用过多，可能会导致浏览器变卡变慢甚至卡死，生成大于10万的数据请耐心等待..."
+              content="数据量大于10万，数据生成所需时间长，可能会导致浏览器变卡变慢甚至卡死（视具体情况而定），生成大于10万的数据请耐心等待..."
               theme="light"
               placement="top"
               v-show="exportForm.tipShow"
             >
               <div class="tip flex-row">
                 <Icon type="md-warning" :size="14"/>
-                <span>数据量大于10万，可能会卡...</span>
+                <span>数据量大于10万，请耐心等待...</span>
               </div>
             </Tooltip>
           </div>
@@ -206,13 +207,14 @@
         <Button @click="exportForm.show=true"  type="primary" icon="md-download"> 导出数据 </Button>
       </div>
     </div>
+
+    生成进度：{{ genPercent }} %
     
     <div id="loadingmodal">
       <div id=modalbox>
         <img src="../assets/images/gif.gif" style="width:150px">
       </div>
     </div>
-    
   </div>
 </template>
 
@@ -236,7 +238,7 @@ import { SexConfig, NameConfig, CounterConfig,
          RandomFieldConfig, DetailAddressConfig, GeographCoordinatesConfig,
          OccupationConfig} from '@/components/datatypesconfig/index.js';  
 import { DATA_TYPES } from '@/datatypes/index.js';
-import { apiAddCase } from '../api/api.js';
+import api from '../api/index.js';
 import { formatJson, formatXml, formatCsv } from '../utils/export.js';
 
 
@@ -260,7 +262,7 @@ export default {
         show: false,
         table_name: '',
         wantShare: true,
-        sharer: '一位不方便透露身份的网友',
+        nick_name: '一位不方便透露身份的网友',
       },
       exportForm: {
         show: false,
@@ -268,7 +270,8 @@ export default {
         dataNum: 100,
         fileType: 'json',
         fileName: 'data_generated'
-      }
+      },
+      genPercent: 0,
     }
   },
   components: {
@@ -319,7 +322,7 @@ export default {
   },
   watch: {
     dataTypeConfigs: function (newVal, oldVal) {
-      this.$store.commit('SET_STORE_CONFIGS', deepcopy(newVal))
+      this.$store.commit('SET_CONFIGS', deepcopy(newVal))
       if (this.dataTypeConfigs.length == 0) {
         this.exportForm.show = false;
         this.saveForm.show = false;
@@ -350,38 +353,47 @@ export default {
     // 生产数据函数
     generate(number) {
       const generator = new Generator(this.parseDataTypeConfigs(), number);
-      return generator.generate();
+      let _self = this;
+      _self.genPercent = 0;
+      return generator.generate(function(percent) {
+        console.log(percent)
+        _self.genPercent = percent;
+        _self.$forceUpdate();
+      });
     },
 
     // ----------  预览
     preview(){
-      this.dataPreview = [];
-      try {
-        this.dataPreview = this.generate(this.previewDataNum);
-        // 设置对话框为可见状态
-        this.previewFlag = true;
-        // 获取数据的所有keys
-        const keys = Object.keys(this.dataPreview[0]);
-        // 重置数据表头
-        this.tableHead = [];
-        for(var i = 0; i < keys.length; i++ ){
-          this.tableHead.push(
-            {
-              title: keys[i],
-              key:  keys[i]
-            }
-          )
-        }
-      } catch (e) {
-        this.$Message.error({
-          content: e.toString(),
-          duration: 5
-        });
-      }
+      let _self = this;
+      setTimeout(function() {
+        _self.generate(100000);
+      }, 1000)
+      // this.dataPreview = [];
+      // try {
+      //   this.dataPreview = this.generate(this.previewDataNum);
+      //   // 设置对话框为可见状态
+      //   this.previewFlag = true;
+      //   // 获取数据的所有keys
+      //   const keys = Object.keys(this.dataPreview[0]);
+      //   // 重置数据表头
+      //   this.tableHead = [];
+      //   for(var i = 0; i < keys.length; i++ ){
+      //     this.tableHead.push(
+      //       {
+      //         title: keys[i],
+      //         key:  keys[i]
+      //       }
+      //     )
+      //   }
+      // } catch (e) {
+      //   this.$Message.error({
+      //     content: e.toString(),
+      //     duration: 5
+      //   });
+      // }
       
     },
     
-    // 导出模态框的下载函数
     // ----------  下载
     download(filename, filetype) {
       try{
@@ -497,19 +509,20 @@ export default {
         this.generate(1); // 先生存1条数据检验配置是否正确
         // 数据格式化
         const form = {
-          sharer: this.saveForm.sharer,
+          nick_name: this.saveForm.nick_name,
           table_name: this.saveForm.table_name,
-          configs: this.dataTypeConfigs,
+          configs: this.parseDataTypeConfigs(),
           quote_num: 0,
           like_num: 0
         };
         if (!this.saveForm.wantShare) {  
           /*    仅保存至localstore        */
-          localStorage.setItem('case', JSON.stringify(form));
+          var key = 'case_' + Date.parse(new Date());
+          localStorage.setItem(key, JSON.stringify(form));
         } else {
           /*   保存并分享， 数据保存到后端，同时保存至localstore */
           // 发出请求，数据保存至后端
-          const res = await apiAddCase(form)
+          const res = await api.addCase(form)
           if (res.code === 200){
             this.$Message.success('分享成功');
             // 数据保存至localshore
@@ -549,11 +562,11 @@ export default {
 <style lang="scss">
 #loadingmodal {
   visibility: hidden;
-  position: absolute;
+  position: fixed;
+  width:100%;
+  height:100%;
   left: 0px;
   top: 0px;
-  width:100%;
-  height:3000px;
   z-index: 1000;
   background-color: white;
   opacity: 0.75;
