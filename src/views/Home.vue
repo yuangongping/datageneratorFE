@@ -1,213 +1,221 @@
 <template>
   <!-- TODO: 解释、例子、预览 -->
   <div class="home">
-    <div class="action-area">
-      <BasicConfig 
-        @basic-config="basicConfig">
-      </BasicConfig>
+    <div class='content'>
+      <div class="action-area">
+        <BasicConfig 
+          @basic-config="basicConfig">
+        </BasicConfig>
 
-      <FastConfig 
-        @fast-config="fastConfig"
-      >
-      </FastConfig>
-    </div>
-
-    <div class="field-list shadow-box"  v-if="dataTypeConfigs.length > 0">
-      <div class="field-title">
-        <span>
-          配置项
-        </span>
-        <Poptip
-          confirm
-          title="确定清空配置吗？"
-          @on-ok="emptyConfigs"
-          class="empty-config"
+        <FastConfig 
+          @fast-config="fastConfig"
         >
-          <span>清空</span>
-        </Poptip>
-        
+        </FastConfig>
       </div>
-      <transition-group name="flip-list" >
-        <div 
-          v-for="(dataTypeConfig, k) in dataTypeConfigs"
-          :key="dataTypeConfig.id"
-          class="config-row"
-        >
-          <!-- 【 通用区域 】字段类型、字段名 -->
-          <div class="field-type">
-            <Tag color="primary">
-              {{ DATA_TYPES[dataTypeConfig.dataType].shortAlias }}
-            </Tag>
-          </div>
 
-          <div class="field-name">
-            <label>
-              <Input type="text"
-                v-model="dataTypeConfig.fieldName"
-              />
-              <span class="config-title">字段名</span>
-            </label>
-          </div>
+      <div class="field-list shadow-box"  v-if="dataTypeConfigs.length > 0">
+        <div class="field-title">
+          <span>
+            配置项
+          </span>
+          <Poptip
+            confirm
+            title="确定清空配置吗？"
+            @on-ok="emptyConfigs"
+            class="empty-config"
+          >
+            <span>清空</span>
+          </Poptip>
           
-        <!-- 字段配置组件区域 -->
-        <div
-          class="field-config"
-          :is="dataTypeConfig.component"
-          :dataType="dataTypeConfig.dataType"
-          :options.sync="dataTypeConfig.options"
-          :relation.sync="dataTypeConfig.relation"
+        </div>
+        <transition-group name="flip-list" >
+          <div 
+            v-for="(dataTypeConfig, k) in dataTypeConfigs"
+            :key="dataTypeConfig.id"
+            class="config-row"
           >
-        </div>
-          <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
-          <div class="switch-config">
-            <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
-              <i-switch
-                size="large"
-                v-model="dataTypeConfig.__unique"
-              >
-                <span slot="open">唯一</span>
-                <span slot="close">唯一</span>
-              </i-switch>
-            </Tooltip>
-          </div>
-
-          <div class="switch-config">
-            <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
-              <i-switch
-                size="large"
-                v-model="dataTypeConfig.__display"
-              >
-                <span slot="open">显示</span>
-                <span slot="close">显示</span>
-              </i-switch>
-            </Tooltip>
-          </div>
-
-          <div class="up-down" >
-              <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
-              <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
-          </div>
-
-          <div class="delrow">
-            <Icon type="md-close" @click="delRow(k)"/>
-          </div>
-
-        </div>
-      </transition-group>
-    </div>
-
-    <Modal
-      title="数据预览"
-      width="90%"
-      :footer-hide="true"
-      v-model="previewFlag"
-      :styles="{'top': '20px'}"
-      :mask-closable="false"
-    >
-      <Table :columns="tableHead" :data="dataPreview"></Table>
-    </Modal>
-
-    <!-- 保存并分享 -->
-    <transition name="fade">
-      <div class="save-share shadow-box flex-row" v-if="saveForm.show">
-        <div class="form-region flex-row">
-          <div class="flex-row">
-            <div class="title">数据集名称/表名</div><Input v-model="saveForm.table_name" :maxlength="20" />
-          </div>
-          <div class="flex-row" v-if="saveForm.wantShare">
-            <div class="title">分享来自于</div><Input v-model="saveForm.sharer" :maxlength="15" />
-          </div>
-          <Button type="primary" @click="saveShare">
-            <span v-if="saveForm.wantShare">
-              保存并分享
-            </span>
-            <span v-else>
-              保存
-            </span>
-          </Button>
-
-          <Tooltip max-width="200" content="这么实用的数据集，真的不分享到社区吗..." theme="light" placement="top">
-            <i-switch
-              size="large"
-              v-model="saveForm.wantShare"
-            >
-              <span slot="open">分享</span>
-              <span slot="close">分享</span>
-            </i-switch>
-          </Tooltip>
-        </div>
-
-        <Icon class="close" type="md-close" @click="saveForm.show=false"/>
-      </div>
-    </transition>
-
-    <!-- 数据导出 -->
-    <transition name="fade">
-      <div class="export shadow-box" v-if="exportForm.show">
-        <div class="flex-row">
-          <div class="title">数据量</div>
-          <InputNumber
-          :min="1"
-          :precision="0"
-          v-model="exportForm.dataNum"
-          @on-change="changeExportDataNum"
-          ></InputNumber>
-
-          <Tooltip
-            max-width="400"
-            content="数据量大于10万，数据生成所需时间长，内存占用过多，可能会导致浏览器变卡变慢甚至卡死，生成大于10万的数据请耐心等待..."
-            theme="light"
-            placement="top"
-            v-show="exportForm.tipShow"
-          >
-            <div class="tip flex-row">
-              <Icon type="md-warning" :size="14"/>
-              <span>数据量大于10万，可能会卡...</span>
+            <!-- 【 通用区域 】字段类型、字段名 -->
+            <div class="field-type">
+              <Tag color="primary">
+                {{ DATA_TYPES[dataTypeConfig.dataType].shortAlias }}
+              </Tag>
             </div>
-          </Tooltip>
-        </div>
 
-        <div class="flex-row">
-          <div class='title'>文件类型</div>
-          <RadioGroup v-model="exportForm.fileType">
-            <Radio label="json" ></Radio>
-            <Radio label="csv"></Radio>
-            <Radio label="xml"></Radio>
-          </RadioGroup>
-        </div>
+            <div class="field-name">
+              <label>
+                <Input type="text"
+                  v-model="dataTypeConfig.fieldName"
+                />
+                <span class="config-title">字段名</span>
+              </label>
+            </div>
+            
+          <!-- 字段配置组件区域 -->
+          <div
+            class="field-config"
+            :is="dataTypeConfig.component"
+            :dataType="dataTypeConfig.dataType"
+            :options.sync="dataTypeConfig.options"
+            :relation.sync="dataTypeConfig.relation"
+            >
+          </div>
+            <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
+            <div class="switch-config">
+              <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
+                <i-switch
+                  size="large"
+                  v-model="dataTypeConfig.__unique"
+                >
+                  <span slot="open">唯一</span>
+                  <span slot="close">唯一</span>
+                </i-switch>
+              </Tooltip>
+            </div>
 
-        <div class="flex-row">
-          <div class='title'>文件名</div>
-          <Input
-            v-model="exportForm.fileName"
-            :maxlength="20"
-            class="file-name"
-          />
-        </div>
+            <div class="switch-config">
+              <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
+                <i-switch
+                  size="large"
+                  v-model="dataTypeConfig.__display"
+                >
+                  <span slot="open">显示</span>
+                  <span slot="close">显示</span>
+                </i-switch>
+              </Tooltip>
+            </div>
 
-        <div class="flex-row btn">
-          <Button
-            @click="doExport"
-            type="primary"
-            size="small"
-          >导出</Button>
-        </div>
+            <div class="up-down" >
+                <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
+                <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
+            </div>
 
-        <Icon class="close" type="md-close" @click="exportForm.show=false"/>
+            <div class="delrow">
+              <Icon type="md-close" @click="delRow(k)"/>
+            </div>
+
+          </div>
+        </transition-group>
       </div>
-    </transition>
 
-    <!-- 按钮区 -->
-    <div class="preview-save" v-if="dataTypeConfigs.length > 0">
-      <Button @click="preview"  type="primary" icon="md-eye"> 预览 </Button>
-      <Tooltip max-width="200" content="保存数据以便于下次生成使用，同时推荐您将结果分享到社区，共享生成配置" theme="light" placement="top">
-        <Button @click="saveForm.show=true"  type="primary" icon="md-share"> 保存并分享配置</Button>
-      </Tooltip>
-      <Button @click="exportForm.show=true"  type="primary" icon="md-download"> 导出数据 </Button>
+      <Modal
+        title="数据预览"
+        width="90%"
+        :footer-hide="true"
+        v-model="previewFlag"
+        :styles="{'top': '20px'}"
+        :mask-closable="false"
+      >
+        <Table :columns="tableHead" :data="dataPreview"></Table>
+      </Modal>
+
+      <!-- 保存并分享 -->
+      <transition name="fade">
+        <div class="save-share shadow-box flex-row" v-if="saveForm.show">
+          <div class="form-region flex-row">
+            <div class="flex-row">
+              <div class="title">数据集名称/表名</div><Input v-model="saveForm.table_name" :maxlength="20" />
+            </div>
+            <div class="flex-row" v-if="saveForm.wantShare">
+              <div class="title">分享来自于</div><Input v-model="saveForm.nick_name" :maxlength="15" />
+            </div>
+            <Button type="primary" @click="saveShare">
+              <span v-if="saveForm.wantShare">
+                保存并分享
+              </span>
+              <span v-else>
+                保存
+              </span>
+            </Button>
+
+            <Tooltip max-width="200" content="这么实用的数据集，真的不分享到社区吗..." theme="light" placement="top">
+              <i-switch
+                size="large"
+                v-model="saveForm.wantShare"
+              >
+                <span slot="open">分享</span>
+                <span slot="close">分享</span>
+              </i-switch>
+            </Tooltip>
+          </div>
+
+          <Icon class="close" type="md-close" @click="saveForm.show=false"/>
+        </div>
+      </transition>
+
+      <!-- 数据导出 -->
+      <transition name="fade">
+        <div class="export shadow-box" v-if="exportForm.show">
+          <div class="flex-row">
+            <div class="title">数据量</div>
+            <InputNumber
+            :min="1"
+            :precision="0"
+            v-model="exportForm.dataNum"
+            @on-change="changeExportDataNum"
+            ></InputNumber>
+
+            <Tooltip
+              max-width="400"
+              content="数据量大于10万，数据生成所需时间长，可能会导致浏览器变卡变慢甚至卡死（视具体情况而定），生成大于10万的数据请耐心等待..."
+              theme="light"
+              placement="top"
+              v-show="exportForm.tipShow"
+            >
+              <div class="tip flex-row">
+                <Icon type="md-warning" :size="14"/>
+                <span>数据量大于10万，请耐心等待...</span>
+              </div>
+            </Tooltip>
+          </div>
+
+          <div class="flex-row">
+            <div class='title'>文件类型</div>
+            <RadioGroup v-model="exportForm.fileType">
+              <Radio label="json" ></Radio>
+              <Radio label="csv"></Radio>
+              <Radio label="xml"></Radio>
+            </RadioGroup>
+          </div>
+
+          <div class="flex-row">
+            <div class='title'>文件名</div>
+            <Input
+              v-model="exportForm.fileName"
+              :maxlength="20"
+              class="file-name"
+            />
+          </div>
+
+          <div class="flex-row btn">
+            <Button
+              @click="doExport"
+              type="primary"
+              size="small"
+            >导出</Button>
+          </div>
+
+          <Icon class="close" type="md-close" @click="exportForm.show=false"/>
+        </div>
+      </transition>
+
+      <!-- 按钮区 -->
+      <div class="preview-save" v-if="dataTypeConfigs.length > 0">
+        <Button @click="preview"  type="primary" icon="md-eye"> 预览 </Button>
+        <Tooltip max-width="200" content="保存数据以便于下次生成使用，同时推荐您将结果分享到社区，共享生成配置" theme="light" placement="top">
+          <Button @click="saveForm.show=true"  type="primary" icon="md-share"> 保存并分享配置</Button>
+        </Tooltip>
+        <Button @click="exportForm.show=true"  type="primary" icon="md-download"> 导出数据 </Button>
+      </div>
     </div>
 
+    生成进度：{{ genPercent }} %
+    
+    <div id="loadingmodal">
+      <div id=modalbox>
+        <img src="../assets/images/gif.gif" style="width:150px">
+      </div>
+    </div>
   </div>
-
 </template>
 
 <script>
@@ -230,13 +238,17 @@ import { SexConfig, NameConfig, CounterConfig,
          RandomFieldConfig, DetailAddressConfig, GeographCoordinatesConfig,
          OccupationConfig} from '@/components/datatypesconfig/index.js';  
 import { DATA_TYPES } from '@/datatypes/index.js';
+import api from '../api/index.js';
+import { formatJson, formatXml, formatCsv } from '../utils/export.js';
+
+
 export default {
   name: 'home',
   data() {
     return {
       previewFlag: false,
       downloadFlag: false,
-      loadingGif: false,
+      shareFlag: false,
       tableHead: [],
       // 预览数据量, 预览10条
       previewDataNum: 10, 
@@ -250,7 +262,7 @@ export default {
         show: false,
         table_name: '',
         wantShare: true,
-        sharer: '一位不方便透露身份的网友',
+        nick_name: '一位不方便透露身份的网友',
       },
       exportForm: {
         show: false,
@@ -258,7 +270,8 @@ export default {
         dataNum: 100,
         fileType: 'json',
         fileName: 'data_generated'
-      }
+      },
+      genPercent: 0,
     }
   },
   components: {
@@ -340,50 +353,69 @@ export default {
     // 生产数据函数
     generate(number) {
       const generator = new Generator(this.parseDataTypeConfigs(), number);
-      return generator.generate();
+      let _self = this;
+      _self.genPercent = 0;
+      return generator.generate(function(percent) {
+        console.log(percent)
+        _self.genPercent = percent;
+        _self.$forceUpdate();
+      });
     },
 
     // ----------  预览
     preview(){
-      this.dataPreview = [];
-      try {
-        this.dataPreview = this.generate(this.previewDataNum);
-        // 设置对话框为可见状态
-        this.previewFlag = true;
-        // 获取数据的所有keys
-        const keys = Object.keys(this.dataPreview[0]);
-        // 重置数据表头
-        this.tableHead = [];
-        for(var i = 0; i < keys.length; i++ ){
-          this.tableHead.push(
-            {
-              title: keys[i],
-              key:  keys[i]
-            }
-          )
-        }
-      } catch (e) {
-        this.$Message.error({
-          content: e.toString(),
-          duration: 5
-        });
-      }
+      let _self = this;
+      setTimeout(function() {
+        _self.generate(100000);
+      }, 1000)
+      // this.dataPreview = [];
+      // try {
+      //   this.dataPreview = this.generate(this.previewDataNum);
+      //   // 设置对话框为可见状态
+      //   this.previewFlag = true;
+      //   // 获取数据的所有keys
+      //   const keys = Object.keys(this.dataPreview[0]);
+      //   // 重置数据表头
+      //   this.tableHead = [];
+      //   for(var i = 0; i < keys.length; i++ ){
+      //     this.tableHead.push(
+      //       {
+      //         title: keys[i],
+      //         key:  keys[i]
+      //       }
+      //     )
+      //   }
+      // } catch (e) {
+      //   this.$Message.error({
+      //     content: e.toString(),
+      //     duration: 5
+      //   });
+      // }
       
     },
     
     // ----------  下载
     download(filename, filetype) {
       try{
-        const data  = this.generate(this.exportForm.dataNum);
-        const dataToDownload = JSON.stringify(data);
-
-        const $aNode = document.createElement("a"),
-        blob = new Blob([dataToDownload]);
-        $aNode.download = filename + '.' + filetype;
-        $aNode.href = (window.URL ? URL : window.webkitURL).createObjectURL(blob);
-        document.body.appendChild($aNode);
-        $aNode.click();
-        document.body.removeChild($aNode);
+        const datas = this.generate(this.exportForm.dataNum);
+        if (datas == "" || filename == "" || filetype == "") {
+          throw new Error("下载组件存在非空属性");
+        }
+        // 以及数据格式生成对应文件
+        switch(filetype){
+          case 'json':
+            formatJson(datas, filename, filetype);
+            break;
+          case 'csv':
+            formatCsv(datas, filename, filetype);
+            break;
+          case 'xml':
+            formatXml(datas, filename, filetype);
+            break;
+          default:
+            formatCsv(datas, filename, 'csv');
+        }
+        
       } catch (e) {
         this.$Message.error({
           content: e.toString(),
@@ -394,9 +426,13 @@ export default {
 
     // ----------  导出
     doExport () {
-      const { exportForm } = this;
+      const { exportForm, download, modalLoading } = this;
       if (exportForm.fileName) {
-        this.download(exportForm.fileName, exportForm.fileType);
+        modalLoading(true);
+        setTimeout(function() {
+          download(exportForm.fileName, exportForm.fileType);
+          modalLoading(false);
+        }, 100);
       } else {
         this.$Message.error({
           content: "请填写导出文件名",
@@ -404,7 +440,6 @@ export default {
         });
       }
     },
-
 
     // 基础字段组件
     basicConfig(componentToAdd) {
@@ -466,21 +501,35 @@ export default {
       this.dataTypeConfigs = [];
     },
     // 保存分享
-    saveShare() {
+    async saveShare() {
       try {
         if (!this.saveForm.table_name) {
           throw new Error("请输入数据集/表名称")
         }
         this.generate(1); // 先生存1条数据检验配置是否正确
-
-        // 只保存
-        if (!this.saveForm.wantShare) {
-          console.log('##############')
-
+        // 数据格式化
+        const form = {
+          nick_name: this.saveForm.nick_name,
+          table_name: this.saveForm.table_name,
+          configs: this.parseDataTypeConfigs(),
+          quote_num: 0,
+          like_num: 0
+        };
+        if (!this.saveForm.wantShare) {  
+          /*    仅保存至localstore        */
+          var key = 'case_' + Date.parse(new Date());
+          localStorage.setItem(key, JSON.stringify(form));
         } else {
-        // 保存并分享
-          console.log('##############')
-
+          /*   保存并分享， 数据保存到后端，同时保存至localstore */
+          // 发出请求，数据保存至后端
+          const res = await api.addCase(form)
+          if (res.code === 200){
+            this.$Message.success('分享成功');
+            // 数据保存至localshore
+            localStorage.setItem('case', JSON.stringify(form));
+          } else {
+            this.$Message.error("数据无法保存，请检查！"); 
+          }
         }
       } catch (e) {
         this.$Message.error({
@@ -496,12 +545,43 @@ export default {
       } else {
         this.exportForm.tipShow = false;
       }
+    },
+    // 自定义加载模态框函数，设置可见与不可见
+    modalLoading(visible){
+      var el = document.getElementById('loadingmodal');
+      if (visible){
+        el.style.visibility =  "visible";
+      }else{
+        el.style.visibility =  "hidden" ;
+      }
     }
   }
 }
 </script>
 
 <style lang="scss">
+#loadingmodal {
+  visibility: hidden;
+  position: fixed;
+  width:100%;
+  height:100%;
+  left: 0px;
+  top: 0px;
+  z-index: 1000;
+  background-color: white;
+  opacity: 0.75;
+  text-align:center;
+
+  #modalbox{
+    position: absolute;
+    width: 150px;
+    left:50%;
+    top:45%;
+    transform: translate(-50%, -50%);
+    background-color:white;
+  }
+}
+
 // 通用flex
 .flex-row {
   display: flex;

@@ -1,9 +1,23 @@
 <template>
   <div class="case">
+    <div class="filter">
+        <div v-if="filterFlag">
+           <!-- <span>为您提供相关结果26161616个</span> -->
+          <a @click="filterFlag=false"><Icon type="ios-funnel-outline" />筛选工具</a>
+        </div>
+        <div v-else>
+          <Select v-model="filter" class="select">
+            <Option value="社区案例" >社区案例</Option>
+            <Option value="我的案例" >我的案例</Option>
+          </Select>
+          <a @click="filterFlag=true"><Icon type="ios-arrow-up" />收起工具</a>
+        </div>
+    </div>
+    
     <div class="case-item" v-for="(caseItem, index) in caseList" :key="caseItem.id">
       <div class="content">
         <div class="title">
-          {{ caseItem.name }}
+          {{ caseItem.table_name }}
           <Tooltip v-if="caseItem.fast_config > 0" class="recommend" max-width="300" content="已被推荐为快捷配置, 在首页进行展示" theme="light" placement="top">
             <Icon
               v-for="i in caseItem.fast_config"
@@ -30,7 +44,7 @@
         <div class="share-meta flex-row">
           <div>
             #来自
-            <span class="sharer"> {{ caseItem.sharer }}</span>
+            <span class="sharer"> {{ caseItem.nick_name }}</span>
           </div>
 
           <div class="share-time">{{ caseItem.shareTime | timeToAgo }}</div>
@@ -65,6 +79,17 @@
 </template>
 
 <style lang="scss">
+.filter{
+  span{
+    margin-right: 10%;
+  }
+  .select{
+    width: 100px;
+  }
+  .ivu-select-selection{
+    border: 0px solid #dcdee2;
+  }
+}
 .case {
   .case-item {
     border-bottom: 1px solid #eee;
@@ -146,15 +171,17 @@
 }
 </style>
 <script>
-import api from '@/api/index.js'
+import api from '@/api/index.js';
 import { Generator } from "@/generator/index";
-import { Icon, Button, Page, Tag, Tooltip, Rate } from "iview";
+import { Icon, Button, Page, Tag, Tooltip, Rate, Select, Option  } from "iview";
 import { timeToAgo } from "@/utils/functions";
 import { mapGetters } from 'vuex';
 
 export default {
   data() {
     return {
+      filterFlag: false,
+      filter: '社区案例',
       totalNum: 0,
       caseList: []
     };
@@ -162,6 +189,8 @@ export default {
   components: {
     Icon,
     Button,
+    Select,
+    Option,
     Page,
     Tag,
     Tooltip,
@@ -174,10 +203,13 @@ export default {
     timeToAgo
   },
   mounted() {
+    // 获取数据总条数
     this.totalCase();
+    // 获取数据
     this.listCase();
   },
   methods: {
+    // 获取数据总量
     async totalCase() {
       try {
         const res = await api.totalCase();
@@ -239,6 +271,9 @@ export default {
         });
         if (res.code === 200) {
           this.caseList = this.parseCases(res.data);
+          const ss = localStorage.getItem('case');
+          console.log(ss);
+
         } else {
           this.$Message.error("数据获取错误，请检查！");
         }
@@ -276,8 +311,8 @@ export default {
         }
         _cases.push({
           id: _case.id,
-          sharer: _case.nick_name,
-          name: _case.table_name,
+          nick_name: _case.nick_name,
+          table_name: _case.table_name,
           shareTime: _case.date_created,
           likeNum: _case.like_num,
           quoteNum: _case.quote_num,

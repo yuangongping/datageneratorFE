@@ -16,24 +16,25 @@ export function totalSuggestion() {
 }
 
 export function addCase(params) {
-    return new Promise((resolve, reject) => {
-      request({
-        url: '/addcase',
-        method: 'post',
-        data: querystring.stringify({
-            nick_name: params.nick_name,
-            table_name: params.table_name,
-            configs: JSON.stringify(params.config)
-          })
-      }).then((res) => {
-        resolve(res)
-      }).catch((e) => {
-        reject(e)
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/addcase',
+      method: 'post',
+      data: querystring.stringify({
+        nick_name: params.nick_name,
+        table_name: params.table_name,
+        quote_num: params.quote_num,
+        like_num: params.like_num,
+        configs: JSON.stringify(params.configs)
       })
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
     })
-  }
+  })
+}
 
-  
 export function addSuggestion(params) {
   return new Promise((resolve, reject) => {
     request({

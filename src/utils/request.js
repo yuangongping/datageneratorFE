@@ -4,7 +4,7 @@ import axios from 'axios'
 const service = axios.create({
   baseURL: 'http://172.16.13.21:5000',
   timeout: 15000, // 请求超时时间
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' , 'Access-Control-Allow-Origin':'*'},
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   withCredentials: true // 跨域session
 })
 

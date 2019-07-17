@@ -185,8 +185,11 @@ export class Generator {
         return genResult;
     }
 
-    generate() {
+    generate(percentCallback) {
         const { jsonTemplate, nrows } = this;
+
+        let lastPecent = 0;
+        const percentDeno = (nrows - 1) / 100;
         const data = [];
         // 依据需要生成的数据量进行循环
         const sortedDataTypes = this.getSortedDataTypes();
@@ -227,6 +230,12 @@ export class Generator {
             }
 
             data.push(templateRow);
+
+            const percent = parseInt(i / percentDeno);
+            if (percent % 5 == 0 && percent != lastPecent) {
+                percentCallback(percent)
+                lastPecent = percent;
+            }
         }
 
         return data;
