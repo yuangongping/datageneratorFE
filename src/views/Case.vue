@@ -2,79 +2,123 @@
   <div class="case">
     <div class="filter">
         <div v-if="filterFlag">
-           <!-- <span>为您提供相关结果26161616个</span> -->
           <a @click="filterFlag=false"><Icon type="ios-funnel-outline" />筛选工具</a>
         </div>
         <div v-else>
-          <Select v-model="filter" class="select">
+          <Select v-model="filter" class="select" @on-change='listCase'>
             <Option value="社区案例" >社区案例</Option>
             <Option value="我的案例" >我的案例</Option>
           </Select>
           <a @click="filterFlag=true"><Icon type="ios-arrow-up" />收起工具</a>
         </div>
     </div>
-    
-    <div class="case-item" v-for="(caseItem, index) in caseList" :key="caseItem.id">
-      <div class="content">
-        <div class="title">
-          {{ caseItem.table_name }}
-          <Tooltip v-if="caseItem.fast_config > 0" class="recommend" max-width="300" content="已被推荐为快捷配置, 在首页进行展示" theme="light" placement="top">
-            <Icon
-              v-for="i in caseItem.fast_config"
-              :key="i"
-              type="ios-star"
-            />
-          </Tooltip>
-        </div>
-
-        <div class="fields-data">
-          <div class="flex-row">
-            <span
-              class="fields"
-              v-for="field in caseItem.fields"
-              :key="field.fieldName"
-            >{{ field.fieldName }}</span>
+    <div class="communitycase" v-if="filter==='社区案例'">
+      <div class="case-item" v-for="(caseItem, index) in caseList" :key="caseItem.id">
+        <div class="content">
+          <div class="title">
+            {{ caseItem.table_name }}
+            <Tooltip v-if="caseItem.fast_config > 0" class="recommend" max-width="300" content="已被推荐为快捷配置, 在首页进行展示" theme="light" placement="top">
+              <Icon
+                v-for="i in caseItem.fast_config"
+                :key="i"
+                type="ios-star"
+              />
+            </Tooltip>
           </div>
 
-          <div class="flex-row">
-            <span v-for="(value, name) in caseItem.data" :key="name">{{ value }}</span>
-          </div>
-        </div>
+          <div class="fields-data">
+            <div class="flex-row">
+              <span
+                class="fields"
+                v-for="field in caseItem.fields"
+                :key="field.fieldName"
+              >{{ field.fieldName }}</span>
+            </div>
 
-        <div class="share-meta flex-row">
-          <div>
-            #来自
-            <span class="sharer"> {{ caseItem.nick_name }}</span>
-          </div>
-
-          <div class="share-time">{{ caseItem.shareTime | timeToAgo }}</div>
-
-          <div class="action-num" @click="quote(index)"  :class="{picked: caseItem.quoted}">
-            <Icon type="md-share"/>
-            引用
-            {{ caseItem.quoteNum }}
+            <div class="flex-row">
+              <span v-for="(value, name) in caseItem.data" :key="name">{{ value }}</span>
+            </div>
           </div>
 
-          <div class="action-num" @click="like(index)" :class="{picked: caseItem.liked}">
-            <Icon type="ios-thumbs-up" />
-            赞
-            {{ caseItem.likeNum }}
-          </div>
+          <div class="share-meta flex-row">
+            <div>
+              #来自
+              <span class="sharer"> {{ caseItem.nick_name }}</span>
+            </div>
 
-          
+            <div class="share-time">{{ caseItem.shareTime | timeToAgo }}</div>
+
+            <div class="action-num" @click="quote(index)"  :class="{picked: caseItem.quoted}">
+              <Icon type="md-share"/>
+              引用
+              {{ caseItem.quoteNum }}
+            </div>
+
+            <div class="action-num" @click="like(index)" :class="{picked: caseItem.liked}">
+              <Icon type="ios-thumbs-up" />
+              赞
+              {{ caseItem.likeNum }}
+            </div>
+
+            
+          </div>
         </div>
       </div>
+      <Page
+        class="page"
+        size="small"
+        :page-size="storeNumPerPage"
+        show-total
+        :total="totalNum"
+        :current="storeCasePage"
+        @on-change="pageChange"
+      />
     </div>
+    <!-- 我的案例 -->
+    <div v-else>
+      <div class="case-item" v-for="(caseItem, index) in mycaseList" :key="caseItem.id">
+        <div class="content">
 
-    <Page
-      class="page"
-      size="small"
-      :page-size="storeNumPerPage"
-      show-total
-      :total="totalNum"
-      :current="storeCasePage"
-      @on-change="pageChange"
-    />
+          <div class="title">
+            {{ caseItem.table_name }}
+            <Tooltip v-if="caseItem.fast_config > 0" class="recommend" max-width="300" content="已被推荐为快捷配置, 在首页进行展示" theme="light" placement="top">
+              <Icon
+                v-for="i in caseItem.fast_config"
+                :key="i"
+                type="ios-star"
+              />
+            </Tooltip>
+          </div>
+
+          <div class="fields-data">
+            <div class="flex-row">
+              <span
+                class="fields"
+                v-for="field in caseItem.fields"
+                :key="field.fieldName"
+              >{{ field.fieldName }}</span>
+            </div>
+
+            <div class="flex-row">
+              <span v-for="(value, name) in caseItem.data" :key="name">{{ value }}</span>
+            </div>
+          </div>
+
+          <div class="share-meta flex-row">
+            <div>
+              #来自
+              <span class="sharer"> {{ caseItem.nick_name }}</span>
+            </div>
+            <div class="share-time">{{ caseItem.shareTime | timeToAgo }}</div>
+            <div class="action-num" @click="myquote(index)"  :class="{picked: caseItem.quoted}">
+              <Icon type="md-share"/>
+              引用
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </template>
 
@@ -173,7 +217,7 @@
 <script>
 import api from '@/api/index.js';
 import { Generator } from "@/generator/index";
-import { Icon, Button, Page, Tag, Tooltip, Rate, Select, Option  } from "iview";
+import { Icon, Page, Tooltip, Select, Option  } from "iview";
 import { timeToAgo } from "@/utils/functions";
 import { mapGetters } from 'vuex';
 
@@ -183,18 +227,17 @@ export default {
       filterFlag: false,
       filter: '社区案例',
       totalNum: 0,
-      caseList: []
+      caseList: [],
+      mycaseList: []
+      
     };
   },
   components: {
     Icon,
-    Button,
     Select,
     Option,
     Page,
-    Tag,
-    Tooltip,
-    Rate
+    Tooltip
   },
   computed: {
     ...mapGetters(['storeCasePage', 'storeNumPerPage'])
@@ -263,20 +306,40 @@ export default {
         this.$Message.error(e);
       }
     },
+
+    async myquote(index) {
+      try {
+        this.mycaseList[index].quoted = true;
+        this.$store.commit('SET_QUOTE', this.mycaseList[index])
+      } catch (e) {
+        console.error(e);
+        this.$Message.error(e);
+      }
+    },
+
     async listCase() {
       try {
-        const res = await api.listCase({
+        if(this.filter !== '社区案例'){
+          var tempList = [];
+          for(var i = 0; i < localStorage.length; i++){
+            if(localStorage.key(i).indexOf("case_") == 0){
+              let record = localStorage.getItem(localStorage.key(i));
+              tempList.push(JSON.parse(record))
+            }
+          }
+          this.mycaseList = this.parseCases(tempList);
+        }else{
+         const res = await api.listCase({
           page: this.storeCasePage,
           num: this.storeNumPerPage
         });
         if (res.code === 200) {
           this.caseList = this.parseCases(res.data);
-          const ss = localStorage.getItem('case');
-          console.log(ss);
-
         } else {
           this.$Message.error("数据获取错误，请检查！");
         }
+        }
+        
       } catch (e) {
         console.log('e')
         this.$Message.error(e);

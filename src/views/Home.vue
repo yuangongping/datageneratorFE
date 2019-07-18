@@ -208,11 +208,11 @@
       </div>
     </div>
 
-    生成进度：{{ genPercent }} %
+    <!-- <div id="genPercent"></div> -->
     
     <div id="loadingmodal">
-      <div id=modalbox>
-        <img src="../assets/images/gif.gif" style="width:150px">
+      <div class=shadow-box>
+        <img src="../assets/images/timg.gif" style="width:100%">
       </div>
     </div>
   </div>
@@ -327,6 +327,10 @@ export default {
         this.exportForm.show = false;
         this.saveForm.show = false;
       }
+    },
+    genPercent: function(newVal, oldVal) {
+      console.log('-  ---------------');
+      console.log(newVal, oldVal)
     }
   },
   mounted() {
@@ -356,18 +360,20 @@ export default {
       let _self = this;
       _self.genPercent = 0;
       return generator.generate(function(percent) {
-        console.log(percent)
         _self.genPercent = percent;
-        _self.$forceUpdate();
+        let percentDom = document.getElementById("genPercent");
+        console.log(percentDom)
+        percentDom.innerHTML = percent;
+        // requestAnimationFrame(function() {
+        //   _self.genPercent = percent;
+        // })
       });
     },
 
     // ----------  预览
     preview(){
       let _self = this;
-      setTimeout(function() {
-        _self.generate(100000);
-      }, 1000)
+      _self.generate(100000);
       // this.dataPreview = [];
       // try {
       //   this.dataPreview = this.generate(this.previewDataNum);
@@ -474,32 +480,24 @@ export default {
         })
       }
     },
-    
-    // 删除字段组件， k下标
-    delRow(k) {
-      this.dataTypeConfigs.splice(k, 1);
-    },
-    // 上移
-    sortUp(k) {
-      if (k != 0) {
-        let temp = this.dataTypeConfigs[k - 1];
-        Vue.set(this.dataTypeConfigs, k - 1, this.dataTypeConfigs[k]);
-        Vue.set(this.dataTypeConfigs, k, temp);
-      }
-    },
-
-    // 下移
-    sortDown(k) {
-      if (k != (this.dataTypeConfigs.length - 1)) {
-        let temp = this.dataTypeConfigs[k + 1];
-        Vue.set(this.dataTypeConfigs, k + 1, this.dataTypeConfigs[k]);
-        Vue.set(this.dataTypeConfigs, k, temp);
-      }
-    },
     // 清空配置
     emptyConfigs() {
       this.dataTypeConfigs = [];
     },
+
+    //获取当前时间 , 年-月-日 时：分：秒格式
+    getNowFormatDate() {
+      var date = new Date();
+      var seperator1 = "-";
+      var seperator2 = ":";
+      var month = date.getMonth() + 1<10? "0"+(date.getMonth() + 1):date.getMonth() + 1;
+      var strDate = date.getDate()<10? "0" + date.getDate():date.getDate();
+      var currentdate = date.getFullYear() + seperator1  + month  + seperator1  + strDate
+          + " "  + date.getHours()  + seperator2  + date.getMinutes()
+          + seperator2 + date.getSeconds();
+      return currentdate;
+    },
+
     // 保存分享
     async saveShare() {
       try {
@@ -518,6 +516,9 @@ export default {
         if (!this.saveForm.wantShare) {  
           /*    仅保存至localstore        */
           var key = 'case_' + Date.parse(new Date());
+          form.configs = JSON.stringify(form.configs);
+          form['date_created'] = this.getNowFormatDate();
+          form['id'] = key;
           localStorage.setItem(key, JSON.stringify(form));
         } else {
           /*   保存并分享， 数据保存到后端，同时保存至localstore */
@@ -526,7 +527,11 @@ export default {
           if (res.code === 200){
             this.$Message.success('分享成功');
             // 数据保存至localshore
-            localStorage.setItem('case', JSON.stringify(form));
+            var key = 'case_' + Date.parse(new Date());
+            form.configs = JSON.stringify(form.configs);
+            form['date_created'] = this.getNowFormatDate();
+            form['id'] = key;
+            localStorage.setItem(key, JSON.stringify(form));
           } else {
             this.$Message.error("数据无法保存，请检查！"); 
           }
@@ -538,6 +543,7 @@ export default {
         });
       }
     },
+
     // 导出数据数量的输入回调
     changeExportDataNum(num) {
       if (num >= 100000) {
@@ -546,6 +552,7 @@ export default {
         this.exportForm.tipShow = false;
       }
     },
+
     // 自定义加载模态框函数，设置可见与不可见
     modalLoading(visible){
       var el = document.getElementById('loadingmodal');
@@ -554,7 +561,30 @@ export default {
       }else{
         el.style.visibility =  "hidden" ;
       }
-    }
+    },
+
+      // 删除字段组件， k下标
+    delRow(k) {
+      this.dataTypeConfigs.splice(k, 1);
+    },
+
+    // 上移
+    sortUp(k) {
+      if (k != 0) {
+        let temp = this.dataTypeConfigs[k - 1];
+        Vue.set(this.dataTypeConfigs, k - 1, this.dataTypeConfigs[k]);
+        Vue.set(this.dataTypeConfigs, k, temp);
+      }
+    },
+
+    // 下移
+    sortDown(k) {
+      if (k != (this.dataTypeConfigs.length - 1)) {
+        let temp = this.dataTypeConfigs[k + 1];
+        Vue.set(this.dataTypeConfigs, k + 1, this.dataTypeConfigs[k]);
+        Vue.set(this.dataTypeConfigs, k, temp);
+      }
+    },
   }
 }
 </script>
@@ -569,16 +599,17 @@ export default {
   top: 0px;
   z-index: 1000;
   background-color: white;
-  opacity: 0.75;
+  opacity: 0.9;
   text-align:center;
 
-  #modalbox{
+  .shadow-box{
     position: absolute;
-    width: 150px;
+    width: 300px;
     left:50%;
     top:45%;
     transform: translate(-50%, -50%);
-    background-color:white;
+    background-color: #E0DCDF;
+
   }
 }
 

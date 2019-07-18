@@ -113,7 +113,7 @@
 }
 </style>
 <script>
-import { Icon, Modal, Input, Button, Page } from 'iview';
+import { Modal, Input, Button, Page } from 'iview';
 import api from '@/api/index.js';
 import { timeToAgo } from "@/utils/functions";
 import { mapGetters } from 'vuex';
@@ -129,7 +129,6 @@ export default {
     }
   },
   components: {
-    Icon,
     Input,
     Modal,
     Button,
