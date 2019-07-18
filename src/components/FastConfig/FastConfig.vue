@@ -31,7 +31,7 @@
 
 <script>
 import api from '@/api/index.js'
-import { ButtonGroup, Button, Tooltip } from 'iview';
+import { ButtonGroup, Button } from 'iview';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -43,8 +43,7 @@ export default {
   },
   components: {
     ButtonGroup,
-    Button,
-    Tooltip
+    Button
   },
   computed: {
     ...mapGetters(['storeQuote'])
