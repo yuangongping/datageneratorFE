@@ -1,7 +1,7 @@
 import { DATA_TYPES } from '@/datatypes/index.js';
 import deepcopy from 'deepcopy';
 import { RELATION_ENUM } from '../datatypes/CONST';
-// import { randomBytes } from 'crypto';
+import { WORKER_MESSAGE } from './CONST.js';
 
 export class Generator {
     /**
@@ -185,7 +185,7 @@ export class Generator {
         return genResult;
     }
 
-    generate() {
+    plainGenerate() {
         const { jsonTemplate, nrows } = this;
         const data = [];
         // 依据需要生成的数据量进行循环
@@ -284,7 +284,7 @@ export class Generator {
             const percent = parseInt(i / nrowsDeno);
             if (percent % 5 == 0 && percent != lastPercent) {
                 workerSelf.postMessage({
-                    type: 'PERCENT',
+                    type: WORKER_MESSAGE.progress,
                     data: percent
                 });
                 lastPercent = percent;

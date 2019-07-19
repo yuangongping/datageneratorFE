@@ -3,12 +3,12 @@
       <div class="menu">
         <Menu  mode="horizontal"  @on-select="toSelect" active-name="case" >
           <MenuItem name="case" >
-              <Icon type="ios-briefcase" />
-              案例
+            <Icon type="ios-briefcase" />
+            案例
           </MenuItem>
           <MenuItem name="suggestion"  > 
-              <Icon type="ios-chatbubbles" />
-              意见            
+            <Icon type="ios-chatbubbles" />
+            意见            
           </MenuItem>
         </Menu>
         <router-view class="router-view"/>  
@@ -21,7 +21,7 @@
 .community{
   display: flex;
   flex-direction: column;
-  margin: 0 20px;
+  margin: 0 20px 40px 20px;
   padding: 20px;
   box-shadow: 0 10px 30px 0 rgba(0,0,0,.1);
   
