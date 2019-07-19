@@ -148,7 +148,7 @@
 <script>
 import api from '@/api/index.js'
 import { Generator } from "@/generator/index";
-import { Icon, Button, Page, Tag, Tooltip, Rate } from "iview";
+import { Icon, Page, Tooltip } from "iview";
 import { timeToAgo } from "@/utils/functions";
 import { mapGetters } from 'vuex';
 
@@ -161,11 +161,8 @@ export default {
   },
   components: {
     Icon,
-    Button,
     Page,
-    Tag,
     Tooltip,
-    Rate
   },
   computed: {
     ...mapGetters(['storeCasePage', 'storeNumPerPage'])
