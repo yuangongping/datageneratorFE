@@ -12,6 +12,7 @@
           <a @click="filterFlag=true"><Icon type="ios-arrow-up" />收起工具</a>
         </div>
     </div>
+
     <div class="communitycase" v-if="filter==='社区案例'">
       <div class="case-item" v-for="(caseItem, index) in caseList" :key="caseItem.id">
         <div class="content">
@@ -74,6 +75,7 @@
         @on-change="pageChange"
       />
     </div>
+
     <!-- 我的案例 -->
     <div v-else>
       <div class="case-item" v-for="(caseItem, index) in mycaseList" :key="caseItem.id">
@@ -114,6 +116,11 @@
               <Icon type="md-share"/>
               引用
             </div>
+            <div class="action-num" @click="mydelete(index)"  :class="{picked: caseItem.quoted}">
+              <Icon type="md-trash" />
+              删除
+            </div>
+
           </div>
         </div>
       </div>
@@ -316,6 +323,17 @@ export default {
         this.$Message.error(e);
       }
     },
+    // 删除我的案例
+    mydelete(index){
+       try {
+        localStorage.removeItem(this.mycaseList[index].id);
+        this.listCase();
+        this.$Message.success('删除成功！');
+      } catch (e) {
+        console.error(e);
+        this.$Message.error(e);
+      }
+    },
 
     async listCase() {
       try {
@@ -368,7 +386,7 @@ export default {
         let data = {};
         const generator = new Generator(configs, 1);
         try {
-          data = generator.generate()[0];
+          data = generator.plainGenerate()[0];
         } catch (e) {
           console.log(e);
         }

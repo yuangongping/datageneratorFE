@@ -1,7 +1,7 @@
 import { DATA_TYPES } from '@/datatypes/index.js';
 import deepcopy from 'deepcopy';
 import { RELATION_ENUM } from '../datatypes/CONST';
-// import { randomBytes } from 'crypto';
+import { WORKER_MESSAGE } from './CONST.js';
 
 export class Generator {
     /**
@@ -185,11 +185,60 @@ export class Generator {
         return genResult;
     }
 
-    generate(percentCallback) {
+    plainGenerate() {
+        const { jsonTemplate, nrows } = this;
+        const data = [];
+        // 依据需要生成的数据量进行循环
+        const sortedDataTypes = this.getSortedDataTypes();
+        for (let i = 0; i < nrows; i++) {
+            // 生成单个数据变量
+            const genOneObj = {};
+            sortedDataTypes.forEach(el => {
+                let options = el.dataType.options;
+                // 放入计数器
+                options.__counter = i;
+                // 判断数据是否存在关联字段，有些组件有，有些组件没有
+                // 放入计数器
+                options.__counter = i;
+                if (el.dataType.relation) {
+                    // 判断字段是否相关，不等于独立字段RELATION_ENUM.INDEPEND.EN，即相关
+                    if (el.dataType.relation.type != RELATION_ENUM.INDEPEND.EN) {
+                        // 获取关联字段名，多个关联字段以 ， 分割
+                        const relateFieldNames = el.dataType.relation.fieldNames.split(',');
+                        // 遍历关联字段
+                        relateFieldNames.forEach(relateField => {
+                            // 合并与之关联的options与自己的options用于生成 新的options和data
+                            if (genOneObj[relateField] != undefined) {
+                                Object.assign(options, genOneObj[relateField].options);
+                            } else {
+                                throw new Error(`处理字段 ${el.fieldName} 的关联字段 ${relateField}出错，请仔细检查关联关系！是否存在循环引用或不相关的字段？`);
+                            }
+                        });
+                    }
+                }
+                // 获取各个字段的值
+                genOneObj[el.fieldName] = this.getValue(el.dataType.genFunc, el.fieldName, options, el.dataType.relation);
+            });
+
+            // 按照之前的数据模板重新赋值生成的数据，保证之前模板不受排序的影响
+            const templateRow = {};
+            for (let key in jsonTemplate) {
+                templateRow[key] = genOneObj[key].data;
+            }
+
+            data.push(templateRow);
+        }
+
+        return data;
+    }
+
+    wokerGenerate(workerSelf) {
         const { jsonTemplate, nrows } = this;
 
-        let lastPecent = 0;
-        const percentDeno = (nrows - 1) / 100;
+        /** worker version */
+        const nrowsDeno = (nrows - 1) / 100;
+        let lastPercent = 0;
+
         const data = [];
         // 依据需要生成的数据量进行循环
         const sortedDataTypes = this.getSortedDataTypes();
@@ -231,14 +280,16 @@ export class Generator {
 
             data.push(templateRow);
 
-            const percent = parseInt(i / percentDeno);
-            if (percent % 5 == 0 && percent != lastPecent) {
-                percentCallback(percent)
-                lastPecent = percent;
+            /** worker version */
+            const percent = parseInt(i / nrowsDeno);
+            if (percent % 5 == 0 && percent != lastPercent) {
+                workerSelf.postMessage({
+                    type: WORKER_MESSAGE.progress,
+                    data: percent
+                });
+                lastPercent = percent;
             }
         }
-
         return data;
     }
-
 }

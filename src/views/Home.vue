@@ -202,18 +202,19 @@
       <div class="preview-save" v-if="dataTypeConfigs.length > 0">
         <Button @click="preview"  type="primary" icon="md-eye"> 预览 </Button>
         <Tooltip max-width="200" content="保存数据以便于下次生成使用，同时推荐您将结果分享到社区，共享生成配置" theme="light" placement="top">
-          <Button @click="saveForm.show=true"  type="primary" icon="md-share"> 保存并分享配置</Button>
+          <Button @click="saveForm.show=true" :disabled="saveForm.show"  type="primary" icon="md-share"> 保存并分享配置</Button>
         </Tooltip>
-        <Button @click="exportForm.show=true"  type="primary" icon="md-download"> 导出数据 </Button>
+        <Button @click="exportForm.show=true"  :disabled="exportForm.show"  type="primary" icon="md-download"> 导出数据 </Button>
       </div>
     </div>
 
-    <!-- <div id="genPercent"></div> -->
     
-    <div id="loadingmodal">
-      <div class=shadow-box>
-        <img src="../assets/images/timg.gif" style="width:100%">
-      </div>
+    <div id="downloadingmodal" class="flex-row" v-if="downloading">
+        <div class="flex-column">
+          <img src="../assets/images/loading.gif">
+          <span>数据生成中, 请耐心等待...</span>
+          <Progress :percent="genPercent" status="active" />
+        </div>
     </div>
   </div>
 </template>
@@ -223,13 +224,12 @@
 import Vue from 'vue'
 import { mapGetters } from 'vuex';
 import deepcopy from 'deepcopy';
-import draggable from 'vuedraggable';
 import { Progress, Button, Input, Select, Option, Icon, Tag, Poptip,
          Switch, Tooltip, Modal, Table, InputNumber, RadioGroup, Radio, Scroll } from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
 import FastConfig from '@/components/FastConfig/FastConfig.vue';
 import BasicConfig from '@/components/BasicConfig/BasicConfig.vue';
-import { Generator } from '@/generator/index';
+
 import { SexConfig, NameConfig, CounterConfig,
          NumberConfig, IdentificationNumberConfig, Str2NumberConfig,
          StrConcatConfig, StrSegmentConfig ,RandomChoiceConfig,
@@ -238,6 +238,11 @@ import { SexConfig, NameConfig, CounterConfig,
          RandomFieldConfig, DetailAddressConfig, GeographCoordinatesConfig,
          OccupationConfig} from '@/components/datatypesconfig/index.js';  
 import { DATA_TYPES } from '@/datatypes/index.js';
+
+import { Generator } from '@/generator/index';
+import Worker from '@/generator/generate.worker.js';
+import { WORKER_MESSAGE } from '@/generator/CONST.js'
+
 import api from '../api/index.js';
 import { formatJson, formatXml, formatCsv } from '../utils/export.js';
 
@@ -247,7 +252,6 @@ export default {
   data() {
     return {
       previewFlag: false,
-      downloadFlag: false,
       shareFlag: false,
       tableHead: [],
       // 预览数据量, 预览10条
@@ -271,6 +275,7 @@ export default {
         fileType: 'json',
         fileName: 'data_generated'
       },
+      downloading: false,
       genPercent: 0,
     }
   },
@@ -291,8 +296,8 @@ export default {
     Radio,
     Modal,
     Table,
-    draggable,
     Poptip,
+    Progress,
     
     // 字段配置组件
     SexConfig,
@@ -327,10 +332,6 @@ export default {
         this.exportForm.show = false;
         this.saveForm.show = false;
       }
-    },
-    genPercent: function(newVal, oldVal) {
-      console.log('-  ---------------');
-      console.log(newVal, oldVal)
     }
   },
   mounted() {
@@ -354,72 +355,90 @@ export default {
       return dataTypeConfigs;
     },
 
-    // 生产数据函数
-    generate(number) {
-      const generator = new Generator(this.parseDataTypeConfigs(), number);
-      let _self = this;
-      _self.genPercent = 0;
-      return generator.generate(function(percent) {
-        _self.genPercent = percent;
-        let percentDom = document.getElementById("genPercent");
-        console.log(percentDom)
-        percentDom.innerHTML = percent;
-        // requestAnimationFrame(function() {
-        //   _self.genPercent = percent;
-        // })
+    // 普通生成
+    plainGenerate(configs, nrows) {
+      const generator = new Generator(configs, nrows);
+      return generator.plainGenerate()
+    },
+
+    // 使用worker生成
+    workerGenerate(configs, nrows, downLoadFunc) {
+      const worker = new Worker();
+      var _self = this;
+
+      worker.onmessage = function (event) {
+        const message = event.data;
+        if (message.type == WORKER_MESSAGE.progress) {
+          _self.genPercent = message.data;
+        }
+
+        if (message.type ==  WORKER_MESSAGE.finish) {
+          downLoadFunc(message.data, _self.exportForm.fileName, _self.exportForm.fileType);
+          _self.downloading = false;
+        }
+      };
+
+      worker.onerror = function (e) {
+        _self.downloading = false;
+        _self.$Message.error({
+          content: e.message,  // worker传过来的错误信息在message里面
+          duration: 5
+        });
+      }
+
+      worker.postMessage({
+        configs: configs,
+        nrows: nrows
       });
     },
 
     // ----------  预览
     preview(){
-      let _self = this;
-      _self.generate(100000);
-      // this.dataPreview = [];
-      // try {
-      //   this.dataPreview = this.generate(this.previewDataNum);
-      //   // 设置对话框为可见状态
-      //   this.previewFlag = true;
-      //   // 获取数据的所有keys
-      //   const keys = Object.keys(this.dataPreview[0]);
-      //   // 重置数据表头
-      //   this.tableHead = [];
-      //   for(var i = 0; i < keys.length; i++ ){
-      //     this.tableHead.push(
-      //       {
-      //         title: keys[i],
-      //         key:  keys[i]
-      //       }
-      //     )
-      //   }
-      // } catch (e) {
-      //   this.$Message.error({
-      //     content: e.toString(),
-      //     duration: 5
-      //   });
-      // }
-      
+      this.dataPreview = [];
+      try {
+        this.dataPreview = this.plainGenerate(this.parseDataTypeConfigs(), this.previewDataNum);
+        // 设置对话框为可见状态
+        this.previewFlag = true;
+        // 获取数据的所有keys
+        const keys = Object.keys(this.dataPreview[0]);
+        // 重置数据表头
+        this.tableHead = [];
+        for(var i = 0; i < keys.length; i++ ){
+          this.tableHead.push(
+            {
+              title: keys[i],
+              key:  keys[i]
+            }
+          )
+        }
+      } catch (e) {
+        this.$Message.error({
+          content: e.toString(),
+          duration: 5
+        });
+      }
     },
     
     // ----------  下载
-    download(filename, filetype) {
+    download(data, filename, filetype) {
       try{
-        const datas = this.generate(this.exportForm.dataNum);
-        if (datas == "" || filename == "" || filetype == "") {
-          throw new Error("下载组件存在非空属性");
+        if (!data) {
+          throw new Error("没有可导出的数据！");
+          return;
         }
         // 以及数据格式生成对应文件
         switch(filetype){
           case 'json':
-            formatJson(datas, filename, filetype);
+            formatJson(data, filename, filetype);
             break;
           case 'csv':
-            formatCsv(datas, filename, filetype);
+            formatCsv(data, filename, filetype);
             break;
           case 'xml':
-            formatXml(datas, filename, filetype);
+            formatXml(data, filename, filetype);
             break;
           default:
-            formatCsv(datas, filename, 'csv');
+            formatCsv(data, filename, 'csv');
         }
         
       } catch (e) {
@@ -432,13 +451,11 @@ export default {
 
     // ----------  导出
     doExport () {
-      const { exportForm, download, modalLoading } = this;
+      const { exportForm, download, modalLoading, parseDataTypeConfigs, workerGenerate } = this;
       if (exportForm.fileName) {
-        modalLoading(true);
-        setTimeout(function() {
-          download(exportForm.fileName, exportForm.fileType);
-          modalLoading(false);
-        }, 100);
+        this.genPercent = 0;
+        this.downloading = true;
+        workerGenerate(parseDataTypeConfigs(), exportForm.dataNum, download);
       } else {
         this.$Message.error({
           content: "请填写导出文件名",
@@ -504,7 +521,7 @@ export default {
         if (!this.saveForm.table_name) {
           throw new Error("请输入数据集/表名称")
         }
-        this.generate(1); // 先生存1条数据检验配置是否正确
+        this.plainGenerate(this.parseDataTypeConfigs(), 1); // 先生存1条数据检验配置是否正确
         // 数据格式化
         const form = {
           nick_name: this.saveForm.nick_name,
@@ -520,6 +537,7 @@ export default {
           form['date_created'] = this.getNowFormatDate();
           form['id'] = key;
           localStorage.setItem(key, JSON.stringify(form));
+          this.$Message.success('保存成功，等待审核！');
         } else {
           /*   保存并分享， 数据保存到后端，同时保存至localstore */
           // 发出请求，数据保存至后端
@@ -555,7 +573,7 @@ export default {
 
     // 自定义加载模态框函数，设置可见与不可见
     modalLoading(visible){
-      var el = document.getElementById('loadingmodal');
+      var el = document.getElementById('downloadingmodal');
       if (visible){
         el.style.visibility =  "visible";
       }else{
@@ -590,8 +608,7 @@ export default {
 </script>
 
 <style lang="scss">
-#loadingmodal {
-  visibility: hidden;
+#downloadingmodal {
   position: fixed;
   width:100%;
   height:100%;
@@ -602,14 +619,14 @@ export default {
   opacity: 0.9;
   text-align:center;
 
-  .shadow-box{
-    position: absolute;
-    width: 300px;
-    left:50%;
-    top:45%;
-    transform: translate(-50%, -50%);
-    background-color: #E0DCDF;
+  .flex-column {
+    padding: 300px;
+    align-items: center;
+    flex: 1;
+  }
 
+  img {
+    width: 200px;
   }
 }
 
