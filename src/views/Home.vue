@@ -205,8 +205,9 @@
       <Button @click="exportForm.show=true"  type="primary" icon="md-download"> 导出数据 </Button>
     </div>
 
+    <Progress :percent="genPercent" status="active" />
   </div>
-
+  
 </template>
 
 <script>
@@ -214,7 +215,6 @@
 import Vue from 'vue'
 import { mapGetters } from 'vuex';
 import deepcopy from 'deepcopy';
-import draggable from 'vuedraggable';
 import { Progress, Button, Input, Select, Option, Icon, Tag, Poptip,
          Switch, Tooltip, Modal, Table, InputNumber, RadioGroup, Radio, Scroll } from 'iview';
 import Exporter from '@/components/Exporter/index.vue';
@@ -229,6 +229,8 @@ import { SexConfig, NameConfig, CounterConfig,
          RandomFieldConfig, DetailAddressConfig, GeographCoordinatesConfig,
          OccupationConfig} from '@/components/datatypesconfig/index.js';  
 import { DATA_TYPES } from '@/datatypes/index.js';
+import Worker from '@/generator/generate.worker.js';
+
 export default {
   name: 'home',
   data() {
@@ -257,7 +259,8 @@ export default {
         dataNum: 100,
         fileType: 'json',
         fileName: 'data_generated'
-      }
+      },
+      genPercent: 0,
     }
   },
   components: {
@@ -277,8 +280,8 @@ export default {
     Radio,
     Modal,
     Table,
-    draggable,
     Poptip,
+    Progress,
     
     // 字段配置组件
     SexConfig,
@@ -395,7 +398,29 @@ export default {
     doExport () {
       const { exportForm } = this;
       if (exportForm.fileName) {
-        this.download(exportForm.fileName, exportForm.fileType);
+        // this.download(exportForm.fileName, exportForm.fileType);
+
+        const worker = new Worker();
+      
+        var _self = this;
+        worker.onmessage = function (event) {
+          const message = event.data;
+          if (message.type == 'PERCENT') {
+            _self.genPercent = message.data;
+          }
+        };
+
+        worker.onerror = function (e) {
+          _self.$Message.error({
+            content: e.message,  // worker传过来的错误信息在message里面
+            duration: 5
+          });
+        }
+
+        worker.postMessage({
+          configs: this.parseDataTypeConfigs(),
+          nrows: 100000
+        });
       } else {
         this.$Message.error({
           content: "请填写导出文件名",
