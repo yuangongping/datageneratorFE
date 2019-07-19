@@ -368,7 +368,7 @@ export default {
         let data = {};
         const generator = new Generator(configs, 1);
         try {
-          data = generator.generate()[0];
+          data = generator.plainGenerate()[0];
         } catch (e) {
           console.log(e);
         }
