@@ -521,7 +521,7 @@ export default {
         if (!this.saveForm.table_name) {
           throw new Error("请输入数据集/表名称")
         }
-        this.generate(1); // 先生存1条数据检验配置是否正确
+        this.plainGenerate(this.parseDataTypeConfigs(), 1); // 先生存1条数据检验配置是否正确
         // 数据格式化
         const form = {
           nick_name: this.saveForm.nick_name,
@@ -537,6 +537,7 @@ export default {
           form['date_created'] = this.getNowFormatDate();
           form['id'] = key;
           localStorage.setItem(key, JSON.stringify(form));
+          this.$Message.success('保存成功，等待审核！');
         } else {
           /*   保存并分享， 数据保存到后端，同时保存至localstore */
           // 发出请求，数据保存至后端
