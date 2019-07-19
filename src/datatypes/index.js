@@ -269,7 +269,7 @@ export const DATA_TYPES = {
             fieldNames: "",
             minInterval: 0,
             maxInterval: 1,
-            type: RELATION_ENUM.INDEPEND.EN,
+            type: RELATION_ENUM.COR_RELATION.EN,
             allowTypes: "ALL",
         }
     },

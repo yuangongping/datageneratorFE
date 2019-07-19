@@ -3,12 +3,12 @@
       <div class="menu">
         <Menu  mode="horizontal"  @on-select="toSelect" active-name="case" >
           <MenuItem name="case" >
-              <Icon type="ios-briefcase" />
-              案例
+            <Icon type="ios-briefcase" />
+            案例
           </MenuItem>
           <MenuItem name="suggestion"  > 
-              <Icon type="ios-chatbubbles" />
-              意见            
+            <Icon type="ios-chatbubbles" />
+            意见            
           </MenuItem>
         </Menu>
         <router-view class="router-view"/>  

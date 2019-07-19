@@ -13,7 +13,7 @@
     </div>
 
     <Button v-if="storeQuote != null" type="error" icon="md-add" size="small" @click="pasteQuote">
-      {{ storeQuote.name }} (来自引用)
+      {{ storeQuote.table_name }} (来自引用)
     </Button>
   </div>
 </template>
@@ -32,7 +32,7 @@ export default {
   },
   components: {
     ButtonGroup,
-    Button,
+    Button
   },
   computed: {
     ...mapGetters(['storeQuote'])
