@@ -147,12 +147,23 @@
         <div class="export shadow-box" v-if="exportForm.show">
           <div class="flex-row">
             <div class="title">数据量</div>
-            <InputNumber
-            :min="1"
-            :precision="0"
-            v-model="exportForm.dataNum"
-            @on-change="changeExportDataNum"
-            ></InputNumber>
+
+            <Tooltip
+              theme="light"
+              placement="top"
+            >
+              <div slot="content">
+                  {{ exportForm.dataNum | numberToCN }} 条
+              </div>
+              <InputNumber
+                :min="1"
+                :precision="0"
+                v-model="exportForm.dataNum"
+                @on-change="changeExportDataNum"
+              ></InputNumber>
+            </Tooltip>
+
+            
 
             <Tooltip
               max-width="400"
@@ -334,7 +345,23 @@ export default {
       }
     }
   },
+  filters: {
+    numberToCN(num) {
+      if (!num) {
+        return 0;
+      }
+      const num_str = num.toString();
+      if (num_str.length < 5) {
+        return num_str;
+      } else if (4 < num_str.length && num_str.length < 9) {
+        return num_str.slice(-1 * num_str.length, num_str.length - 4) + '万' + num_str.slice(num_str.length - 4)
+      } else if (num_str.length > 8) {
+        return num_str.slice(-1 * num_str.length,  num_str.length - 8) + '亿' + num_str.slice(4, 8) + '万' + num_str.slice(num_str.length - 4)
+      }
+    }
+  },
   mounted() {
+    console.log(this.numberToCN(123456789012))
     this.dataTypeConfigs = deepcopy(this.storeConfigs);
   },
   methods: {
