@@ -227,7 +227,28 @@
           <Progress :percent="genPercent" status="active" />
         </div>
     </div>
+
+    <div>
+      <Modal 
+        v-model="webWorkerFlag" 
+        width="600"
+        :closable="false"
+        :mask-closable="false">
+          <div style="text-align:center; margin-top:40px">
+              <p style="margin-top:10px">数据生成时，使用到了HTML5 WebWorker技术，</p>
+              <p style="margin-top:10px">您的浏览器版本不支持WebWorker，请升级至最新版本</p>
+              <p style="margin-top:10px">WebWorker与浏览器的兼容性参考：
+                <a target="blank" href="https://caniuse.com/#search=webworker">https://caniuse.com/#search=webworker</a>
+              </p>
+          </div>
+          <div slot="footer">
+            <Button type="error" size="large" long :loading="modal_loading" @click="webWorkerFlag=false">确定</Button>
+          </div>
+          
+      </Modal>
   </div>
+  </div>
+
 </template>
 
 <script>
@@ -264,6 +285,7 @@ export default {
     return {
       previewFlag: false,
       shareFlag: false,
+      webWorkerFlag: false,
       tableHead: [],
       // 预览数据量, 预览10条
       previewDataNum: 10, 
@@ -389,6 +411,11 @@ export default {
 
     // 使用worker生成
     workerGenerate(configs, nrows, downLoadFunc) {
+      // 使用web Worker前检查一下浏览器是否支持 https://cloud.tencent.com/developer/article/1356677
+      if(typeof(Worker) === 'undefined'){
+        this.webWorkerFlag = true;
+        return
+      }
       const worker = new Worker();
       var _self = this;
 
@@ -569,7 +596,7 @@ export default {
           // 发出请求，数据保存至后端
           const res = await api.addCase(form)
           if (res.code === 200){
-            this.$Message.success('分享成功');
+            this.$Message.success('分享成功，等待后台审核！');
             // 数据保存至localshore
             var key = 'case_' + Date.parse(new Date());
             form.configs = JSON.stringify(form.configs);
@@ -606,8 +633,7 @@ export default {
         el.style.visibility =  "hidden" ;
       }
     },
-
-      // 删除字段组件， k下标
+    // 删除字段组件， k下标
     delRow(k) {
       this.dataTypeConfigs.splice(k, 1);
     },

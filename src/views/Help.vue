@@ -39,6 +39,13 @@
         <p>数字表达式即字段的值需通过表达式运算生成时，填写的表达式。例如年龄计算为2019减去出生年龄, 出生年龄为关联字段, 则年龄的数字表达式为2019-${RELATE}</p>
         <p>例如图中数字表达式为Y=X^2， Z=X+Z。${RELATE}代表关联字段的值，${DATA}代表本字段的值，运算关系可以任意选择。</p>
         <img src="../assets/images/express.png" alt="" width="90%" style="margin-left:30px;">
+
+        <p>
+          <router-link to="/community/suggestion">
+            更多问题请前往社区意见提问
+          </router-link>
+        </p>
+       
         
       </div>
     </div>
