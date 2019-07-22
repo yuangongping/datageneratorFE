@@ -347,6 +347,9 @@ export default {
   },
   filters: {
     numberToCN(num) {
+      if (!num) {
+        return 0;
+      }
       const num_str = num.toString();
       if (num_str.length < 5) {
         return num_str;
