@@ -537,7 +537,7 @@ export default {
           form['date_created'] = this.getNowFormatDate();
           form['id'] = key;
           localStorage.setItem(key, JSON.stringify(form));
-          this.$Message.success('保存成功，等待审核！');
+          this.$Message.success('保存成功！');
         } else {
           /*   保存并分享， 数据保存到后端，同时保存至localstore */
           // 发出请求，数据保存至后端
