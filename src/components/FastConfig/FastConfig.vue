@@ -1,17 +1,6 @@
 <template>
   <div class="fast-config">
     <div class="title">快捷配置</div>
-    <!-- <div class="button-group">
-      <ButtonGroup 
-        v-for="fastType in Object.keys(FAST_TYPES)" 
-        :key="fastType" 
-        size="small"> 
-        <Button type="info" icon="md-add" @click="fastConfig(fastType)">
-          {{FAST_TYPES[fastType].alias}}
-        </Button>
-      </ButtonGroup>
-    </div> -->
-
     <div class="button-group">
       <ButtonGroup 
         v-for="(fastItem, k) in fastConfigs" 
@@ -65,7 +54,7 @@ export default {
           this.fastConfigs = res.data;
         } else {
           console.error(res);
-          this.$Message.error("获取总页码错误");
+          this.$Message.error("获取快捷配置数据错误");
         }
       } catch (e) {
         console.error(e);

@@ -1,5 +1,4 @@
 import request from '../utils/request.js';
-const querystring = require('querystring')
 
 export function getFastConfigs() {
   return new Promise((resolve, reject) => {
@@ -13,3 +12,4 @@ export function getFastConfigs() {
     })
   })
 }
+
