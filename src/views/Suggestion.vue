@@ -182,7 +182,6 @@ export default {
     },
     async listSuggestion() {
       try{
-        console.log(this.storeSuggestionPage, this.storeNumPerPage)
         const res = await api.listSuggestion({
           page: this.storeSuggestionPage,
           num: this.storeNumPerPage
