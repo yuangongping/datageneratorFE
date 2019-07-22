@@ -2,38 +2,76 @@
   <div class="fast-config">
     <div class="title">快捷配置</div>
     <div class="button-group">
-      <ButtonGroup 
-        v-for="fastType in Object.keys(FAST_TYPES)" 
-        :key="fastType" 
-        size="small"> 
-        <Button type="info" icon="md-add" @click="fastConfig(fastType)">
-          {{FAST_TYPES[fastType].alias}}
-        </Button>
-      </ButtonGroup>
+      <Tooltip
+        v-for="(fastItem, k) in fastConfigs" 
+        :key="k" 
+        max-width="200" theme="light" placement="top" >
+        <div slot="content">贡献者：{{ fastItem.nick_name }} </div>
+        <ButtonGroup 
+          size="small"> 
+            <Button type="info" icon="md-add" @click="fastConfig(fastItem)">
+              {{ fastItem.table_name }}
+            </Button>
+        </ButtonGroup>
+      </Tooltip>
     </div>
+
+    <Tooltip
+      v-if="storeQuote != null"
+      max-width="200" theme="light" placement="top" >
+      <div slot="content">贡献者：{{ storeQuote.nick_name }} </div>
+      <Button type="error" icon="md-add" size="small" @click="pasteQuote">
+        {{ storeQuote.table_name }} (来自引用)
+      </Button>
+    </Tooltip>
+    
   </div>
 </template>
 
 <script>
+import api from '@/api/index.js'
+import { ButtonGroup, Button, Tooltip } from 'iview';
+import { mapGetters } from 'vuex';
 
-import { FAST_TYPES } from './fastconfig.js';
-import { ButtonGroup, Button } from 'iview';
 export default {
   name: 'fastconfig',
   data() {
     return {
-      FAST_TYPES: FAST_TYPES,
+      fastConfigs: []
     }
   },
   components: {
     ButtonGroup,
-    Button
+    Button,
+    Tooltip
+  },
+  computed: {
+    ...mapGetters(['storeQuote'])
   },
   mounted() {
+    this.getFastConfigs();
   },
   methods: {
-    fastConfig(fastType) {
-      this.$emit('fast-config', FAST_TYPES[fastType].config)
+    fastConfig(fastItem) {
+      this.$emit('fast-config', JSON.parse(fastItem.configs))
+    },
+    pasteQuote() {
+      this.$emit('fast-config', this.storeQuote.configs)
+    },
+    async getFastConfigs() {
+      try {
+        const res = await api.getFastConfigs();
+        if (res.code === 200) {
+          console.log(res.data)
+          this.fastConfigs = res.data;
+        } else {
+          console.error(res);
+          this.$Message.error("获取快捷配置数据错误");
+        }
+      } catch (e) {
+        console.error(e);
+        this.$Message.error(e);
+      }
     }
   }
 }
@@ -58,8 +96,9 @@ export default {
     border-left: 2px solid #2d8cf0;
   }
 
+  
   .button-group {
-    .ivu-btn-group {
+    .ivu-tooltip {
       margin-right: 10px;
       margin-bottom: 10px;
     }

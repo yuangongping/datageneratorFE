@@ -51,11 +51,15 @@
 
     <div class="config-item" v-if="relationValue.type !== RELATION_ENUM.INDEPEND.EN">
       <label>
-        <Input type="text"
-            v-model="relationValue.fieldNames"
-            @on-change="chgRelation"
-        />
         <span class="config-title">关联字段</span>
+        <Tooltip max-width="200" theme="light" placement="top">
+          <div slot="content" v-if="relationValue.allowTypes === 'ALL'">可以关联所有字段</div>
+          <div slot="content" v-else>建议关联 <Tag color="primary" style="color: #fff;" v-for="datatype in relationValue.allowTypes" :key="datatype">{{ DATA_TYPES[datatype].alias }}</Tag> 组件, 请合理设置关联字段</div>
+          <Input type="text"
+              v-model="relationValue.fieldNames"
+              @on-change="chgRelation"
+          />
+        </Tooltip>
       </label>
     </div>
     
@@ -86,10 +90,11 @@
 <script>
 import { DATA_TYPES } from '@/datatypes/index.js'; 
 import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
-import { Input, InputNumber, Select, Option } from "iview";
+import { Input, InputNumber, Select, Option, Tooltip, Tag  } from "iview";
 export default {
   data() {
     return {
+      DATA_TYPES: DATA_TYPES,
       dataTypeAlias: DATA_TYPES[this.dataType].alias,
       fieldNameValue: this.fieldName,
       optionsValue: JSON.parse(this.options),
@@ -105,6 +110,8 @@ export default {
     relation: String,
   },
   components: {
+    Tooltip,
+    Tag, 
     Select,
     Option,
     Input,

@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { Checkbox, CheckboxGroup } from "iview";
+import { Checkbox, CheckboxGroup} from "iview";
 import OriginalData from '@/datatypes/COMMON_DATA/OriginalData_dict.js';
 export default {
   data() {
