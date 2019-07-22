@@ -361,7 +361,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.numberToCN(123456789012))
     this.dataTypeConfigs = deepcopy(this.storeConfigs);
   },
   methods: {
@@ -713,13 +712,8 @@ export default {
 }
 .action-area {
   display: flex;
-  div {
-    &:nth-child(n) {
-      margin-right: 20px;
-    }
-    &:nth-child(2n) {
-      margin-right: 0;
-    }
+  .basic-config {
+    margin-right: 20px;
   }
 }
 .config-row {
