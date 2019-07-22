@@ -309,7 +309,7 @@ export const DATA_TYPES = {
         relation: {
             fieldNames: "",
             type: RELATION_ENUM.INDEPEND.EN,
-            allowTypes: ["Time"],
+            allowTypes: ["Number"],
         }
     }
 };
