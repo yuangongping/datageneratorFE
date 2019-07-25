@@ -20,7 +20,7 @@
       <label>
         <span class="config-title">关联字段</span>
         <Tooltip max-width="200" theme="light" placement="top">
-          <div slot="content" v-if="relationValue.allowTypes === 'ALL'">可以关联所有字段</div>
+          <div slot="content" v-if="relationValue.allowTypes === 'ALL'">请关联 “数字” 类型组件</div>
           <div slot="content" v-else>建议关联 <Tag color="primary" style="color: #fff;" v-for="datatype in relationValue.allowTypes" :key="datatype">{{ DATA_TYPES[datatype].alias }}</Tag> 组件, 请合理设置关联字段</div>
           <Input type="text"
               v-model="relationValue.fieldNames"

@@ -9,6 +9,8 @@
           v-model="optionsValue.initialTime"
           placeholder="请输入起止时间"
           :disabled="relationValue.type==='GREATER'?true:false"
+          :editable="false"
+          :split-panels="true"
         >
         </DatePicker>
         <span class="config-title">生成时间范围</span>

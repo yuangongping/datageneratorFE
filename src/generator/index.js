@@ -25,7 +25,7 @@ export class Generator {
             ...
           ]
         */
-        this.dataFilter = {}; // 数据过滤器，用于唯一性校验
+        this.uniqueFilter = {}; // 数据过滤器，用于唯一性校验
         this.configArr = configArr;
         this.jsonTemplate = this.getJsonTemplate();
         this.nrows = nrows;
@@ -122,7 +122,7 @@ export class Generator {
      * @memberof Generator
      */
     getSortedDataTypes() {
-        const { configArr, dataFilter } = this;
+        const { configArr } = this;
         let sortedFields = []
 
         for (const config of configArr) {
@@ -144,7 +144,7 @@ export class Generator {
                     }
                     // 如果字段是唯一的，创建数据过滤器
                     if (tempDataType.dataType.options.__unique) {
-                        dataFilter[field] = [];
+                        this.uniqueFilter[field] = [];
                     }
                     sortedConfigArr.push(tempDataType);
                     break;
@@ -161,7 +161,7 @@ export class Generator {
      * @param {String} fieldName 字段名
      */
     getValue(genFunc, fieldName, options, relation) {
-        const { dataFilter } = this;
+        const { uniqueFilter } = this;
         let genResult;
         if (options.__unique) {
             // 尝试10万次生成，用于重复校验
@@ -170,8 +170,8 @@ export class Generator {
                 // 得到生成结果
                 genResult = genFunc(options, relation);
                 // 判断生成的值是否已经存在，不存在则
-                if (!dataFilter[fieldName][genResult.data]) {
-                    dataFilter[fieldName][genResult.data] = true;
+                if (!uniqueFilter[fieldName][genResult.data]) {
+                    uniqueFilter[fieldName][genResult.data] = true;
                     failStat = false;
                     break;
                 }
@@ -188,47 +188,80 @@ export class Generator {
     plainGenerate() {
         const { jsonTemplate, nrows } = this;
         const data = [];
-        // 依据需要生成的数据量进行循环
         const sortedDataTypes = this.getSortedDataTypes();
         for (let i = 0; i < nrows; i++) {
             // 生成单个数据变量
-            const genOneObj = {};
-            sortedDataTypes.forEach(el => {
-                let options = el.dataType.options;
-                // 放入计数器
-                options.__counter = i;
-                // 判断数据是否存在关联字段，有些组件有，有些组件没有
-                // 放入计数器
-                options.__counter = i;
-                if (el.dataType.relation) {
-                    // 判断字段是否相关，不等于独立字段RELATION_ENUM.INDEPEND.EN，即相关
-                    if (el.dataType.relation.type != RELATION_ENUM.INDEPEND.EN) {
-                        // 获取关联字段名，多个关联字段以 ， 分割
-                        const relateFieldNames = el.dataType.relation.fieldNames.split(',');
-                        // 遍历关联字段
-                        relateFieldNames.forEach(relateField => {
-                            // 合并与之关联的options与自己的options用于生成 新的options和data
-                            if (genOneObj[relateField] != undefined) {
-                                Object.assign(options, genOneObj[relateField].options);
-                            } else {
-                                throw new Error(`处理字段 ${el.fieldName} 的关联字段 ${relateField}出错，请仔细检查关联关系！是否存在循环引用或不相关的字段？`);
-                            }
-                        });
+            const genOneRow = {};
+            // 用于唯一性校验
+            let uniqueCheck = {};
+            // 对每一行数据尝试10万次生成，用于重复校验    
+            for (let j = 0; j < 100000; j++) {
+                for (let el of sortedDataTypes) {
+                    let options = el.dataType.options;
+                    // 放入计数器
+                    options.__counter = i;
+                    // 判断数据是否存在关联字段，有些组件有，有些组件没有
+                    // 放入计数器
+                    options.__counter = i;
+                    if (el.dataType.relation) {
+                        // 判断字段是否相关，不等于独立字段RELATION_ENUM.INDEPEND.EN，即相关
+                        if (el.dataType.relation.type != RELATION_ENUM.INDEPEND.EN) {
+                            // 获取关联字段名，多个关联字段以 ， 分割
+                            const relateFieldNames = el.dataType.relation.fieldNames.split(',');
+                            // 遍历关联字段
+                            relateFieldNames.forEach(relateField => {
+                                // 合并与之关联的options与自己的options用于生成 新的options和data
+                                if (genOneRow[relateField] != undefined) {
+                                    Object.assign(options, genOneRow[relateField].options);
+                                } else {
+                                    throw new Error(`处理字段 ${el.fieldName} 的关联字段 ${relateField}出错，请仔细检查关联关系！是否存在循环引用或不相关的字段？`);
+                                }
+                            });
+                        }
+                    }
+
+                    const genOneField = el.dataType.genFunc(options, el.dataType.relation);
+                    if (options.__unique) {
+                        // 如果生成值是不重复的值
+                        if (!this.uniqueFilter[el.fieldName][genOneField.data]) {
+                            this.uniqueFilter[el.fieldName][genOneField.data] = true;
+                            
+                            uniqueCheck[el.fieldName] = true;
+                        } else {
+                            // 如果是重复的值
+                            uniqueCheck[el.fieldName] = false;
+                            break;
+                        }
+                    }
+                    genOneRow[el.fieldName] = genOneField;
+                }
+
+                // 如果所有重复字段的检验都通过，跳出检验循环
+                let allPass = true;
+                for (const fieldKey in uniqueCheck) {
+                    if (!uniqueCheck[fieldKey]) {
+                        allPass = false;
                     }
                 }
-                // 获取各个字段的值
-                genOneObj[el.fieldName] = this.getValue(el.dataType.genFunc, el.fieldName, options, el.dataType.relation);
-            });
-
+                if (allPass) {
+                    break;
+                }
+            }
+            // 检查经过校验循环后的字段校验结果
+            for (const fieldKey in uniqueCheck) {
+                if (!uniqueCheck[fieldKey]) {
+                    throw new Error(`无法生成值不重复的字段${fieldKey}, 请检查唯一性是否合理`);
+                }
+            }
+            
             // 按照之前的数据模板重新赋值生成的数据，保证之前模板不受排序的影响
             const templateRow = {};
             for (let key in jsonTemplate) {
-                templateRow[key] = genOneObj[key].data;
+                templateRow[key] = genOneRow[key].data;
             }
 
             data.push(templateRow);
         }
-
         return data;
     }
 
@@ -244,38 +277,73 @@ export class Generator {
         const sortedDataTypes = this.getSortedDataTypes();
         for (let i = 0; i < nrows; i++) {
             // 生成单个数据变量
-            const genOneObj = {};
-            sortedDataTypes.forEach(el => {
-                let options = el.dataType.options;
-                // 放入计数器
-                options.__counter = i;
-                // 判断数据是否存在关联字段，有些组件有，有些组件没有
-                // 放入计数器
-                options.__counter = i;
-                if (el.dataType.relation) {
-                    // 判断字段是否相关，不等于独立字段RELATION_ENUM.INDEPEND.EN，即相关
-                    if (el.dataType.relation.type != RELATION_ENUM.INDEPEND.EN) {
-                        // 获取关联字段名，多个关联字段以 ， 分割
-                        const relateFieldNames = el.dataType.relation.fieldNames.split(',');
-                        // 遍历关联字段
-                        relateFieldNames.forEach(relateField => {
-                            // 合并与之关联的options与自己的options用于生成 新的options和data
-                            if (genOneObj[relateField] != undefined) {
-                                Object.assign(options, genOneObj[relateField].options);
-                            } else {
-                                throw new Error(`处理字段 ${el.fieldName} 的关联字段 ${relateField}出错，请仔细检查关联关系！是否存在循环引用或不相关的字段？`);
-                            }
-                        });
+            const genOneRow = {};
+            // 用于唯一性校验
+            let uniqueCheck = {};
+            // 对每一行数据尝试10万次生成，用于重复校验    
+            for (let j = 0; j < 100000; j++) {
+                for (let el of sortedDataTypes) {
+                    let options = el.dataType.options;
+                    // 放入计数器
+                    options.__counter = i;
+                    // 判断数据是否存在关联字段，有些组件有，有些组件没有
+                    // 放入计数器
+                    options.__counter = i;
+                    if (el.dataType.relation) {
+                        // 判断字段是否相关，不等于独立字段RELATION_ENUM.INDEPEND.EN，即相关
+                        if (el.dataType.relation.type != RELATION_ENUM.INDEPEND.EN) {
+                            // 获取关联字段名，多个关联字段以 ， 分割
+                            const relateFieldNames = el.dataType.relation.fieldNames.split(',');
+                            // 遍历关联字段
+                            relateFieldNames.forEach(relateField => {
+                                // 合并与之关联的options与自己的options用于生成 新的options和data
+                                if (genOneRow[relateField] != undefined) {
+                                    Object.assign(options, genOneRow[relateField].options);
+                                } else {
+                                    throw new Error(`处理字段 ${el.fieldName} 的关联字段 ${relateField}出错，请仔细检查关联关系！是否存在循环引用或不相关的字段？`);
+                                }
+                            });
+                        }
+                    }
+
+                    const genOneField = el.dataType.genFunc(options, el.dataType.relation);
+                    if (options.__unique) {
+                        // 如果生成值是不重复的值
+                        if (!this.uniqueFilter[el.fieldName][genOneField.data]) {
+                            this.uniqueFilter[el.fieldName][genOneField.data] = true;
+                            
+                            uniqueCheck[el.fieldName] = true;
+                        } else {
+                            // 如果是重复的值
+                            uniqueCheck[el.fieldName] = false;
+                            break;
+                        }
+                    }
+                    genOneRow[el.fieldName] = genOneField;
+                }
+
+                // 如果所有重复字段的检验都通过，跳出检验循环
+                let allPass = true;
+                for (const fieldKey in uniqueCheck) {
+                    if (!uniqueCheck[fieldKey]) {
+                        allPass = false;
                     }
                 }
-                // 获取各个字段的值
-                genOneObj[el.fieldName] = this.getValue(el.dataType.genFunc, el.fieldName, options, el.dataType.relation);
-            });
-
+                if (allPass) {
+                    break;
+                }
+            }
+            // 检查经过校验循环后的字段校验结果
+            for (const fieldKey in uniqueCheck) {
+                if (!uniqueCheck[fieldKey]) {
+                    throw new Error(`无法生成值不重复的字段${fieldKey}, 请检查唯一性是否合理`);
+                }
+            }
+            
             // 按照之前的数据模板重新赋值生成的数据，保证之前模板不受排序的影响
             const templateRow = {};
             for (let key in jsonTemplate) {
-                templateRow[key] = genOneObj[key].data;
+                templateRow[key] = genOneRow[key].data;
             }
 
             data.push(templateRow);

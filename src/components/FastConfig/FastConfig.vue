@@ -1,6 +1,6 @@
 <template>
   <div class="fast-config">
-    <div class="title">快捷配置</div>
+    <div class="title">推荐案例</div>
     <div class="button-group">
       <Tooltip
         v-for="(fastItem, k) in fastConfigs" 
@@ -62,7 +62,6 @@ export default {
       try {
         const res = await api.getFastConfigs();
         if (res.code === 200) {
-          console.log(res.data)
           this.fastConfigs = res.data;
         } else {
           console.error(res);

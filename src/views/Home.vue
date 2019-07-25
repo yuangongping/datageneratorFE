@@ -35,10 +35,18 @@
             class="config-row"
           >
             <!-- 【 通用区域 】字段类型、字段名 -->
-            <div class="field-type">
+            <div class="field-type flex-row">
+
+              <div class="delrow">
+                <Icon type="md-close" @click="delRow(k)"/>
+              </div>
               <Tag color="primary">
                 {{ DATA_TYPES[dataTypeConfig.dataType].shortAlias }}
               </Tag>
+              <div class="up-down" >
+                <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
+                <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
+              </div>
             </div>
 
             <div class="field-name">
@@ -82,15 +90,6 @@
                   <span slot="close">显示</span>
                 </i-switch>
               </Tooltip>
-            </div>
-
-            <div class="up-down" >
-                <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
-                <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
-            </div>
-
-            <div class="delrow">
-              <Icon type="md-close" @click="delRow(k)"/>
             </div>
 
           </div>
@@ -137,7 +136,9 @@
               </i-switch>
             </Tooltip>
           </div>
-
+          <span v-if="!saveForm.wantShare" class="tip">
+            只保存的配置在 "社区-案例-我的案例" 查看。但是在您手动清除cookie和浏览器数据的时候会被删除
+          </span>
           <Icon class="close" type="md-close" @click="saveForm.show=false"/>
         </div>
       </transition>
@@ -286,6 +287,7 @@ export default {
       previewFlag: false,
       shareFlag: false,
       webWorkerFlag: false,
+      modal_loading: true,
       tableHead: [],
       // 预览数据量, 预览10条
       previewDataNum: 10, 
@@ -590,7 +592,7 @@ export default {
           form['date_created'] = this.getNowFormatDate();
           form['id'] = key;
           localStorage.setItem(key, JSON.stringify(form));
-          this.$Message.success('保存成功！');
+          this.$Message.success('保存成功！已保存至社区-案例-我的案例');
         } else {
           /*   保存并分享， 数据保存到后端，同时保存至localstore */
           // 发出请求，数据保存至后端
@@ -756,9 +758,24 @@ export default {
     background-color: #fafafa;
   }
   .field-type {
-    width: 62px;
+    width: 124px;
     padding-left: 5px;
     margin-right: 10px;
+    .ivu-tag {
+      width: 52px;
+      text-align: center;
+    }
+    .delrow {
+      width: 30px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .up-down {
+      width: 30px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+    }
   }
   .field-name {
     width: 160px;
@@ -785,18 +802,7 @@ export default {
   .switch-config {
     width: 70px;
   }
-  
-  .delrow {
-    width: 30px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  .up-down {
-    width: 30px;
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-  }
+
   .question {
     color: #66cccc; margin-left: 2px; cursor: pointer; font-size: 12px;
   }
@@ -835,6 +841,11 @@ label {
 
   .ivu-input-wrapper {
     width: 200px !important;
+  }
+
+  .tip {
+    padding-left: 20px;
+    color: chocolate;
   }
 
   button {
