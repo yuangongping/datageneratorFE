@@ -9,7 +9,6 @@ export default (options, relation) => {
   let provinceChoice;
   let cityChoice;
   let districtChioce;
-  let district_key;
   let districts;
   let districts_dict;
 
@@ -25,21 +24,12 @@ export default (options, relation) => {
     }
   }else {  // 关联字段时
     const city = options.cityChoice;
-    if(city in {'北京市':"", '上海市':"", '重庆市':"", '天津市':""}){  // 直辖市特殊处理
-      district_key = randomChoice(Object.keys(OriginalData_dict[city]));
-      districts_dict = OriginalData_dict[city][district_key];  
-      districts = Object.keys(districts_dict);
-    }else{
       Object.keys(OriginalData_dict).forEach(el => {
         if(city in OriginalData_dict[el]){
           districts_dict = OriginalData_dict[el][city];
           districts = Object.keys(districts_dict);
-        }else{
-          return;
         }
-      });
-    }
-  }
+      });}
   if(districts.length === 0){
     throw new Error("请选择区县!"); // 数组为空抛出异常
   }

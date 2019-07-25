@@ -56,14 +56,11 @@ const getTop6 = () =>{
 };
 
 // 获取身份证的前7-14位，即日期码， 如果是独立字段，时间从1949年1月1号至当前时间，即70年中随机选择
-const getTopSeven2Fourteen = () => {
-    const baseYear = 1949;
+const get7to14 = () => {
     // 创建日期对象
     var myDate = new Date();
-    // 获取含有4位数的当前年
-    const currYear = myDate.getFullYear();
     // 随机获取年
-    const year = baseYear + Math.floor(Math.random() * (currYear - baseYear) );
+    const year = myDate.getFullYear() - Math.floor(Math.random() * 100 );
     // 随机获取月份, 由于月份为1-12 ，故+1
     var month = Math.floor(Math.random() * 12 ) + 1;
     // 获取指定年月含有多少天
@@ -82,23 +79,20 @@ const getTopSeven2Fourteen = () => {
     return year.toString() + month + day;
 };
 
-// 获取身份证的16-17位，随机码
-const getTopFifteen2Seventeen = (sex) => {
-    // 生成0-999之间的随机数
+// 获取身份证的15-15位，随机码
+const get15to17 = (sex) => {
+    // 生成1-999之间的随机数
     var num = 0;
-    // 生成0-999之间的随机数
-    num = Math.ceil(Math.random() * 1000);
+    // 生成1-999之间的随机数
+    num = Math.ceil(Math.random() * 998) + 1;
+
     // 如果性别是男，且生成的随机数是偶数，则改为奇数，保证男为三位随机奇数
-    if(sex === '男' && num % 2 === 0){
+    if(sex === 'man' && num % 2 === 0){
         num += 1
     }
     // 如果性别是女，且生成的随机数是奇数，则改为偶数，保证女为三位随机偶数
-    if(sex === '女' && num % 2 !== 0){
-        if(num === 1){
-            num += 1
-        } else {
-            num -= 1
-        }  
+    if(sex === 'woman' && num % 2 !== 0){
+        num -= 1
     }
     // 格式化输出
     if ( num < 10 ){
@@ -144,10 +138,8 @@ export default (options, relation) => {
         let value = options[FIELD_PRE + relationFieldNamesList[i]];
         top14 += value
     }
-    // 得到关联的性别字段的值
-    const sexValue = options[FIELD_PRE + relationFieldNamesList[2]];
     // 依据性别获取15-17位数
-    const topFifteen2Seventeen = getTopFifteen2Seventeen(sexValue);
+    const topFifteen2Seventeen = get15to17(options.sex);
     // 字符串拼接前17位
     const top17 = top14 + topFifteen2Seventeen;
     // 依据前17位，计算出最后一位校验位
@@ -158,9 +150,9 @@ export default (options, relation) => {
     // 随机获取区号，即身份证的前6位
     const top6 = getTop6();
     // 随机后去日期，即身份证的日期8位
-    const topSeven2Fourteen = getTopSeven2Fourteen();
+    const topSeven2Fourteen = get7to14();
     // 随机获取15-17位数, 传入空变量，则表示随机获取
-    const topFifteen2Seventeen = getTopFifteen2Seventeen('');
+    const topFifteen2Seventeen = get15to17('');
     const top17 = top6 + topSeven2Fourteen + topFifteen2Seventeen;
     // 依据前17位，计算出最后一位校验位
     const lastNum = getLastNumber(top17);

@@ -1,4 +1,7 @@
-import { addCase, addSuggestion, listSuggestion, listCase, updateCase, totalCase, totalSuggestion } from './community.js';
+import { addCase, addSuggestion, listSuggestion, listCase, 
+         updateCase, totalCase, totalSuggestion, delCase,
+         adoptCase, recommendCase, listCaseAdmin, totalCaseAdmin
+        } from './community.js';
 import { getFastConfigs } from './home.js';
 
 export default {
@@ -9,5 +12,10 @@ export default {
   updateCase,
   totalCase,
   totalSuggestion,
-  getFastConfigs
+  getFastConfigs,
+  delCase,
+  adoptCase,
+  recommendCase,
+  listCaseAdmin,
+  totalCaseAdmin
 }

@@ -1,5 +1,6 @@
 import { FIELD_PRE, RELATION_ENUM } from '../CONST.js';
-import { random, evaluate, round } from 'mathjs';
+import * as math from "mathjs"
+// import { random, evaluate, round } from 'mathjs';
 
 export default (options, relation) => {
   let min = options.min;
@@ -28,23 +29,23 @@ export default (options, relation) => {
       min = Math.max(min, relVal);
     }
 
-    __result = random(min, max);
+    __result = math.random(min, max);
 
     if (relation.type == RELATION_ENUM.NUM_EXPRESS.EN) {
       let expression = relation.expression;
       expression = expression.replace(/\${RELATE}/g, relVal);
       expression = expression.replace(/\${DATA}/g, __result);
       try {
-        __result = evaluate(expression);
+        __result = math.eval(expression);
       } catch (e) {
         throw new Error(`字段 ${options.__fieldName} 的表达式格式有误，请重新输入！`)
       }
     }
   } else {
-    __result = random(min, max);
+    __result = math.random(min, max);
   }
 
-  __result = round(__result, options.decimal);
+  __result = math.round(__result, options.decimal);
   // 将生成结果传递下去
   const deliver_options = {};
   deliver_options[FIELD_PRE + options.__fieldName] = __result;

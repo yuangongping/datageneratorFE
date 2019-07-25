@@ -2,6 +2,7 @@ import axios from 'axios'
 
 // 创建axios实例
 const service = axios.create({
+  // baseURL: 'http://172.16.13.22:5007',
   baseURL: 'http://172.16.119.6:5007',
   timeout: 15000, // 请求超时时间
   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -16,7 +17,7 @@ service.interceptors.response.use(
   */
     const res = response.data
     if (res.code !== 200) {
-      return Promise.reject('error')
+      return Promise.reject(res);
     } else {
       return response.data
     }

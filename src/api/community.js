@@ -99,6 +99,23 @@ export function listCase(params) {
   })
 }
 
+export function listCaseAdmin(params) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/listcaseadmin',
+      method: 'post',
+      data: querystring.stringify({
+        page: params.page,
+        num: params.num,
+      })
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
 export function updateCase(params) {
   return new Promise((resolve, reject) => {
     request({
@@ -108,6 +125,68 @@ export function updateCase(params) {
         id: params.id,
         type: params.type
       })
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+export function delCase(id) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/delcase',
+      method: 'get',
+      params: {
+        id
+      }
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+export function recommendCase(id, star) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/recommendcase',
+      method: 'get',
+      params: {
+        id,
+        star
+      }
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+export function adoptCase(id) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/adoptcase',
+      method: 'get',
+      params: {
+        id
+      }
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+export function totalCaseAdmin(){
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/totalcaseadmin',
+      method: 'get'
     }).then((res) => {
       resolve(res)
     }).catch((e) => {
