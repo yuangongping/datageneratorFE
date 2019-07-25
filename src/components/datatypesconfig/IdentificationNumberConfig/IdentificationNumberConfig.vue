@@ -22,37 +22,40 @@
 
     <div class="config-item" v-if="relationValue.type !== 'INDEPEND'">
       <label>
+        <span class="config-title">区县码关联字段</span>
         <Input 
           type="text"
           v-model="relateFields[0]"
           @on-change="chgRelateFields"
-          placeholder="请填地址字段名"
+          placeholder="仅可关联区县码组件"
         />
-        <span class="config-title">地址关联字段</span>
-      </label>
+    </label>
     </div>
            
     <div class="config-item"  v-if="relationValue.type !== 'INDEPEND'">
       <label>
-        <Input 
-          type="text"
-          v-model="relateFields[1]"
-          @on-change="chgRelateFields"
-          placeholder="请填时间字段名"
-        />
-        <span class="config-title">时间关联字段</span>
+        <span class="config-title">出生日期关联字段</span>
+        <Tooltip max-width="200" theme="light" placement="top">
+          <div slot="content">时间格式示例：19990101</div>
+          <Input 
+            type="text"
+            v-model="relateFields[1]"
+            @on-change="chgRelateFields"
+            placeholder="例：19990101"
+          />
+        </Tooltip>
       </label>
     </div>
     
     <div class="config-item"  v-if="relationValue.type !== 'INDEPEND'">
       <label>
+        <span class="config-title">性别关联字段</span>
         <Input 
           type="text"
           v-model="relateFields[2]"
           @on-change="chgRelateFields"
-          placeholder="请填性别字段名"
+          placeholder="仅可关联性别组件"
         />
-        <span class="config-title">性别关联字段</span>
       </label>
     </div>
 
@@ -61,11 +64,13 @@
 
 <script>
 import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
-import { Input, Select, Option } from "iview";
+import { Input, Select, Option, Tag, Tooltip } from "iview";
+import { DATA_TYPES } from '@/datatypes/index.js';
 
 export default {
   data() {
     return {
+      DATA_TYPES: DATA_TYPES,
       optionsValue: JSON.parse(this.options),
       // 关联组件配置参数
       relationValue: JSON.parse(this.relation),
@@ -80,9 +85,11 @@ export default {
     }
   },
   components: {
+    Tooltip,
     Select,
     Input,
-    Option
+    Option,
+    Tag
   },
   props: {
     dataType: String,

@@ -21,15 +21,18 @@
 
      <div class="config-item" >
       <label>
-        <div class="input-box" >
-          <Input type="text"
-            v-model="relateFields[0]"
-            @on-change="chgRelateFields"
-          />
-        </div>
         <span class="config-title">关联字段1</span>
+        <Tooltip max-width="200" theme="light" placement="top">
+          <div slot="content" v-if="relationValue.allowTypes === 'ALL'">可以关联所有字段</div>
+          <div slot="content" v-else>建议关联 <Tag color="primary" style="color: #fff;" v-for="datatype in relationValue.allowTypes" :key="datatype">{{ DATA_TYPES[datatype].alias }}</Tag> 组件, 请合理设置关联字段</div>
+          <div class="input-box" >
+            <Input type="text"
+              v-model="relateFields[0]"
+              @on-change="chgRelateFields"
+            />
+          </div>
+        </Tooltip>
       </label>
-
       <label>
         <div class="input-box" >
           <InputNumber
@@ -44,13 +47,17 @@
 
     <div class="config-item" >
       <label>
-        <div class="input-box" >
-          <Input type="text"
-            v-model="relateFields[1]"
-            @on-change="chgRelateFields"
-          />
-        </div>
         <span class="config-title">关联字段2</span>
+        <Tooltip max-width="200" theme="light" placement="top">
+          <div slot="content" v-if="relationValue.allowTypes === 'ALL'">可以关联所有字段</div>
+          <div slot="content" v-else>建议关联 <Tag color="primary" style="color: #fff;" v-for="datatype in relationValue.allowTypes" :key="datatype">{{ DATA_TYPES[datatype].alias }}</Tag> 组件, 请合理设置关联字段</div>
+          <div class="input-box" >
+            <Input type="text"
+              v-model="relateFields[1]"
+              @on-change="chgRelateFields"
+            />
+          </div>
+        </Tooltip>
       </label>
 
       <label>
@@ -95,11 +102,13 @@
 
 <script>
 import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
-import { Input, Select, Option,InputNumber } from "iview";
+import { Input, Select, Option,InputNumber, Tooltip, Tag  } from "iview";
+import { DATA_TYPES } from '@/datatypes/index.js';
 
 export default {
   data() {
     return {
+      DATA_TYPES: DATA_TYPES,
       optionsValue: JSON.parse(this.options),
       // 关联组件配置参数
       relationValue: JSON.parse(this.relation),
@@ -117,7 +126,9 @@ export default {
     Select,
     Input,
     Option,
-    InputNumber
+    InputNumber,
+    Tooltip, 
+    Tag 
   },
   props: {
     dataType: String,

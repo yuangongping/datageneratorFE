@@ -206,7 +206,7 @@ export const DATA_TYPES = {
             fieldNames: "",
             type: RELATION_ENUM.COR_RELATION.EN,
             expresion: '',
-            allowTypes: ["Counter", "Number"],
+            allowTypes: 'ALL',
         },
     },
     StrConcat: {
@@ -309,7 +309,7 @@ export const DATA_TYPES = {
         relation: {
             fieldNames: "",
             type: RELATION_ENUM.INDEPEND.EN,
-            allowTypes: ["Time"],
+            allowTypes: ["Number"],
         }
     }
 };

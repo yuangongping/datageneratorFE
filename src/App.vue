@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <div id="nav">
-      <img src="./assets/cetclogo.png" class="logo">
-      <strong>模拟数据生成系统</strong>
+      <img src="./assets/cetclogo.png" class="logo" @click="backToIndex">
+      <strong @click="backToIndex">模拟数据生成系统</strong>
       <div class="router">
         <router-link to="/">
           <Icon type="ios-home" size="22" class="icon"/>
@@ -67,6 +67,7 @@ footer {
   strong {
     font-family: '微软雅黑';
     font-size:20px;
+    cursor: pointer;
   }
 
   .router {
@@ -89,6 +90,7 @@ footer {
   .logo {
     height: 26px;
     margin: 0 10px 0 20px;
+    cursor: pointer;
   }
   .text{
     font-size: 14px;
@@ -109,6 +111,11 @@ import { Icon } from 'iview';
 export default {
   components: {
     Icon,
+  },
+  methods: {
+    backToIndex() {
+      this.$router.push('/')
+    }
   }
 }
 </script>

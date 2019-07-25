@@ -1,26 +1,36 @@
 <template>
   <div class="fast-config">
-    <div class="title">快捷配置</div>
+    <div class="title">推荐案例</div>
     <div class="button-group">
-      <ButtonGroup 
+      <Tooltip
         v-for="(fastItem, k) in fastConfigs" 
         :key="k" 
-        size="small"> 
-        <Button type="info" icon="md-add" @click="fastConfig(fastItem)">
-          {{ fastItem.table_name }}
-        </Button>
-      </ButtonGroup>
+        max-width="200" theme="light" placement="top" >
+        <div slot="content">贡献者：{{ fastItem.nick_name }} </div>
+        <ButtonGroup 
+          size="small"> 
+            <Button type="info" icon="md-add" @click="fastConfig(fastItem)">
+              {{ fastItem.table_name }}
+            </Button>
+        </ButtonGroup>
+      </Tooltip>
     </div>
 
-    <Button v-if="storeQuote != null" type="error" icon="md-add" size="small" @click="pasteQuote">
-      {{ storeQuote.table_name }} (来自引用)
-    </Button>
+    <Tooltip
+      v-if="storeQuote != null"
+      max-width="200" theme="light" placement="top" >
+      <div slot="content">贡献者：{{ storeQuote.nick_name }} </div>
+      <Button type="error" icon="md-add" size="small" @click="pasteQuote">
+        {{ storeQuote.table_name }} (来自引用)
+      </Button>
+    </Tooltip>
+    
   </div>
 </template>
 
 <script>
 import api from '@/api/index.js'
-import { ButtonGroup, Button } from 'iview';
+import { ButtonGroup, Button, Tooltip } from 'iview';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -32,7 +42,8 @@ export default {
   },
   components: {
     ButtonGroup,
-    Button
+    Button,
+    Tooltip
   },
   computed: {
     ...mapGetters(['storeQuote'])
@@ -84,8 +95,9 @@ export default {
     border-left: 2px solid #2d8cf0;
   }
 
+  
   .button-group {
-    .ivu-btn-group {
+    .ivu-tooltip {
       margin-right: 10px;
       margin-bottom: 10px;
     }

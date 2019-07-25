@@ -35,10 +35,18 @@
             class="config-row"
           >
             <!-- 【 通用区域 】字段类型、字段名 -->
-            <div class="field-type">
+            <div class="field-type flex-row">
+
+              <div class="delrow">
+                <Icon type="md-close" @click="delRow(k)"/>
+              </div>
               <Tag color="primary">
                 {{ DATA_TYPES[dataTypeConfig.dataType].shortAlias }}
               </Tag>
+              <div class="up-down" >
+                <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
+                <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
+              </div>
             </div>
 
             <div class="field-name">
@@ -82,15 +90,6 @@
                   <span slot="close">显示</span>
                 </i-switch>
               </Tooltip>
-            </div>
-
-            <div class="up-down" >
-                <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
-                <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
-            </div>
-
-            <div class="delrow">
-              <Icon type="md-close" @click="delRow(k)"/>
             </div>
 
           </div>
@@ -137,7 +136,9 @@
               </i-switch>
             </Tooltip>
           </div>
-
+          <span v-if="!saveForm.wantShare" class="tip">
+            只保存的配置在 "社区-案例-我的案例" 查看。但是在您手动清除cookie和浏览器数据的时候会被删除
+          </span>
           <Icon class="close" type="md-close" @click="saveForm.show=false"/>
         </div>
       </transition>
@@ -147,12 +148,23 @@
         <div class="export shadow-box" v-if="exportForm.show">
           <div class="flex-row">
             <div class="title">数据量</div>
-            <InputNumber
-            :min="1"
-            :precision="0"
-            v-model="exportForm.dataNum"
-            @on-change="changeExportDataNum"
-            ></InputNumber>
+
+            <Tooltip
+              theme="light"
+              placement="top"
+            >
+              <div slot="content">
+                  {{ exportForm.dataNum | numberToCN }} 条
+              </div>
+              <InputNumber
+                :min="1"
+                :precision="0"
+                v-model="exportForm.dataNum"
+                @on-change="changeExportDataNum"
+              ></InputNumber>
+            </Tooltip>
+
+            
 
             <Tooltip
               max-width="400"
@@ -216,7 +228,28 @@
           <Progress :percent="genPercent" status="active" />
         </div>
     </div>
+
+    <div>
+      <Modal 
+        v-model="webWorkerFlag" 
+        width="600"
+        :closable="false"
+        :mask-closable="false">
+          <div style="text-align:center; margin-top:40px">
+              <p style="margin-top:10px">数据生成时，使用到了HTML5 WebWorker技术，</p>
+              <p style="margin-top:10px">您的浏览器版本不支持WebWorker，请升级至最新版本</p>
+              <p style="margin-top:10px">WebWorker与浏览器的兼容性参考：
+                <a target="blank" href="https://caniuse.com/#search=webworker">https://caniuse.com/#search=webworker</a>
+              </p>
+          </div>
+          <div slot="footer">
+            <Button type="error" size="large" long :loading="modal_loading" @click="webWorkerFlag=false">确定</Button>
+          </div>
+          
+      </Modal>
   </div>
+  </div>
+
 </template>
 
 <script>
@@ -253,6 +286,8 @@ export default {
     return {
       previewFlag: false,
       shareFlag: false,
+      webWorkerFlag: false,
+      modal_loading: true,
       tableHead: [],
       // 预览数据量, 预览10条
       previewDataNum: 10, 
@@ -334,6 +369,21 @@ export default {
       }
     }
   },
+  filters: {
+    numberToCN(num) {
+      if (!num) {
+        return 0;
+      }
+      const num_str = num.toString();
+      if (num_str.length < 5) {
+        return num_str;
+      } else if (4 < num_str.length && num_str.length < 9) {
+        return num_str.slice(-1 * num_str.length, num_str.length - 4) + '万' + num_str.slice(num_str.length - 4)
+      } else if (num_str.length > 8) {
+        return num_str.slice(-1 * num_str.length,  num_str.length - 8) + '亿' + num_str.slice(4, 8) + '万' + num_str.slice(num_str.length - 4)
+      }
+    }
+  },
   mounted() {
     this.dataTypeConfigs = deepcopy(this.storeConfigs);
   },
@@ -363,6 +413,11 @@ export default {
 
     // 使用worker生成
     workerGenerate(configs, nrows, downLoadFunc) {
+      // 使用web Worker前检查一下浏览器是否支持 https://cloud.tencent.com/developer/article/1356677
+      if(typeof(Worker) === 'undefined'){
+        this.webWorkerFlag = true;
+        return
+      }
       const worker = new Worker();
       var _self = this;
 
@@ -537,13 +592,13 @@ export default {
           form['date_created'] = this.getNowFormatDate();
           form['id'] = key;
           localStorage.setItem(key, JSON.stringify(form));
-          this.$Message.success('保存成功，等待审核！');
+          this.$Message.success('保存成功！已保存至社区-案例-我的案例');
         } else {
           /*   保存并分享， 数据保存到后端，同时保存至localstore */
           // 发出请求，数据保存至后端
           const res = await api.addCase(form)
           if (res.code === 200){
-            this.$Message.success('分享成功');
+            this.$Message.success('分享成功，等待后台审核！');
             // 数据保存至localshore
             var key = 'case_' + Date.parse(new Date());
             form.configs = JSON.stringify(form.configs);
@@ -580,8 +635,7 @@ export default {
         el.style.visibility =  "hidden" ;
       }
     },
-
-      // 删除字段组件， k下标
+    // 删除字段组件， k下标
     delRow(k) {
       this.dataTypeConfigs.splice(k, 1);
     },
@@ -686,13 +740,8 @@ export default {
 }
 .action-area {
   display: flex;
-  div {
-    &:nth-child(n) {
-      margin-right: 20px;
-    }
-    &:nth-child(2n) {
-      margin-right: 0;
-    }
+  .basic-config {
+    margin-right: 20px;
   }
 }
 .config-row {
@@ -709,9 +758,24 @@ export default {
     background-color: #fafafa;
   }
   .field-type {
-    width: 62px;
+    width: 124px;
     padding-left: 5px;
     margin-right: 10px;
+    .ivu-tag {
+      width: 52px;
+      text-align: center;
+    }
+    .delrow {
+      width: 30px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .up-down {
+      width: 30px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+    }
   }
   .field-name {
     width: 160px;
@@ -738,18 +802,7 @@ export default {
   .switch-config {
     width: 70px;
   }
-  
-  .delrow {
-    width: 30px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  .up-down {
-    width: 30px;
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-  }
+
   .question {
     color: #66cccc; margin-left: 2px; cursor: pointer; font-size: 12px;
   }
@@ -788,6 +841,11 @@ label {
 
   .ivu-input-wrapper {
     width: 200px !important;
+  }
+
+  .tip {
+    padding-left: 20px;
+    color: chocolate;
   }
 
   button {

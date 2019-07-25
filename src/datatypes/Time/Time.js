@@ -1,5 +1,6 @@
 import { FIELD_PRE, RELATION_ENUM, OPTIONS_ENUM } from '../CONST.js';
-import { random, floor} from 'mathjs';
+import * as math from 'mathjs';
+// import { math.random, floor} from 'mathjs';
 
 export default (options, relation) => {
   const timeStep = (Number(options.timeStep) || 1) * 60;  // 固定步长递增的步长值 
@@ -27,7 +28,7 @@ export default (options, relation) => {
       }
       // 选择生成随机时刻类型的时间
       if (timeCategory === OPTIONS_ENUM.Time.TIME_TYPE.RANDOMSING.EN){  
-        randomInterval = floor(random() * (maxInterval - minInterval + 1) + minInterval) + relVal;  // 单位为秒
+        randomInterval = math.floor(math.random() * (maxInterval - minInterval + 1) + minInterval) + relVal;  // 单位为秒
         transResult = randomInterval;  // 传递生成结果时间戳
         resultTIme = new Date(randomInterval * 1000);  // 最终生成时间
       }
@@ -40,7 +41,7 @@ export default (options, relation) => {
           if(minInterval !== maxInterval){
             throw new Error(`${options.__fieldName}字段所选时间类型与${relation.fieldNames}字段时间类型进行关联时最大最小间隔需相等`);
           }
-          randomInterval = floor(random() * (maxInterval - minInterval + 1) + minInterval) + relVal;  // 单位为秒
+          randomInterval = math.floor(math.random() * (maxInterval - minInterval + 1) + minInterval) + relVal;  // 单位为秒
           transResult = randomInterval;  // 传递生成结果时间戳
           resultTIme = new Date(randomInterval * 1000);  // 最终生成时间
         }
@@ -50,9 +51,9 @@ export default (options, relation) => {
           throw new Error(`${options.__fieldName}字段所选时间类型无法与${relation.fieldNames}字段时间类型进行关联`);
         }
         else if(relationCategory === OPTIONS_ENUM.Time.TIME_TYPE.FIX.EN || relationCategory === OPTIONS_ENUM.Time.TIME_TYPE.RANDOMINCREMENT.EN ){  // 所关联字段时间类型为固定步长递增或随机递增
-          randomInterval = floor(random() * (maxInterval - minInterval + 1) + minInterval) + relVal;  // 单位为秒
+          randomInterval = math.floor(math.random() * (maxInterval - minInterval + 1) + minInterval) + relVal;  // 单位为秒
           while(randomInterval < options.__lastTimeValue){  // 确保当前时间大于上一次生成的时间
-            randomInterval = floor(random() * (maxInterval - minInterval + 1) + minInterval) + relVal;  // 单位为秒
+            randomInterval = math.floor(math.random() * (maxInterval - minInterval + 1) + minInterval) + relVal;  // 单位为秒
           }
           transResult = randomInterval;  // 传递生成结果时间戳
           resultTIme = new Date(randomInterval * 1000);  // 最终生成时间
@@ -71,7 +72,7 @@ export default (options, relation) => {
     }
     // 生成随机时间
     if(timeCategory === OPTIONS_ENUM.Time.TIME_TYPE.RANDOMSING.EN){  
-      var randomStamp =  floor(random() * (endTimeStamp - startTimeStamp + 1) + startTimeStamp);
+      var randomStamp =  math.floor(math.random() * (endTimeStamp - startTimeStamp + 1) + startTimeStamp);
       resultTIme = new Date(randomStamp * 1000);
       transResult = Number(randomStamp);  // 传递生成结果的时间戳
     }
@@ -89,7 +90,7 @@ export default (options, relation) => {
       if(options.minStep > options.maxStep){
         throw new Error(`最小间隔需小于等于最大间隔`);
       }
-      var randomStep = floor(random() * (options.maxStep - options.minStep + 1) + options.minStep);  // 选择随机步长
+      var randomStep = math.floor(math.random() * (options.maxStep - options.minStep + 1) + options.minStep);  // 选择随机步长
       if(options.__counter === 0){  // 起始时间
         randomStepStamp = startTimeStamp;
         options.__lastTimeValue = randomStepStamp;
