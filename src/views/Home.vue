@@ -332,7 +332,6 @@ export default {
     Modal,
     Table,
     Poptip,
-    Progress,
     
     // 字段配置组件
     SexConfig,
@@ -506,7 +505,7 @@ export default {
 
     // ----------  导出
     doExport () {
-      const { exportForm, download, modalLoading, parseDataTypeConfigs, workerGenerate } = this;
+      const { exportForm, download, parseDataTypeConfigs, workerGenerate } = this;
       if (exportForm.fileName) {
         this.genPercent = 0;
         this.downloading = true;

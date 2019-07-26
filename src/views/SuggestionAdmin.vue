@@ -22,9 +22,32 @@
             
             <div class="publish-time">
               {{ suggestionItem.date_created | timeToAgo}}
+            </div> 
+
+            <div style="margin-right:0px; cursor: pointer;">
+              <Icon type="ios-checkmark-circle" style="margin-right:5px;"/>
+              <Poptip
+                confirm
+                title="确定通过吗"
+                @on-ok="adoptSuggestion(suggestionItem.id)"
+                style="margin-right:5px;"
+              > 
+                <span v-if="suggestionItem.status > 0" class="passed" >已通过</span>
+                <span v-else>待审核</span>
+              </Poptip>
+            </div>
+
+             <div style="margin-right:0px; cursor: pointer;">
+              <Icon type="md-trash"   style="margin-right:5px;"/>
+              <Poptip
+                  confirm
+                  title="确定删除吗"
+                  @on-ok="delSuggestion(suggestionItem.id)"
+                >
+                  <span>删除</span>
+                </Poptip>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -40,7 +63,7 @@
           <Input v-model="nickname" type="text"  style="width: 200px" placeholder="请输入您的昵称..." /><br>
           <Input v-model="content" type="textarea" :rows="3" placeholder="请输入您的意见..." />
         </Modal>
-       </div>
+      </div>
 
        <Page
         class="page"
@@ -113,7 +136,7 @@
 }
 </style>
 <script>
-import { Modal, Input, Button, Page } from 'iview';
+import { Modal, Input, Button, Page, Icon, Poptip } from 'iview';
 import api from '@/api/index.js';
 import { timeToAgo } from "@/utils/functions";
 import { mapGetters } from 'vuex';
@@ -132,11 +155,13 @@ export default {
     Input,
     Modal,
     Button,
-    Page
+    Page,
+    Icon,
+    Poptip
   },
   mounted() {
-    this.totalSuggestion();
-    this.listSuggestion();
+    this.totalSuggestionAdmin();
+    this.listSuggestionAdmin();
   },
   computed: {
     ...mapGetters(['storeSuggestionPage', 'storeNumPerPage'])
@@ -148,9 +173,9 @@ export default {
     timeToAgo
   },
   methods: {
-    async totalSuggestion(){
+    async totalSuggestionAdmin(){
       try {
-        const res = await api.totalSuggestion();
+        const res = await api.totalSuggestionAdmin();
         if (res.code === 200) {
           this.totalNum = res.data;
         } else {
@@ -158,6 +183,24 @@ export default {
           this.$Message.error("获取总页码错误");
         }
       } catch (e) {
+        console.error(e);
+        this.$Message.error(e);
+      }
+    },
+
+    async listSuggestionAdmin() {
+      try{
+        const res = await api.listSuggestionAdmin({
+          page: this.storeSuggestionPage,
+          num: this.storeNumPerPage
+        });
+        if (res.code === 200){
+          this.suggestionList = res.data
+        } else {
+          console.error(res);
+          this.$Message.error("数据获取错误，请检查！"); 
+        }
+      } catch(e) {
         console.error(e);
         this.$Message.error(e);
       }
@@ -180,19 +223,31 @@ export default {
         this.$Message.error(e); 
       }
     },
-    async listSuggestion() {
-      try{
-        const res = await api.listSuggestion({
-          page: this.storeSuggestionPage,
-          num: this.storeNumPerPage
-        });
-        if (res.code === 200){
-          this.suggestionList = res.data
+   
+    // 意见审核
+    async adoptSuggestion(id) {
+      try {
+        const res = await api.adoptSuggestion(id);
+        if(res.code === 200) {
+          this.$Message.success('审核通过');
+          this.listSuggestionAdmin();
         } else {
-          console.error(res);
-          this.$Message.error("数据获取错误，请检查！"); 
+          this.$Message.success('操作失败！');
         }
-      } catch(e) {
+      } catch (e) {
+        this.$Message.error(e);
+      }
+    },
+    async delSuggestion(id) {
+      try {
+        const res = await api.delSuggestion(id);
+        if(res.code === 200) {
+          this.listSuggestionAdmin();
+          this.$Message.success('删除成功！');
+        } else {
+          this.$Message.success('删除失败！');
+        }
+      } catch (e) {
         console.error(e);
         this.$Message.error(e);
       }

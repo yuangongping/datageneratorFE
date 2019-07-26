@@ -29,33 +29,15 @@
                 </FormItem>
             </Form>
         </Modal>
-
-        <!-- <div class="community">
-          <div class="menu">
-              <Menu  mode="horizontal"  @on-select="toSelect" active-name="case" >
-              <MenuItem name="case_admin" >
-                  <Icon type="ios-briefcase" />
-                  案例
-              </MenuItem>
-              <MenuItem name="suggestion_admin"  > 
-                  <Icon type="ios-chatbubbles" />
-                  意见            
-              </MenuItem>
-              </Menu>
-              <router-view class="router-view"/>  
-          </div> 
-        </div>  -->
-
-
     </div>
 </template>
 <style lang="scss">
 
 </style>
 <script>
-import { Icon, Modal, Form, FormItem, Button, Input, MenuItem, Menu } from 'iview';
+import { Modal } from 'iview';
 import { apiLogin } from '../api/user.js'
-import { setAuth, getAuth } from '../utils/cookies.js'
+import { setAuth } from '../utils/cookies.js'
 export default {
   data(){
       return {
@@ -68,7 +50,7 @@ export default {
       }
     },
   components: {
-    Icon, Modal, Form, FormItem, Button, Input, MenuItem, Menu
+    Modal
   },
 
   methods: {

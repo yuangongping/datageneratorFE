@@ -48,26 +48,27 @@
             </div>
 
             <!-- 管理员操作框 -->
-            <div class="acti">
-              <Icon type="ios-checkmark-circle" />
+            <div  style="margin-right:0px;">
+              <Icon type="ios-checkmark-circle" style="margin-right:5px;"/>
               <Poptip
                 confirm
                 title="确定通过吗"
                 @on-ok="adoptCase(index)"
+                style="margin-right:5px;"
               > 
-                <span v-if="caseItem.status > 0" class="passed">已通过</span>
+                <span v-if="caseItem.status > 0" class="passed" >已通过</span>
                 <span v-else>待审核</span>
               </Poptip>
             </div>
 
-            <div class="action-num">
-              <Icon type="ios-star" />
-              <InputNumber :min="1" v-model="caseItem.fast_config" size="small" width=10></InputNumber>
+            <div>
+              <Icon type="ios-star"  style="margin-right:5px;"/>
+              <InputNumber :min="1" v-model="caseItem.fast_config" size="small"  style="margin-right:5px;"></InputNumber>
               <span @click="recommendCase(index)">推荐</span>
             </div>
-
-            <div class="action-num">
-              <Icon type="md-trash" />
+            
+            <div>
+              <Icon type="md-trash"   style="margin-right:5px;"/>
               <Poptip
                   confirm
                   title="确定删除吗"
@@ -76,6 +77,7 @@
                   <span>删除</span>
                 </Poptip>
             </div>
+            
           </div>
         </div>
       
@@ -176,10 +178,9 @@
     margin-top: 20px;
   }
 }
-
-.admin{
+.administrator{
   display: flex;
-} 
+}
 
 .case .case-item .content .share-meta .acti {
   margin-right: 0px;
@@ -188,11 +189,9 @@
 <script>
 import api from '@/api/index.js';
 import { Generator } from "@/generator/index";
-import { Icon, Page, Tooltip, Select, Option, Modal, Poptip, InputNumber } from "iview";
+import { Icon, Page, Tooltip,  Poptip, InputNumber } from "iview";
 import { timeToAgo } from "@/utils/functions";
 import { mapGetters } from 'vuex';
-import { stat } from 'fs';
-import { getAuth } from '../utils/cookies.js';
 export default {
   data() {
     return {
@@ -204,12 +203,9 @@ export default {
   },
   components: {
     Icon,
-    Select,
-    Option,
     Page,
     Tooltip,
     Poptip,
-    Modal,
     InputNumber
   },
   computed: {
@@ -219,7 +215,6 @@ export default {
     timeToAgo
   },
   mounted() {
-    this.auth = getAuth();
     // 获取数据总条数
     this.totalCase();
     // 获取数据

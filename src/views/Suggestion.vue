@@ -17,11 +17,16 @@
 
           <div class="opinion-meta">
             <div class="opinion">
-              来自 {{ suggestionItem.nick_name }}
+              来自 <span>{{ suggestionItem.nick_name }}</span>
             </div>
             
             <div class="publish-time">
               {{ suggestionItem.date_created | timeToAgo}}
+            </div>
+
+            <div class="reply" style="margin-right:0px; cursor: pointer;">
+              <Icon type="md-chatboxes" />
+              回复
             </div>
           </div>
 
@@ -87,9 +92,13 @@
         display: flex;
         flex-direction: row;
         color: #888;
-
+        span{
+          margin-left: 2px;
+          color:  #1269db;
+        }
         div {
           margin-right: 20px;
+          
         }
       }
     }
@@ -113,7 +122,7 @@
 }
 </style>
 <script>
-import { Modal, Input, Button, Page } from 'iview';
+import { Modal, Input, Button, Page, Icon } from 'iview';
 import api from '@/api/index.js';
 import { timeToAgo } from "@/utils/functions";
 import { mapGetters } from 'vuex';
@@ -132,7 +141,8 @@ export default {
     Input,
     Modal,
     Button,
-    Page
+    Page,
+    Icon
   },
   mounted() {
     this.totalSuggestion();
