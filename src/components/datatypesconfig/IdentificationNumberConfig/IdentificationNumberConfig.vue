@@ -64,7 +64,7 @@
 
 <script>
 import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
-import { Input, Select, Option, Tag, Tooltip } from "iview";
+import { Input, Select, Option, Tooltip } from "iview";
 import { DATA_TYPES } from '@/datatypes/index.js';
 
 export default {
@@ -88,8 +88,7 @@ export default {
     Tooltip,
     Select,
     Input,
-    Option,
-    Tag
+    Option
   },
   props: {
     dataType: String,
