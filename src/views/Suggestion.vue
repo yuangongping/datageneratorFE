@@ -24,7 +24,7 @@
               {{ suggestionItem.date_created | timeToAgo}}
             </div>
 
-            <div class="reply" style="margin-right:0px; cursor: pointer;">
+            <div class="reply" style="margin-right:0px; cursor: pointer;" @click="replyForm.suggestion_id=suggestionItem.id; replySuggestionFlag=true">
               <Icon type="md-chatboxes" />
               回复
             </div>
@@ -32,6 +32,20 @@
 
         </div>
       </div>
+
+      <!-- 回复 -->
+      <div class="add-reply" >  
+        <Modal
+          title="回复"
+          v-model="replySuggestionFlag"
+          :mask-closable="false"
+          @on-ok="replySuggestion"
+        >
+          <span class='input_label'>用户名</span>
+          <Input v-model="replyForm.nickname" type="text"  style="width: 200px" placeholder="请输入您的昵称..." /><br>
+          <Input v-model="replyForm.content" type="textarea" :rows="3" placeholder="请输入您的意见..." />
+        </Modal>
+       </div>
 
       <div class="add-suggestion" >
         <Button class="suggest-btn" icon="md-add" @click="suggestionFlag = true">建议</Button>  
@@ -133,8 +147,14 @@ export default {
       totalNum: 0,
       suggestionList: [],
       suggestionFlag: false,
+      replySuggestionFlag: false,
       content: '',
-      nickname: ''
+      nickname: '',
+      replyForm: {
+        nickname: '',
+        content: '',
+        suggestion_id: ''
+      }
     }
   },
   components: {
@@ -190,6 +210,7 @@ export default {
         this.$Message.error(e); 
       }
     },
+
     async listSuggestion() {
       try{
         const res = await api.listSuggestion({
@@ -206,6 +227,9 @@ export default {
         console.error(e);
         this.$Message.error(e);
       }
+    },
+    async replySuggestion(){
+      console.log('dsadsads:', this.replyForm.suggestion_id);
     },
     pageChange(num) {
       this.$store.commit('SET_SUGGESTION_PAGE', num);

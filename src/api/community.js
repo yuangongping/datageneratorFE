@@ -259,3 +259,19 @@ export function totalCaseAdmin(){
     })
   })
 }
+
+
+// 回复意见api
+export function replySuggestion(params) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/replysuggestion',
+      method: 'post',
+      data: JSON.stringify(params)
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}

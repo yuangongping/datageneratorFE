@@ -537,6 +537,14 @@ export default {
       if (exportForm.fileName) {
         this.genPercent = 0;
         this.downloading = true;
+        // 添加用户记录数据
+        api.addUserRecord({
+          configs: JSON.stringify(parseDataTypeConfigs()),
+          export_data_number:  exportForm.dataNum,
+          export_file_type: exportForm.fileType,
+          export_filename: exportForm.fileName
+        })
+        // WORKER 线程生成数据
         workerGenerate(parseDataTypeConfigs(), exportForm.dataNum, download);
       } else {
         this.$Message.error({
