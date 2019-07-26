@@ -17,7 +17,7 @@
 
           <div class="opinion-meta">
             <div class="opinion">
-              来自 {{ suggestionItem.nick_name }}
+              来自 <span>{{ suggestionItem.nick_name }}</span>
             </div>
             
             <div class="publish-time">
@@ -33,38 +33,23 @@
                 style="margin-right:5px;"
               > 
                 <span v-if="suggestionItem.status > 0" class="passed" >已通过</span>
-                <span v-else>待审核</span>
+                <span v-else style="color: gray">待审核</span>
               </Poptip>
             </div>
 
-             <div style="margin-right:0px; cursor: pointer;">
+             <div style="margin-right:0px; cursor: pointer; ">
               <Icon type="md-trash"   style="margin-right:5px;"/>
               <Poptip
                   confirm
                   title="确定删除吗"
                   @on-ok="delSuggestion(suggestionItem.id)"
                 >
-                  <span>删除</span>
+                  <span style="color:red">删除</span>
                 </Poptip>
             </div>
           </div>
         </div>
       </div>
-
-      <div class="add-suggestion" >
-        <Button class="suggest-btn" icon="md-add" @click="suggestionFlag = true">建议</Button>  
-        <Modal
-          title="提意见"
-          v-model="suggestionFlag"
-          :mask-closable="false"
-          @on-ok="addSuggestion"
-        >
-          <span class='input_label'>用户名</span>
-          <Input v-model="nickname" type="text"  style="width: 200px" placeholder="请输入您的昵称..." /><br>
-          <Input v-model="content" type="textarea" :rows="3" placeholder="请输入您的意见..." />
-        </Modal>
-      </div>
-
        <Page
         class="page"
         size="small"
@@ -205,25 +190,7 @@ export default {
         this.$Message.error(e);
       }
     },
-
-    async addSuggestion() {
-       try {
-        const params={
-          nick_name: this.nickname,
-          content: this.content,
-        }
-        const res = await api.addSuggestion(params)
-        if (res.code === 200){
-          this.$Message.success('添加建议成功, 等待后台审核');
-          this.listSuggestion()
-        } else {
-          this.$Message.error("数据无法保存，请检查！"); 
-        }
-      } catch (e) {
-        this.$Message.error(e); 
-      }
-    },
-   
+    
     // 意见审核
     async adoptSuggestion(id) {
       try {
@@ -238,6 +205,7 @@ export default {
         this.$Message.error(e);
       }
     },
+
     async delSuggestion(id) {
       try {
         const res = await api.delSuggestion(id);
@@ -252,6 +220,7 @@ export default {
         this.$Message.error(e);
       }
     },
+
     pageChange(num) {
       this.$store.commit('SET_SUGGESTION_PAGE', num);
       this.listSuggestion();

@@ -35,7 +35,7 @@
 
 </style>
 <script>
-import { Modal } from 'iview';
+import { Modal,  Form, FormItem, Input, Button } from 'iview';
 import { apiLogin } from '../api/user.js'
 import { setAuth } from '../utils/cookies.js'
 export default {
@@ -50,13 +50,18 @@ export default {
       }
     },
   components: {
-    Modal
+    Modal,
+    Form,
+    FormItem,
+    Input,
+    Button
   },
 
   methods: {
     // 登录
     async login () {
       try {
+        console.log(this.formLogin)
         const res = await apiLogin(this.formLogin)
         if (res.code === 200) {
           setAuth(this.formLogin.username);

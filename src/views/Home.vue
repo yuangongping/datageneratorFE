@@ -14,6 +14,13 @@
       </div>
 
       <div class="field-list shadow-box"  v-if="dataTypeConfigs.length > 0">
+        <div v-if="dragTip.showOnce == 1" class="drag-tip shadow-box">
+          <div class="content">
+            我可以拖动哦 (*^▽^*)！
+            <div class="arrow"></div>
+          </div>
+        </div>
+
         <div class="field-title">
           <span>
             配置项
@@ -28,72 +35,74 @@
           </Poptip>
           
         </div>
-        <transition-group name="flip-list" >
-          <div 
-            v-for="(dataTypeConfig, k) in dataTypeConfigs"
-            :key="dataTypeConfig.id"
-            class="config-row"
-          >
-            <!-- 【 通用区域 】字段类型、字段名 -->
-            <div class="field-type flex-row">
-
-              <div class="delrow">
-                <Icon type="md-close" @click="delRow(k)"/>
-              </div>
-              <Tag color="primary">
-                {{ DATA_TYPES[dataTypeConfig.dataType].shortAlias }}
-              </Tag>
-              <div class="up-down" >
-                <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
-                <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
-              </div>
-            </div>
-
-            <div class="field-name">
-              <label>
-                <Input type="text"
-                  v-model="dataTypeConfig.fieldName"
-                />
-                <span class="config-title">字段名</span>
-              </label>
-            </div>
-            
-          <!-- 字段配置组件区域 -->
-          <div
-            class="field-config"
-            :is="dataTypeConfig.component"
-            :dataType="dataTypeConfig.dataType"
-            :options.sync="dataTypeConfig.options"
-            :relation.sync="dataTypeConfig.relation"
+        <draggable :list="dataTypeConfigs" :options = "{animation:500}" handle=".dragarea">
+          <transition-group>
+            <div 
+              v-for="(dataTypeConfig, k) in dataTypeConfigs"
+              :key="dataTypeConfig.id"
+              class="config-row"
             >
-          </div>
-            <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
-            <div class="switch-config">
-              <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
-                <i-switch
-                  size="large"
-                  v-model="dataTypeConfig.__unique"
-                >
-                  <span slot="open">唯一</span>
-                  <span slot="close">唯一</span>
-                </i-switch>
-              </Tooltip>
-            </div>
+              <!-- 【 通用区域 】字段类型、字段名 -->
+              <div class="field-type flex-row dragarea">
 
-            <div class="switch-config">
-              <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
-                <i-switch
-                  size="large"
-                  v-model="dataTypeConfig.__display"
-                >
-                  <span slot="open">显示</span>
-                  <span slot="close">显示</span>
-                </i-switch>
-              </Tooltip>
-            </div>
+                <div class="delrow">
+                  <Icon type="md-close" @click="delRow(k)"/>
+                </div>
+                <Tag color="primary">
+                  {{ DATA_TYPES[dataTypeConfig.dataType].shortAlias }}
+                </Tag>
+                <!-- <div class="up-down" >
+                  <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
+                  <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
+                </div> -->
+              </div>
 
-          </div>
-        </transition-group>
+              <div class="field-name">
+                <label>
+                  <Input type="text"
+                    v-model="dataTypeConfig.fieldName"
+                  />
+                  <span class="config-title">字段名</span>
+                </label>
+              </div>
+              
+            <!-- 字段配置组件区域 -->
+            <div
+              class="field-config"
+              :is="dataTypeConfig.component"
+              :dataType="dataTypeConfig.dataType"
+              :options.sync="dataTypeConfig.options"
+              :relation.sync="dataTypeConfig.relation"
+              >
+            </div>
+              <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
+              <div class="switch-config">
+                <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
+                  <i-switch
+                    size="large"
+                    v-model="dataTypeConfig.__unique"
+                  >
+                    <span slot="open">唯一</span>
+                    <span slot="close">唯一</span>
+                  </i-switch>
+                </Tooltip>
+              </div>
+
+              <div class="switch-config">
+                <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
+                  <i-switch
+                    size="large"
+                    v-model="dataTypeConfig.__display"
+                  >
+                    <span slot="open">显示</span>
+                    <span slot="close">显示</span>
+                  </i-switch>
+                </Tooltip>
+              </div>
+
+            </div>
+          </transition-group>
+        </draggable>
       </div>
 
       <Modal
@@ -259,6 +268,7 @@ import { mapGetters } from 'vuex';
 import deepcopy from 'deepcopy';
 import { Progress, Button, Input, Select, Option, Icon, Tag, Poptip,
          Switch, Tooltip, Modal, Table, InputNumber, RadioGroup, Radio, Scroll } from 'iview';
+import draggable from 'vuedraggable';
 import Exporter from '@/components/Exporter/index.vue';
 import FastConfig from '@/components/FastConfig/FastConfig.vue';
 import BasicConfig from '@/components/BasicConfig/BasicConfig.vue';
@@ -312,6 +322,10 @@ export default {
       },
       downloading: false,
       genPercent: 0,
+      dragTip: {
+        showOnce: 0, // 0: 显示 1: 现实中 2:不再显示
+        closeTimer: null
+      }
     }
   },
   components: {
@@ -332,6 +346,8 @@ export default {
     Modal,
     Table,
     Poptip,
+    Progress,
+    draggable,
     
     // 字段配置组件
     SexConfig,
@@ -365,6 +381,18 @@ export default {
       if (this.dataTypeConfigs.length == 0) {
         this.exportForm.show = false;
         this.saveForm.show = false;
+      }
+
+      if (this.dragTip.showOnce == 0) {
+        if (this.dataTypeConfigs.length > 1) {
+          this.dragTip.showOnce = 1;
+          if (!this.dragTip.closeTimer) {
+            var _self = this;
+            this.dragTip.closeTimer = window.setTimeout(() => {
+              _self.dragTip.showOnce = 2
+            }, 8000)
+          }
+        }
       }
     }
   },
@@ -639,23 +667,27 @@ export default {
       this.dataTypeConfigs.splice(k, 1);
     },
 
-    // 上移
-    sortUp(k) {
-      if (k != 0) {
-        let temp = this.dataTypeConfigs[k - 1];
-        Vue.set(this.dataTypeConfigs, k - 1, this.dataTypeConfigs[k]);
-        Vue.set(this.dataTypeConfigs, k, temp);
-      }
-    },
+    // // 上移
+    // sortUp(k) {
+    //   if (k != 0) {
+    //     let temp = this.dataTypeConfigs[k - 1];
+    //     Vue.set(this.dataTypeConfigs, k - 1, this.dataTypeConfigs[k]);
+    //     Vue.set(this.dataTypeConfigs, k, temp);
+    //   }
+    // },
 
-    // 下移
-    sortDown(k) {
-      if (k != (this.dataTypeConfigs.length - 1)) {
-        let temp = this.dataTypeConfigs[k + 1];
-        Vue.set(this.dataTypeConfigs, k + 1, this.dataTypeConfigs[k]);
-        Vue.set(this.dataTypeConfigs, k, temp);
-      }
-    },
+    // // 下移
+    // sortDown(k) {
+    //   if (k != (this.dataTypeConfigs.length - 1)) {
+    //     let temp = this.dataTypeConfigs[k + 1];
+    //     Vue.set(this.dataTypeConfigs, k + 1, this.dataTypeConfigs[k]);
+    //     Vue.set(this.dataTypeConfigs, k, temp);
+    //   }
+    // },
+    // 拖拽排序
+    datadragEnd (evt) {
+      evt.preventDefault();
+  }
   }
 }
 </script>
@@ -709,9 +741,61 @@ export default {
 }
 
 .field-list {
+  position: relative;
   margin-top: 15px;
   background-color: #ffffff;
   padding: 10px 10px;
+
+  .drag-tip {
+    width: 140px;
+    height: 30px;
+    position: absolute;
+    top:26px;
+    left: -15px;
+    color: #fff;
+    background-color: #ff3d3d;
+    border-radius: 4px;
+
+    .content {
+      width: 100%;
+      height: 100%;
+      line-height: 30px;
+      padding-left: 10px;
+      position: relative;
+    }
+    .arrow {
+      border-style: solid;
+      border-bottom-width: 0px;
+      border-color: rgba(0, 0, 0, 0);
+      border-width: 7px;
+      border-top-color:  #ff3d3d;
+      bottom: -14px;
+      box-sizing: border-box;
+      color: rgb(81, 90, 110);
+      display: block;
+      font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "\\5FAE软雅黑", Arial, sans-serif;
+      font-size: 12px;
+      height: 7px;
+      left: 90px;
+      line-height: 18px;
+      position: absolute;
+      text-align: center;
+      text-size-adjust: 100%;
+      visibility: visible;
+      width: 14px;
+     
+        &:after {
+          content: " ";
+          bottom: 1px;
+          margin-left: -14px;
+          border-bottom-width: 0;
+          border-top-width: 14px;
+          border-top-color: #fff;
+          z-index: 999;
+        }
+    }
+  }
+
   .field-title {
     height: 20px;
     line-height: 20px;
@@ -757,17 +841,29 @@ export default {
     background-color: #fafafa;
   }
   .field-type {
-    width: 124px;
+    width: 100px;
     padding-left: 5px;
     margin-right: 10px;
+    cursor: move;
     .ivu-tag {
       width: 52px;
       text-align: center;
+      cursor: move;
     }
     .delrow {
-      width: 30px;
+      width: 38px;
+      height: 100%;
       cursor: pointer;
       font-size: 16px;
+      
+
+      &:hover {
+        .ivu-icon {
+          color: #ff3d3d;
+          transition-duration: 0.8s;
+          transform: rotateY(180deg);
+        }
+      }
     }
     .up-down {
       width: 30px;
