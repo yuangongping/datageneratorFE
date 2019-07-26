@@ -14,6 +14,13 @@
       </div>
 
       <div class="field-list shadow-box"  v-if="dataTypeConfigs.length > 0">
+        <div v-if="dragTip.showOnce == 1" class="drag-tip shadow-box">
+          <div class="content">
+            我可以拖动哦 (*^▽^*)！
+            <div class="arrow"></div>
+          </div>
+        </div>
+
         <div class="field-title">
           <span>
             配置项
@@ -315,6 +322,10 @@ export default {
       },
       downloading: false,
       genPercent: 0,
+      dragTip: {
+        showOnce: 0, // 0: 显示 1: 现实中 2:不再显示
+        closeTimer: null
+      }
     }
   },
   components: {
@@ -370,6 +381,18 @@ export default {
       if (this.dataTypeConfigs.length == 0) {
         this.exportForm.show = false;
         this.saveForm.show = false;
+      }
+
+      if (this.dragTip.showOnce == 0) {
+        if (this.dataTypeConfigs.length > 1) {
+          this.dragTip.showOnce = 1;
+          if (!this.dragTip.closeTimer) {
+            var _self = this;
+            this.dragTip.closeTimer = window.setTimeout(() => {
+              _self.dragTip.showOnce = 2
+            }, 8000)
+          }
+        }
       }
     }
   },
@@ -510,7 +533,7 @@ export default {
 
     // ----------  导出
     doExport () {
-      const { exportForm, download, modalLoading, parseDataTypeConfigs, workerGenerate } = this;
+      const { exportForm, download, parseDataTypeConfigs, workerGenerate } = this;
       if (exportForm.fileName) {
         this.genPercent = 0;
         this.downloading = true;
@@ -718,9 +741,61 @@ export default {
 }
 
 .field-list {
+  position: relative;
   margin-top: 15px;
   background-color: #ffffff;
   padding: 10px 10px;
+
+  .drag-tip {
+    width: 140px;
+    height: 30px;
+    position: absolute;
+    top:26px;
+    left: -15px;
+    color: #fff;
+    background-color: #ff3d3d;
+    border-radius: 4px;
+
+    .content {
+      width: 100%;
+      height: 100%;
+      line-height: 30px;
+      padding-left: 10px;
+      position: relative;
+    }
+    .arrow {
+      border-style: solid;
+      border-bottom-width: 0px;
+      border-color: rgba(0, 0, 0, 0);
+      border-width: 7px;
+      border-top-color:  #ff3d3d;
+      bottom: -14px;
+      box-sizing: border-box;
+      color: rgb(81, 90, 110);
+      display: block;
+      font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "\\5FAE软雅黑", Arial, sans-serif;
+      font-size: 12px;
+      height: 7px;
+      left: 90px;
+      line-height: 18px;
+      position: absolute;
+      text-align: center;
+      text-size-adjust: 100%;
+      visibility: visible;
+      width: 14px;
+     
+        &:after {
+          content: " ";
+          bottom: 1px;
+          margin-left: -14px;
+          border-bottom-width: 0;
+          border-top-width: 14px;
+          border-top-color: #fff;
+          z-index: 999;
+        }
+    }
+  }
+
   .field-title {
     height: 20px;
     line-height: 20px;
