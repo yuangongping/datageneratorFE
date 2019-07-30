@@ -279,7 +279,7 @@ import { SexConfig, NameConfig, CounterConfig,
          TextConfig, TimeConfig, ProvinceConfig, 
          CityConfig, DistrictConfig, DistrictCodeConfig, 
          RandomFieldConfig, DetailAddressConfig, GeographCoordinatesConfig,
-         OccupationConfig} from '@/components/datatypesconfig/index.js';  
+         OccupationConfig, CarprefixConfig} from '@/components/datatypesconfig/index.js';  
 import { DATA_TYPES } from '@/datatypes/index.js';
 
 import { Generator } from '@/generator/index';
@@ -370,7 +370,8 @@ export default {
     BasicConfig,
     DetailAddressConfig,
     GeographCoordinatesConfig,
-    OccupationConfig
+    OccupationConfig,
+    CarprefixConfig
   },
   computed: {
     ...mapGetters(['storeConfigs'])

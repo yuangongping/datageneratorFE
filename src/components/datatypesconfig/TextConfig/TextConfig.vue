@@ -12,6 +12,19 @@
         </Checkbox-group>
       </div>
     </div>
+    <div class="config-item relation-config" 
+    v-if="optionsValue.textTypes.indexOf('ENGLISH')!=-1">
+      <Select
+        v-model="optionsValue.letterType"
+        @on-change="chgOptions"
+      >
+        <Option
+          v-for="letterTypeKey in Object.keys(Text_OPTIONS_ENUM.LETTER_TYPE)"
+          :value="letterTypeKey"
+          :key="letterTypeKey"
+        >{{ Text_OPTIONS_ENUM.LETTER_TYPE[letterTypeKey].CN}}</Option>
+      </Select>
+    </div>
 
     <div class="config-item relation-config">
       <Select

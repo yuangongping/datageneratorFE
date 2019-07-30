@@ -38,7 +38,8 @@ export const ALLOW_RELATIONS = {
   Time: ['INDEPEND', 'GREATER'],
   RandomField: ['COR_RELATION'],
   GeographCoordinates: ['INDEPEND', 'COR_RELATION'],
-  Occupation: ['INDEPEND', 'COR_RELATION']
+  Occupation: ['INDEPEND', 'COR_RELATION'],
+  Carprefix: ['INDEPEND', 'COR_RELATION']
 }
 
 export const OPTIONS_ENUM = {
@@ -66,7 +67,21 @@ export const OPTIONS_ENUM = {
         EN: "NUMBER",
         CN: "数字"
       },
-    }
+    },
+    LETTER_TYPE: {
+      RANDOM: {
+        EN: "RANDOM",
+        CN: "随机大小写"
+      },
+      UPPER: {
+        EN: "UPPER",
+        CN: "仅大写"
+      },
+      LOWER: {
+        EN: "LOWER",
+        CN: "仅小写"
+      },
+    },
   },
   City: {
     CITY_RANDOM: {
