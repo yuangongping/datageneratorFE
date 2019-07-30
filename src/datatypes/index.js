@@ -19,6 +19,7 @@ import DetailAddressGenFunc from '@/datatypes/DetailAddress/DetailAddress';
 import RandomFieldGenFunc from '@/datatypes/RandomField/RandomField'
 import GeographCoordinatesGenFunc from '@/datatypes/GeographCoordinates/GeographCoordinates'
 import OccupationGenFunc from '@/datatypes/Occupation/Occupation'
+import CarprefixGenFunc from '@/datatypes/Carprefix/Carprefix'
 export const DATA_TYPES = {
     Name: {
         alias: "姓名",
@@ -311,5 +312,19 @@ export const DATA_TYPES = {
             type: RELATION_ENUM.INDEPEND.EN,
             allowTypes: ["Number"],
         }
-    }
+    },
+    Carprefix: {
+        alias: "车牌前缀",
+        shortAlias: "车牌",
+        genFunc: CarprefixGenFunc,
+        options: {
+        },
+        __unique: false, // 生成结果是否是唯一值
+        __display: true, // 生成结果是否包含该字段
+        relation: {
+            fieldNames: "",
+            type: RELATION_ENUM.INDEPEND.EN,
+            allowTypes: ["City"],
+        }
+    },
 };
