@@ -324,7 +324,7 @@ export const DATA_TYPES = {
         __display: true, // 生成结果是否包含该字段
         relation: {
             fieldNames: "",
-            type: RELATION_ENUM.INDEPEND.EN,
+            type: RELATION_ENUM.COR_RELATION.EN,
             allowTypes: ["City"],
         }
     },
