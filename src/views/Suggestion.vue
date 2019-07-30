@@ -1,32 +1,58 @@
 <template>
     <div class="suggestion">
-      <div
-        class="suggestion-item" 
-        v-for="suggestionItem in suggestionList" 
-        :key="suggestionItem.id"
-        
-      >
-        <div class="head-img">
-          {{ suggestionItem.nick_name | headText }}
-        </div>
-
-        <div class="content">
-          <div class="suggestion">
-            {{ suggestionItem.content }}
+      <div v-for="suggestionItem in suggestionList"  :key="suggestionItem.id">
+        <div class="item">
+          <div class="head-img">
+            {{ suggestionItem.nick_name | headText }}
           </div>
 
-          <div class="opinion-meta">
-            <div class="opinion">
-              来自 <span>{{ suggestionItem.nick_name }}</span>
-            </div>
-            
-            <div class="publish-time">
-              {{ suggestionItem.date_created | timeToAgo}}
+          <div class="body">
+            <div class="content_first">
+              {{ suggestionItem.content }}
             </div>
 
-            <div class="reply" style="margin-right:0px; cursor: pointer;" @click="replyForm.suggestion_id=suggestionItem.id; replySuggestionFlag=true">
-              <Icon type="md-chatboxes" />
-              回复
+            <div class="opinion-meta">
+              <div class="opinion">
+                来自 <span class="nick_name">{{ suggestionItem.nick_name }}</span>
+              </div>
+              
+              <div class="publish-time">
+                {{ suggestionItem.date_created | timeToAgo}}
+              </div>
+
+              <div class="reply" @click="replySuggestionFlag=true">
+                <Icon type="md-chatboxes" />
+                回复
+              </div>
+            </div>
+
+            <div class="subitem" v-for="replyItem in suggestionItem.reply" :key="replyItem.id">
+              <div class="item">
+                <div class="sub-head-img">
+                  {{ replyItem.nick_name | headText }}
+                </div>
+
+                <div class="body">
+                  <div class="sub-content_first">
+                    {{ replyItem.content }}
+                  </div>
+
+                  <div class="opinion-meta">
+                    <div class="opinion">
+                      来自 <span class="nick_name">{{ suggestionItem.nick_name }}</span>
+                    </div>
+                    
+                    <div class="publish-time">
+                      {{ suggestionItem.date_created | timeToAgo}}
+                    </div>
+
+                    <div class="reply" @click="replySuggestionFlag=true">
+                      <Icon type="md-chatboxes" />
+                      回复
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -56,7 +82,7 @@
           @on-ok="addSuggestion"
         >
           <span class='input_label'>用户名</span>
-          <Input v-model="nickname" type="text"  style="width: 200px" placeholder="请输入您的昵称..." /><br>
+          <Input v-model="nickname" type="text" placeholder="请输入您的昵称..." /><br>
           <Input v-model="content" type="textarea" :rows="3" placeholder="请输入您的意见..." />
         </Modal>
        </div>
@@ -74,61 +100,58 @@
 </template>
 
 <style lang="scss">
-.suggestion {
-  .suggestion-item {
-    border-bottom: 1px solid #eee;
-    padding: 20px 10px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+$nick_name_color: #1269db;
 
-    .head-img {
-      width: 60px;
-      height: 60px;
+.item {
+  display: inline-flex;
+  .head-img {
+    width: 50px;
+    height: 50px;
+    background: #52BC89;
+    text-align: center;
+    line-height: 50px;
+    color: #ffffff;
+    border-radius: 50px;
+    font-size: 20px;
+  }
+  .body{
+    flex-direction: column;
+    .content_first {
+      margin: 15px 0px 0px 10px;
+    }
+    .sub-content_first {
+      margin: 8px 0px 0px 10px;
+    }
+    .opinion-meta{
+      display: inline-flex;
+      margin: 10px 0px 20px 10px;
+      border-bottom: 1px solid rgb(243, 240, 240);
+      div{
+        margin-right: 30px;
+      }
+    }
+    .reply{
+      margin-right: 0px; 
+      cursor: pointer;
+    }
+    .nick_name{
+      color: $nick_name_color;
+    }
+    .subitem{
+      .sub-body{
+        display: inline-flex;
+      }
+    }
+    .sub-head-img{
+      width: 35px;
+      height: 35px;
       background: #52BC89;
       text-align: center;
-      line-height: 60px;
+      line-height: 35px;
       color: #ffffff;
-      border-radius: 60px;
-      font-size: 20px;
+      border-radius: 35px;
+      font-size: 10px;
     }
-
-    .content {
-      padding-left: 10px;
-      flex: 1;
-
-      .suggestion {
-        padding: 5px 0;
-        font-size: 12px;
-      }
-
-      .opinion-meta {
-        display: flex;
-        flex-direction: row;
-        color: #888;
-        span{
-          margin-left: 2px;
-          color:  #1269db;
-        }
-        div {
-          margin-right: 20px;
-          
-        }
-      }
-    }
-  }
-  .suggest-btn {
-    margin-top: 20px;
-  }
-}
-.ivu-modal-body{
-  .input_label {
-    width: 50px;
-    display: inline-block;
-    font-size: 14px;
-    margin: 15px 20px 30px 10px;
-    text-align:justify;
-    text-align-last: justify;
   }
 }
 .page {
@@ -229,7 +252,7 @@ export default {
       }
     },
     async replySuggestion(){
-      console.log('dsadsads:', this.replyForm.suggestion_id);
+      api.replySuggestion(this.replyForm);
     },
     pageChange(num) {
       this.$store.commit('SET_SUGGESTION_PAGE', num);

@@ -267,7 +267,7 @@ export function replySuggestion(params) {
     request({
       url: '/replysuggestion',
       method: 'post',
-      data: JSON.stringify(params)
+      data: querystring.stringify(params)
     }).then((res) => {
       resolve(res)
     }).catch((e) => {
