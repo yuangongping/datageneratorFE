@@ -263,6 +263,7 @@ export function totalCaseAdmin(){
 
 // 回复意见api
 export function replySuggestion(params) {
+  console.log(params)
   return new Promise((resolve, reject) => {
     request({
       url: '/replysuggestion',

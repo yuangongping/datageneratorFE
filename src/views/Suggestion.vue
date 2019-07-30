@@ -20,7 +20,7 @@
                 {{ suggestionItem.date_created | timeToAgo}}
               </div>
 
-              <div class="reply" @click="replySuggestionFlag=true">
+              <div class="reply" @click="replySuggestionFlag=true; replyForm.suggestion_id=suggestionItem.id">
                 <Icon type="md-chatboxes" />
                 回复
               </div>
@@ -39,14 +39,14 @@
 
                   <div class="opinion-meta">
                     <div class="opinion">
-                      来自 <span class="nick_name">{{ suggestionItem.nick_name }}</span>
+                      来自 <span class="nick_name">{{ replyItem.nick_name }}</span>
                     </div>
                     
                     <div class="publish-time">
-                      {{ suggestionItem.date_created | timeToAgo}}
+                      {{ replyItem.date_created | timeToAgo}}
                     </div>
 
-                    <div class="reply" @click="replySuggestionFlag=true">
+                    <div class="reply" @click="replySuggestionFlag=true; replyForm.suggestion_id=suggestionItem.id">
                       <Icon type="md-chatboxes" />
                       回复
                     </div>
@@ -68,10 +68,10 @@
           @on-ok="replySuggestion"
         >
           <span class='input_label'>用户名</span>
-          <Input v-model="replyForm.nickname" type="text"  style="width: 200px" placeholder="请输入您的昵称..." /><br>
+          <Input v-model="replyForm.nick_name" type="text"  style="width: 200px" placeholder="请输入您的昵称..." /><br>
           <Input v-model="replyForm.content" type="textarea" :rows="3" placeholder="请输入您的意见..." />
         </Modal>
-       </div>
+      </div>
 
       <div class="add-suggestion" >
         <Button class="suggest-btn" icon="md-add" @click="suggestionFlag = true">建议</Button>  
@@ -82,7 +82,7 @@
           @on-ok="addSuggestion"
         >
           <span class='input_label'>用户名</span>
-          <Input v-model="nickname" type="text" placeholder="请输入您的昵称..." /><br>
+          <Input v-model="nick_name" type="text" placeholder="请输入您的昵称..." /><br>
           <Input v-model="content" type="textarea" :rows="3" placeholder="请输入您的意见..." />
         </Modal>
        </div>
@@ -145,7 +145,7 @@ $nick_name_color: #1269db;
     .sub-head-img{
       width: 35px;
       height: 35px;
-      background: #52BC89;
+      background:  rgb(195, 214, 21);
       text-align: center;
       line-height: 35px;
       color: #ffffff;
@@ -172,9 +172,9 @@ export default {
       suggestionFlag: false,
       replySuggestionFlag: false,
       content: '',
-      nickname: '',
+      nick_name: '',
       replyForm: {
-        nickname: '',
+        nick_name: '',
         content: '',
         suggestion_id: ''
       }
@@ -219,7 +219,7 @@ export default {
     async addSuggestion() {
        try {
         const params={
-          nick_name: this.nickname,
+          nick_name: this.nick_name,
           content: this.content,
         }
         const res = await api.addSuggestion(params)
@@ -252,7 +252,10 @@ export default {
       }
     },
     async replySuggestion(){
-      api.replySuggestion(this.replyForm);
+      const res = await api.replySuggestion(this.replyForm);
+      if (res.code == 200) {
+        this.listSuggestion();
+      }
     },
     pageChange(num) {
       this.$store.commit('SET_SUGGESTION_PAGE', num);
