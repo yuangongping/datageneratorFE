@@ -2,6 +2,7 @@
     <div class="suggestion">
       <div v-for="suggestionItem in suggestionList"  :key="suggestionItem.id">
         <div class="item">
+          <!-- 图标 -->
           <div class="head-img">
             {{ suggestionItem.nick_name | headText }}
           </div>
@@ -20,15 +21,16 @@
                 {{ suggestionItem.date_created | timeToAgo}}
               </div>
 
-              <div class="reply" @click="replySuggestionFlag=true">
+              <div class="reply" @click="replySuggestionFlag=true; replyForm.suggestion_id=suggestionItem.id">
                 <Icon type="md-chatboxes" />
                 回复
               </div>
             </div>
 
             <div class="subitem" v-for="replyItem in suggestionItem.reply" :key="replyItem.id">
-              <div class="item">
+              <div class="item" v-if="replyItem.status > 0">
                 <div class="sub-head-img">
+                  
                   {{ replyItem.nick_name | headText }}
                 </div>
 
@@ -39,14 +41,14 @@
 
                   <div class="opinion-meta">
                     <div class="opinion">
-                      来自 <span class="nick_name">{{ suggestionItem.nick_name }}</span>
+                      来自 <span class="nick_name">{{ replyItem.nick_name }}</span>
                     </div>
                     
                     <div class="publish-time">
-                      {{ suggestionItem.date_created | timeToAgo}}
+                      {{ replyItem.date_created | timeToAgo}}
                     </div>
 
-                    <div class="reply" @click="replySuggestionFlag=true">
+                    <div class="reply" @click="replySuggestionFlag=true; replyForm.suggestion_id=suggestionItem.id">
                       <Icon type="md-chatboxes" />
                       回复
                     </div>
@@ -67,11 +69,12 @@
           :mask-closable="false"
           @on-ok="replySuggestion"
         >
-          <span class='input_label'>用户名</span>
-          <Input v-model="replyForm.nickname" type="text"  style="width: 200px" placeholder="请输入您的昵称..." /><br>
-          <Input v-model="replyForm.content" type="textarea" :rows="3" placeholder="请输入您的意见..." />
+          <span>用户名</span>
+          <Input v-model="replyForm.nick_name" type="text" placeholder="请输入您的昵称..." style="width:90%; margin: 20px 0px 30px 10px"/><br>
+          <span>意  见</span>
+          <Input v-model="replyForm.content" type="textarea" :rows="3" placeholder="请输入您的意见..." style="width:90%;  margin: 0px 0px 0px 18px"/>
         </Modal>
-       </div>
+      </div>
 
       <div class="add-suggestion" >
         <Button class="suggest-btn" icon="md-add" @click="suggestionFlag = true">建议</Button>  
@@ -81,9 +84,10 @@
           :mask-closable="false"
           @on-ok="addSuggestion"
         >
-          <span class='input_label'>用户名</span>
-          <Input v-model="nickname" type="text" placeholder="请输入您的昵称..." /><br>
-          <Input v-model="content" type="textarea" :rows="3" placeholder="请输入您的意见..." />
+          <span>用户名</span>
+          <Input v-model="replyForm.nick_name" type="text" placeholder="请输入您的昵称..." style="width:90%; margin: 20px 0px 30px 10px"/><br>
+          <span>意  见</span>
+          <Input v-model="replyForm.content" type="textarea" :rows="3" placeholder="请输入您的意见..." style="width:90%;  margin: 0px 0px 0px 18px"/>
         </Modal>
        </div>
 
@@ -145,7 +149,7 @@ $nick_name_color: #1269db;
     .sub-head-img{
       width: 35px;
       height: 35px;
-      background: #52BC89;
+      background:  rgb(195, 214, 21);
       text-align: center;
       line-height: 35px;
       color: #ffffff;
@@ -154,6 +158,7 @@ $nick_name_color: #1269db;
     }
   }
 }
+
 .page {
   margin-top: 20px;
 }
@@ -171,10 +176,8 @@ export default {
       suggestionList: [],
       suggestionFlag: false,
       replySuggestionFlag: false,
-      content: '',
-      nickname: '',
       replyForm: {
-        nickname: '',
+        nick_name: '',
         content: '',
         suggestion_id: ''
       }
@@ -219,7 +222,7 @@ export default {
     async addSuggestion() {
        try {
         const params={
-          nick_name: this.nickname,
+          nick_name: this.nick_name,
           content: this.content,
         }
         const res = await api.addSuggestion(params)
@@ -252,7 +255,11 @@ export default {
       }
     },
     async replySuggestion(){
-      api.replySuggestion(this.replyForm);
+      const res = await api.replySuggestion(this.replyForm);
+      if (res.code == 200) {
+        this.$Message.success('信息提交成功, 等待后台审核其合法性！');
+        this.listSuggestion();
+      }
     },
     pageChange(num) {
       this.$store.commit('SET_SUGGESTION_PAGE', num);
