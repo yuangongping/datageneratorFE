@@ -2,6 +2,7 @@
     <div class="suggestion">
       <div v-for="suggestionItem in suggestionList"  :key="suggestionItem.id">
         <div class="item">
+          <!-- 图标 -->
           <div class="head-img">
             {{ suggestionItem.nick_name | headText }}
           </div>
@@ -27,8 +28,9 @@
             </div>
 
             <div class="subitem" v-for="replyItem in suggestionItem.reply" :key="replyItem.id">
-              <div class="item">
+              <div class="item" v-if="replyItem.status > 0">
                 <div class="sub-head-img">
+                  
                   {{ replyItem.nick_name | headText }}
                 </div>
 
@@ -67,9 +69,10 @@
           :mask-closable="false"
           @on-ok="replySuggestion"
         >
-          <span class='input_label'>用户名</span>
-          <Input v-model="replyForm.nick_name" type="text"  style="width: 200px" placeholder="请输入您的昵称..." /><br>
-          <Input v-model="replyForm.content" type="textarea" :rows="3" placeholder="请输入您的意见..." />
+          <span>用户名</span>
+          <Input v-model="replyForm.nick_name" type="text" placeholder="请输入您的昵称..." style="width:90%; margin: 20px 0px 30px 10px"/><br>
+          <span>意  见</span>
+          <Input v-model="replyForm.content" type="textarea" :rows="3" placeholder="请输入您的意见..." style="width:90%;  margin: 0px 0px 0px 18px"/>
         </Modal>
       </div>
 
@@ -81,9 +84,10 @@
           :mask-closable="false"
           @on-ok="addSuggestion"
         >
-          <span class='input_label'>用户名</span>
-          <Input v-model="nick_name" type="text" placeholder="请输入您的昵称..." /><br>
-          <Input v-model="content" type="textarea" :rows="3" placeholder="请输入您的意见..." />
+          <span>用户名</span>
+          <Input v-model="replyForm.nick_name" type="text" placeholder="请输入您的昵称..." style="width:90%; margin: 20px 0px 30px 10px"/><br>
+          <span>意  见</span>
+          <Input v-model="replyForm.content" type="textarea" :rows="3" placeholder="请输入您的意见..." style="width:90%;  margin: 0px 0px 0px 18px"/>
         </Modal>
        </div>
 
@@ -154,6 +158,7 @@ $nick_name_color: #1269db;
     }
   }
 }
+
 .page {
   margin-top: 20px;
 }
@@ -171,8 +176,6 @@ export default {
       suggestionList: [],
       suggestionFlag: false,
       replySuggestionFlag: false,
-      content: '',
-      nick_name: '',
       replyForm: {
         nick_name: '',
         content: '',
@@ -254,6 +257,7 @@ export default {
     async replySuggestion(){
       const res = await api.replySuggestion(this.replyForm);
       if (res.code == 200) {
+        this.$Message.success('信息提交成功, 等待后台审核其合法性！');
         this.listSuggestion();
       }
     },

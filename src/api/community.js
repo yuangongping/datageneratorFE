@@ -276,3 +276,37 @@ export function replySuggestion(params) {
     })
   })
 }
+
+// 审核意见回复
+export function adoptSuggestionReply(id){
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/adoptsuggestionreply',
+      method: 'get',
+      params: {
+        id
+      }
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+// 删除回复意见
+export function delSuggestionReply(id) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/delsuggestionreply',
+      method: 'get',
+      params: {
+        id
+      }
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}

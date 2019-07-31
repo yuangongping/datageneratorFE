@@ -16,10 +16,12 @@ import TextGenFunc from '@/datatypes/Text/Text';
 import RandomChoiceGenFunc from '@/datatypes/RandomChoice/RandomChoice';
 import TimeGenFunc from '@/datatypes/Time/Time';
 import DetailAddressGenFunc from '@/datatypes/DetailAddress/DetailAddress';
-import RandomFieldGenFunc from '@/datatypes/RandomField/RandomField'
-import GeographCoordinatesGenFunc from '@/datatypes/GeographCoordinates/GeographCoordinates'
-import OccupationGenFunc from '@/datatypes/Occupation/Occupation'
-import CarprefixGenFunc from '@/datatypes/Carprefix/Carprefix'
+import RandomFieldGenFunc from '@/datatypes/RandomField/RandomField';
+import GeographCoordinatesGenFunc from '@/datatypes/GeographCoordinates/GeographCoordinates';
+import OccupationGenFunc from '@/datatypes/Occupation/Occupation';
+import CarprefixGenFunc from '@/datatypes/Carprefix/Carprefix';
+import RegularExpressionGenFunc from '@/datatypes/RegularExpression/RegularExpression';
+
 export const DATA_TYPES = {
     Name: {
         alias: "姓名",
@@ -324,8 +326,27 @@ export const DATA_TYPES = {
         __display: true, // 生成结果是否包含该字段
         relation: {
             fieldNames: "",
-            type: RELATION_ENUM.INDEPEND.EN,
+            type: RELATION_ENUM.COR_RELATION.EN,
             allowTypes: ["City"],
         }
+    },
+
+    RegularExpression: {
+        alias: "正则表达式",
+        shortAlias: "正则",
+        genFunc: RegularExpressionGenFunc,
+        __unique: false,
+        __display: true,
+        options: {
+            expression: '',
+            outputTypes: '提取',
+            replaceValue: '',
+            __fieldName: ''
+        },
+        relation: {
+            fieldNames: "",
+            type: RELATION_ENUM.COR_RELATION.EN,
+            allowTypes: "ALL",
+        },
     },
 };

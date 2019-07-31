@@ -20,7 +20,7 @@
                 {{ suggestionItem.date_created | timeToAgo}}
               </div>
 
-              <div class="reply" @click="replySuggestionFlag=true; replyForm.suggestion_id=suggestionItem.id">
+              <div class="reply">
                 <Icon class="icon" type="ios-checkmark-circle" />
                 <Poptip
                   confirm
@@ -64,12 +64,12 @@
                       {{ replyItem.date_created | timeToAgo}}
                     </div>
 
-                    <div class="reply" @click="replySuggestionFlag=true; replyForm.suggestion_id=suggestionItem.id">
+                    <div class="reply">
                       <Icon class="icon" type="ios-checkmark-circle" />
                       <Poptip
                         confirm
                         title="确定通过吗"
-                        @on-ok="adoptSuggestion(suggestionItem.id)"
+                        @on-ok="adoptSuggestionReply(replyItem.id)"
                         style="margin-right:5px;"
                       > 
                         <span v-if="replyItem.status > 0" class="passed" >已通过</span>
@@ -80,7 +80,7 @@
                         <Poptip
                         confirm
                         title="确定删除吗"
-                        @on-ok="delSuggestion(suggestionItem.id)"
+                        @on-ok="delSuggestionReply(replyItem.id)"
                         >
                         <span style="color:red">删除</span>
                       </Poptip>
@@ -185,10 +185,7 @@ export default {
   data() {
     return {
       totalNum: 0,
-      suggestionList: [],
-      suggestionFlag: false,
-      content: '',
-      nickname: ''
+      suggestionList: []
     }
   },
   components: {
@@ -259,11 +256,42 @@ export default {
         this.$Message.error(e);
       }
     },
-
+    
     // 删除意见
     async delSuggestion(id) {
       try {
         const res = await api.delSuggestion(id);
+        if(res.code === 200) {
+          this.listSuggestionAdmin();
+          this.$Message.success('删除成功！');
+        } else {
+          this.$Message.success('删除失败！');
+        }
+      } catch (e) {
+        console.error(e);
+        this.$Message.error(e);
+      }
+    },
+
+    // 审核回复
+    async adoptSuggestionReply(id) {
+      try {
+        const res = await api.adoptSuggestionReply(id);
+        if(res.code === 200) {
+          this.$Message.success('审核通过');
+          this.listSuggestionAdmin();
+        } else {
+          this.$Message.success('操作失败！');
+        }
+      } catch (e) {
+        this.$Message.error(e);
+      }
+    },
+
+    // 删除意见回复
+    async delSuggestionReply(id) {
+      try {
+        const res = await api.delSuggestionReply(id);
         if(res.code === 200) {
           this.listSuggestionAdmin();
           this.$Message.success('删除成功！');

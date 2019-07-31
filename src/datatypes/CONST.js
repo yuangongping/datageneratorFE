@@ -39,7 +39,8 @@ export const ALLOW_RELATIONS = {
   RandomField: ['COR_RELATION'],
   GeographCoordinates: ['INDEPEND', 'COR_RELATION'],
   Occupation: ['INDEPEND', 'COR_RELATION'],
-  Carprefix: ['INDEPEND', 'COR_RELATION']
+  Carprefix: ['COR_RELATION'],
+  RegularExpression: ['COR_RELATION']
 }
 
 export const OPTIONS_ENUM = {
