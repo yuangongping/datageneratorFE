@@ -17,14 +17,10 @@ export default (options, relation) => {
       result = town + street + number + '号';
     } else {
       const village = randomChoice(detailaddressData.VILLAGE_ADDRESS.village);
-      if (village.length > 0) {
-        result = town  + village;
-      } else {
-        const group = randomChoice(detailaddressData.VILLAGE_ADDRESS.group);
-        result = town  + village + group;
+      const group = randomChoice(detailaddressData.VILLAGE_ADDRESS.group);
+      result = town  + village + group;
       }
-    }
-  } else {
+    } else {
     const residential_firstname = randomChoice(detailaddressData.CITY_ADDRESS.residential.firstname);
     const residential_secondname = randomChoice(detailaddressData.CITY_ADDRESS.residential.secondname);
     const residential_thirdname = randomChoice(detailaddressData.CITY_ADDRESS.residential.thirdname);

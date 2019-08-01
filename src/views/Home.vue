@@ -14,6 +14,13 @@
       </div>
 
       <div class="field-list shadow-box"  v-if="dataTypeConfigs.length > 0">
+        <div v-if="dragTip.showOnce == 1" class="drag-tip shadow-box">
+          <div class="content">
+            我可以拖动哦 (*^▽^*)！
+            <div class="arrow"></div>
+          </div>
+        </div>
+
         <div class="field-title">
           <span>
             配置项
@@ -28,73 +35,74 @@
           </Poptip>
           
         </div>
-        <transition-group name="flip-list" >
-          <div 
-            v-for="(dataTypeConfig, k) in dataTypeConfigs"
-            :key="dataTypeConfig.id"
-            class="config-row"
-          >
-            <!-- 【 通用区域 】字段类型、字段名 -->
-            <div class="field-type">
-              <Tag color="primary">
-                {{ DATA_TYPES[dataTypeConfig.dataType].shortAlias }}
-              </Tag>
-            </div>
-
-            <div class="field-name">
-              <label>
-                <Input type="text"
-                  v-model="dataTypeConfig.fieldName"
-                />
-                <span class="config-title">字段名</span>
-              </label>
-            </div>
-            
-          <!-- 字段配置组件区域 -->
-          <div
-            class="field-config"
-            :is="dataTypeConfig.component"
-            :dataType="dataTypeConfig.dataType"
-            :options.sync="dataTypeConfig.options"
-            :relation.sync="dataTypeConfig.relation"
+        <draggable :list="dataTypeConfigs" :options = "{animation:500}" handle=".dragarea">
+          <transition-group>
+            <div 
+              v-for="(dataTypeConfig, k) in dataTypeConfigs"
+              :key="dataTypeConfig.id"
+              class="config-row"
             >
-          </div>
-            <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
-            <div class="switch-config">
-              <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
-                <i-switch
-                  size="large"
-                  v-model="dataTypeConfig.__unique"
-                >
-                  <span slot="open">唯一</span>
-                  <span slot="close">唯一</span>
-                </i-switch>
-              </Tooltip>
-            </div>
+              <!-- 【 通用区域 】字段类型、字段名 -->
+              <div class="field-type flex-row dragarea">
 
-            <div class="switch-config">
-              <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
-                <i-switch
-                  size="large"
-                  v-model="dataTypeConfig.__display"
-                >
-                  <span slot="open">显示</span>
-                  <span slot="close">显示</span>
-                </i-switch>
-              </Tooltip>
-            </div>
+                <div class="delrow">
+                  <Icon type="md-close" @click="delRow(k)"/>
+                </div>
+                <Tag color="primary">
+                  {{ DATA_TYPES[dataTypeConfig.dataType].shortAlias }}
+                </Tag>
+                <!-- <div class="up-down" >
+                  <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
+                  <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
+                </div> -->
+              </div>
 
-            <div class="up-down" >
-                <Icon v-if="k > 0" type="md-arrow-up" @click="sortUp(k)"></Icon>
-                <Icon v-if="k < dataTypeConfigs.length - 1" type="md-arrow-down" @click="sortDown(k)"></Icon>
+              <div class="field-name">
+                <label>
+                  <Input type="text"
+                    v-model="dataTypeConfig.fieldName"
+                  />
+                  <span class="config-title">字段名</span>
+                </label>
+              </div>
+              
+            <!-- 字段配置组件区域 -->
+            <div
+              class="field-config"
+              :is="dataTypeConfig.component"
+              :dataType="dataTypeConfig.dataType"
+              :options.sync="dataTypeConfig.options"
+              :relation.sync="dataTypeConfig.relation"
+              >
             </div>
+              <!-- 【 通用区域 】下上移动字段、唯一性和字段显示设置、关闭按钮 -->
+              <div class="switch-config">
+                <Tooltip max-width="200" content="设置该字段是否为不重复的值，请合理设置唯一性" theme="light" placement="top">
+                  <i-switch
+                    size="large"
+                    v-model="dataTypeConfig.__unique"
+                  >
+                    <span slot="open">唯一</span>
+                    <span slot="close">唯一</span>
+                  </i-switch>
+                </Tooltip>
+              </div>
 
-            <div class="delrow">
-              <Icon type="md-close" @click="delRow(k)"/>
+              <div class="switch-config">
+                <Tooltip max-width="200" content="设置该字段是否显示在生成结果中，某些用于过渡的字段可以不用在生成结果中显示" theme="light" placement="top">
+                  <i-switch
+                    size="large"
+                    v-model="dataTypeConfig.__display"
+                  >
+                    <span slot="open">显示</span>
+                    <span slot="close">显示</span>
+                  </i-switch>
+                </Tooltip>
+              </div>
+
             </div>
-
-          </div>
-        </transition-group>
+          </transition-group>
+        </draggable>
       </div>
 
       <Modal
@@ -137,7 +145,9 @@
               </i-switch>
             </Tooltip>
           </div>
-
+          <span v-if="!saveForm.wantShare" class="tip">
+            只保存的配置在 "社区-案例-我的案例" 查看。但是在您手动清除cookie和浏览器数据的时候会被删除
+          </span>
           <Icon class="close" type="md-close" @click="saveForm.show=false"/>
         </div>
       </transition>
@@ -227,7 +237,28 @@
           <Progress :percent="genPercent" status="active" />
         </div>
     </div>
+
+    <div>
+      <Modal 
+        v-model="webWorkerFlag" 
+        width="600"
+        :closable="false"
+        :mask-closable="false">
+          <div style="text-align:center; margin-top:40px">
+              <p style="margin-top:10px">数据生成时，使用到了HTML5 WebWorker技术，</p>
+              <p style="margin-top:10px">您的浏览器版本不支持WebWorker，请升级至最新版本</p>
+              <p style="margin-top:10px">WebWorker与浏览器的兼容性参考：
+                <a target="blank" href="https://caniuse.com/#search=webworker">https://caniuse.com/#search=webworker</a>
+              </p>
+          </div>
+          <div slot="footer">
+            <Button type="error" size="large" long :loading="modal_loading" @click="webWorkerFlag=false">确定</Button>
+          </div>
+          
+      </Modal>
   </div>
+  </div>
+
 </template>
 
 <script>
@@ -237,6 +268,7 @@ import { mapGetters } from 'vuex';
 import deepcopy from 'deepcopy';
 import { Progress, Button, Input, Select, Option, Icon, Tag, Poptip,
          Switch, Tooltip, Modal, Table, InputNumber, RadioGroup, Radio, Scroll } from 'iview';
+import draggable from 'vuedraggable';
 import Exporter from '@/components/Exporter/index.vue';
 import FastConfig from '@/components/FastConfig/FastConfig.vue';
 import BasicConfig from '@/components/BasicConfig/BasicConfig.vue';
@@ -247,7 +279,7 @@ import { SexConfig, NameConfig, CounterConfig,
          TextConfig, TimeConfig, ProvinceConfig, 
          CityConfig, DistrictConfig, DistrictCodeConfig, 
          RandomFieldConfig, DetailAddressConfig, GeographCoordinatesConfig,
-         OccupationConfig} from '@/components/datatypesconfig/index.js';  
+         OccupationConfig, CarprefixConfig, RegularExpressionConfig} from '@/components/datatypesconfig/index.js';  
 import { DATA_TYPES } from '@/datatypes/index.js';
 
 import { Generator } from '@/generator/index';
@@ -264,6 +296,8 @@ export default {
     return {
       previewFlag: false,
       shareFlag: false,
+      webWorkerFlag: false,
+      modal_loading: true,
       tableHead: [],
       // 预览数据量, 预览10条
       previewDataNum: 10, 
@@ -288,6 +322,10 @@ export default {
       },
       downloading: false,
       genPercent: 0,
+      dragTip: {
+        showOnce: 0, // 0: 显示 1: 现实中 2:不再显示
+        closeTimer: null
+      }
     }
   },
   components: {
@@ -309,6 +347,7 @@ export default {
     Table,
     Poptip,
     Progress,
+    draggable,
     
     // 字段配置组件
     SexConfig,
@@ -331,7 +370,9 @@ export default {
     BasicConfig,
     DetailAddressConfig,
     GeographCoordinatesConfig,
-    OccupationConfig
+    OccupationConfig,
+    CarprefixConfig,
+    RegularExpressionConfig
   },
   computed: {
     ...mapGetters(['storeConfigs'])
@@ -342,6 +383,18 @@ export default {
       if (this.dataTypeConfigs.length == 0) {
         this.exportForm.show = false;
         this.saveForm.show = false;
+      }
+
+      if (this.dragTip.showOnce == 0) {
+        if (this.dataTypeConfigs.length > 1) {
+          this.dragTip.showOnce = 1;
+          if (!this.dragTip.closeTimer) {
+            var _self = this;
+            this.dragTip.closeTimer = window.setTimeout(() => {
+              _self.dragTip.showOnce = 2
+            }, 8000)
+          }
+        }
       }
     }
   },
@@ -389,6 +442,11 @@ export default {
 
     // 使用worker生成
     workerGenerate(configs, nrows, downLoadFunc) {
+      // 使用web Worker前检查一下浏览器是否支持 https://cloud.tencent.com/developer/article/1356677
+      if(typeof(Worker) === 'undefined'){
+        this.webWorkerFlag = true;
+        return
+      }
       const worker = new Worker();
       var _self = this;
 
@@ -477,10 +535,18 @@ export default {
 
     // ----------  导出
     doExport () {
-      const { exportForm, download, modalLoading, parseDataTypeConfigs, workerGenerate } = this;
+      const { exportForm, download, parseDataTypeConfigs, workerGenerate } = this;
       if (exportForm.fileName) {
         this.genPercent = 0;
         this.downloading = true;
+        // 添加用户记录数据
+        api.addUserRecord({
+          configs: JSON.stringify(parseDataTypeConfigs()),
+          export_data_number:  exportForm.dataNum,
+          export_file_type: exportForm.fileType,
+          export_filename: exportForm.fileName
+        })
+        // WORKER 线程生成数据
         workerGenerate(parseDataTypeConfigs(), exportForm.dataNum, download);
       } else {
         this.$Message.error({
@@ -563,13 +629,13 @@ export default {
           form['date_created'] = this.getNowFormatDate();
           form['id'] = key;
           localStorage.setItem(key, JSON.stringify(form));
-          this.$Message.success('保存成功！');
+          this.$Message.success('保存成功！已保存至社区-案例-我的案例');
         } else {
           /*   保存并分享， 数据保存到后端，同时保存至localstore */
           // 发出请求，数据保存至后端
           const res = await api.addCase(form)
           if (res.code === 200){
-            this.$Message.success('分享成功');
+            this.$Message.success('分享成功，等待后台审核！');
             // 数据保存至localshore
             var key = 'case_' + Date.parse(new Date());
             form.configs = JSON.stringify(form.configs);
@@ -606,29 +672,32 @@ export default {
         el.style.visibility =  "hidden" ;
       }
     },
-
-      // 删除字段组件， k下标
+    // 删除字段组件， k下标
     delRow(k) {
       this.dataTypeConfigs.splice(k, 1);
     },
 
-    // 上移
-    sortUp(k) {
-      if (k != 0) {
-        let temp = this.dataTypeConfigs[k - 1];
-        Vue.set(this.dataTypeConfigs, k - 1, this.dataTypeConfigs[k]);
-        Vue.set(this.dataTypeConfigs, k, temp);
-      }
-    },
+    // // 上移
+    // sortUp(k) {
+    //   if (k != 0) {
+    //     let temp = this.dataTypeConfigs[k - 1];
+    //     Vue.set(this.dataTypeConfigs, k - 1, this.dataTypeConfigs[k]);
+    //     Vue.set(this.dataTypeConfigs, k, temp);
+    //   }
+    // },
 
-    // 下移
-    sortDown(k) {
-      if (k != (this.dataTypeConfigs.length - 1)) {
-        let temp = this.dataTypeConfigs[k + 1];
-        Vue.set(this.dataTypeConfigs, k + 1, this.dataTypeConfigs[k]);
-        Vue.set(this.dataTypeConfigs, k, temp);
-      }
-    },
+    // // 下移
+    // sortDown(k) {
+    //   if (k != (this.dataTypeConfigs.length - 1)) {
+    //     let temp = this.dataTypeConfigs[k + 1];
+    //     Vue.set(this.dataTypeConfigs, k + 1, this.dataTypeConfigs[k]);
+    //     Vue.set(this.dataTypeConfigs, k, temp);
+    //   }
+    // },
+    // 拖拽排序
+    datadragEnd (evt) {
+      evt.preventDefault();
+  }
   }
 }
 </script>
@@ -682,9 +751,61 @@ export default {
 }
 
 .field-list {
+  position: relative;
   margin-top: 15px;
   background-color: #ffffff;
   padding: 10px 10px;
+
+  .drag-tip {
+    width: 140px;
+    height: 30px;
+    position: absolute;
+    top:26px;
+    left: -15px;
+    color: #fff;
+    background-color: #ff3d3d;
+    border-radius: 4px;
+
+    .content {
+      width: 100%;
+      height: 100%;
+      line-height: 30px;
+      padding-left: 10px;
+      position: relative;
+    }
+    .arrow {
+      border-style: solid;
+      border-bottom-width: 0px;
+      border-color: rgba(0, 0, 0, 0);
+      border-width: 7px;
+      border-top-color:  #ff3d3d;
+      bottom: -14px;
+      box-sizing: border-box;
+      color: rgb(81, 90, 110);
+      display: block;
+      font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "\\5FAE软雅黑", Arial, sans-serif;
+      font-size: 12px;
+      height: 7px;
+      left: 90px;
+      line-height: 18px;
+      position: absolute;
+      text-align: center;
+      text-size-adjust: 100%;
+      visibility: visible;
+      width: 14px;
+     
+        &:after {
+          content: " ";
+          bottom: 1px;
+          margin-left: -14px;
+          border-bottom-width: 0;
+          border-top-width: 14px;
+          border-top-color: #fff;
+          z-index: 999;
+        }
+    }
+  }
+
   .field-title {
     height: 20px;
     line-height: 20px;
@@ -730,9 +851,36 @@ export default {
     background-color: #fafafa;
   }
   .field-type {
-    width: 62px;
+    width: 100px;
     padding-left: 5px;
     margin-right: 10px;
+    cursor: move;
+    .ivu-tag {
+      width: 52px;
+      text-align: center;
+      cursor: move;
+    }
+    .delrow {
+      width: 38px;
+      height: 100%;
+      cursor: pointer;
+      font-size: 16px;
+      
+
+      &:hover {
+        .ivu-icon {
+          color: #ff3d3d;
+          transition-duration: 0.8s;
+          transform: rotateY(180deg);
+        }
+      }
+    }
+    .up-down {
+      width: 30px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+    }
   }
   .field-name {
     width: 160px;
@@ -759,18 +907,7 @@ export default {
   .switch-config {
     width: 70px;
   }
-  
-  .delrow {
-    width: 30px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  .up-down {
-    width: 30px;
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-  }
+
   .question {
     color: #66cccc; margin-left: 2px; cursor: pointer; font-size: 12px;
   }
@@ -809,6 +946,11 @@ label {
 
   .ivu-input-wrapper {
     width: 200px !important;
+  }
+
+  .tip {
+    padding-left: 20px;
+    color: chocolate;
   }
 
   button {

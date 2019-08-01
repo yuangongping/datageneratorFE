@@ -8,7 +8,7 @@ export default new Vuex.Store({
         storeConfigs: [],
         storeQuote: null,
         casePage: 1,
-        numPerPage: 5,
+        numPerPage: 15,
         suggestionPage:1
     },
     mutations: {

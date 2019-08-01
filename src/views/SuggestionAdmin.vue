@@ -2,7 +2,6 @@
     <div class="suggestion">
       <div v-for="suggestionItem in suggestionList"  :key="suggestionItem.id">
         <div class="item">
-          <!-- 图标 -->
           <div class="head-img">
             {{ suggestionItem.nick_name | headText }}
           </div>
@@ -21,16 +20,33 @@
                 {{ suggestionItem.date_created | timeToAgo}}
               </div>
 
-              <div class="reply" @click="replySuggestionFlag=true; replyForm.suggestion_id=suggestionItem.id; replyForm.reply_target=suggestionItem.nick_name; reply_title='回复'+suggestionItem.nick_name">
-                <Icon type="md-chatboxes" />
-                回复
+              <div class="reply">
+                <Icon class="icon" type="ios-checkmark-circle" />
+                <Poptip
+                  confirm
+                  title="确定通过吗"
+                  @on-ok="adoptSuggestion(suggestionItem.id)"
+                  style="margin-right:5px;"
+                > 
+                  <span v-if="suggestionItem.status > 0" class="passed" >已通过</span>
+                  <span v-else style="color: gray">待审核</span>
+                </Poptip>
+                 
+                <Icon class="icon" type="md-trash" />
+                  <Poptip
+                  confirm
+                  title="确定删除吗"
+                  @on-ok="delSuggestion(suggestionItem.id)"
+                  >
+                  <span style="color:red">删除</span>
+                </Poptip>
               </div>
+               
             </div>
 
             <div class="subitem" v-for="replyItem in suggestionItem.reply" :key="replyItem.id">
-              <div class="item" v-if="replyItem.status > 0">
+              <div class="item">
                 <div class="sub-head-img">
-                  
                   {{ replyItem.nick_name | headText }}
                 </div>
 
@@ -41,16 +57,33 @@
 
                   <div class="opinion-meta">
                     <div class="opinion">
-                      来自<span class="nick_name">{{ replyItem.nick_name }}</span>
+                      来自 <span class="nick_name">{{ replyItem.nick_name }}</span>
                     </div>
                     
                     <div class="publish-time">
                       {{ replyItem.date_created | timeToAgo}}
                     </div>
 
-                    <div class="reply" @click="replySuggestionFlag=true; replyForm.suggestion_id=suggestionItem.id; replyForm.reply_target=replyItem.nick_name; reply_title='回复'+replyForm.reply_target">
-                      <Icon type="md-chatboxes" />
-                      回复
+                    <div class="reply">
+                      <Icon class="icon" type="ios-checkmark-circle" />
+                      <Poptip
+                        confirm
+                        title="确定通过吗"
+                        @on-ok="adoptSuggestionReply(replyItem.id)"
+                        style="margin-right:5px;"
+                      > 
+                        <span v-if="replyItem.status > 0" class="passed" >已通过</span>
+                        <span v-else class="pendingApproval">待审核</span>
+                      </Poptip>
+                      
+                      <Icon class="icon" type="md-trash" />
+                        <Poptip
+                        confirm
+                        title="确定删除吗"
+                        @on-ok="delSuggestionReply(replyItem.id)"
+                        >
+                        <span style="color:red">删除</span>
+                      </Poptip>
                     </div>
                   </div>
                 </div>
@@ -61,37 +94,7 @@
         </div>
       </div>
 
-      <!-- 回复 -->
-      <div class="add-reply" >  
-        <Modal
-          :title= reply_title
-          v-model="replySuggestionFlag"
-          :mask-closable="false"
-          @on-ok="replySuggestion"
-        >
-          <span>用户名</span>
-          <Input v-model="replyForm.nick_name" type="text" placeholder="请输入您的昵称..." style="width:90%; margin: 20px 0px 30px 10px"/><br>
-          <span>意  见</span>
-          <Input v-model="replyForm.content" type="textarea" :rows="3" placeholder="请输入您的意见..." style="width:90%;  margin: 0px 0px 0px 18px"/>
-        </Modal>
-      </div>
-
-      <div class="add-suggestion" >
-        <Button class="suggest-btn" icon="md-add" @click="suggestionFlag = true">建议</Button>  
-        <Modal
-          title="提意见"
-          v-model="suggestionFlag"
-          :mask-closable="false"
-          @on-ok="addSuggestion"
-        >
-          <span>用户名</span>
-          <Input v-model="replyForm.nick_name" type="text" placeholder="请输入您的昵称..." style="width:90%; margin: 20px 0px 30px 10px"/><br>
-          <span>意  见</span>
-          <Input v-model="replyForm.content" type="textarea" :rows="3" placeholder="请输入您的意见..." style="width:90%;  margin: 0px 0px 0px 18px"/>
-        </Modal>
-       </div>
-
-       <Page
+      <Page
         class="page"
         size="small"
         :page-size="storeNumPerPage"
@@ -137,6 +140,16 @@ $nick_name_color: #1269db;
     .reply{
       margin-right: 0px; 
       cursor: pointer;
+      .icon {
+        height:80%;
+        margin-right: 6px; 
+      }
+      .pendingApproval{
+        color: gray;
+      }
+      .passed{
+        color: #52BC89;
+      }
     }
     .nick_name{
       color: $nick_name_color;
@@ -149,7 +162,7 @@ $nick_name_color: #1269db;
     .sub-head-img{
       width: 35px;
       height: 35px;
-      background:  rgb(195, 214, 21);
+      background: rgb(195, 214, 21);
       text-align: center;
       line-height: 35px;
       color: #ffffff;
@@ -158,7 +171,6 @@ $nick_name_color: #1269db;
     }
   }
 }
-
 .page {
   margin-top: 20px;
 }
@@ -167,7 +179,7 @@ $nick_name_color: #1269db;
 }
 </style>
 <script>
-import { Modal, Input, Button, Page, Icon } from 'iview';
+import { Modal, Input, Button, Page, Icon, Poptip } from 'iview';
 import api from '@/api/index.js';
 import { timeToAgo } from "@/utils/functions";
 import { mapGetters } from 'vuex';
@@ -176,16 +188,7 @@ export default {
   data() {
     return {
       totalNum: 0,
-      suggestionList: [],
-      suggestionFlag: false,
-      replySuggestionFlag: false,
-      replyForm: {
-        nick_name: '',
-        reply_target: '',
-        content: '',
-        suggestion_id: ''
-      },
-      reply_title: ''
+      suggestionList: []
     }
   },
   components: {
@@ -193,11 +196,12 @@ export default {
     Modal,
     Button,
     Page,
-    Icon
+    Icon,
+    Poptip
   },
   mounted() {
-    this.totalSuggestion();
-    this.listSuggestion();
+    this.totalSuggestionAdmin();
+    this.listSuggestionAdmin();
   },
   computed: {
     ...mapGetters(['storeSuggestionPage', 'storeNumPerPage'])
@@ -209,9 +213,9 @@ export default {
     timeToAgo
   },
   methods: {
-    async totalSuggestion(){
+    async totalSuggestionAdmin(){
       try {
-        const res = await api.totalSuggestion();
+        const res = await api.totalSuggestionAdmin();
         if (res.code === 200) {
           this.totalNum = res.data;
         } else {
@@ -223,28 +227,9 @@ export default {
         this.$Message.error(e);
       }
     },
-
-    async addSuggestion() {
-       try {
-        const params={
-          nick_name: this.nick_name,
-          content: this.content,
-        }
-        const res = await api.addSuggestion(params)
-        if (res.code === 200){
-          this.$Message.success('添加建议成功, 等待后台审核');
-          this.listSuggestion()
-        } else {
-          this.$Message.error("数据无法保存，请检查！"); 
-        }
-      } catch (e) {
-        this.$Message.error(e); 
-      }
-    },
-
-    async listSuggestion() {
+    async listSuggestionAdmin() {
       try{
-        const res = await api.listSuggestion({
+        const res = await api.listSuggestionAdmin({
           page: this.storeSuggestionPage,
           num: this.storeNumPerPage
         });
@@ -259,13 +244,70 @@ export default {
         this.$Message.error(e);
       }
     },
-    async replySuggestion(){
-      const res = await api.replySuggestion(this.replyForm);
-      if (res.code == 200) {
-        this.$Message.success('信息提交成功, 等待后台审核其合法性！');
-        this.listSuggestion();
+
+    // 意见审核
+    async adoptSuggestion(id) {
+      try {
+        const res = await api.adoptSuggestion(id);
+        if(res.code === 200) {
+          this.$Message.success('审核通过');
+          this.listSuggestionAdmin();
+        } else {
+          this.$Message.success('操作失败！');
+        }
+      } catch (e) {
+        this.$Message.error(e);
       }
     },
+    
+    // 删除意见
+    async delSuggestion(id) {
+      try {
+        const res = await api.delSuggestion(id);
+        if(res.code === 200) {
+          this.listSuggestionAdmin();
+          this.$Message.success('删除成功！');
+        } else {
+          this.$Message.success('删除失败！');
+        }
+      } catch (e) {
+        console.error(e);
+        this.$Message.error(e);
+      }
+    },
+
+    // 审核回复
+    async adoptSuggestionReply(id) {
+      try {
+        const res = await api.adoptSuggestionReply(id);
+        if(res.code === 200) {
+          this.$Message.success('审核通过');
+          this.listSuggestionAdmin();
+        } else {
+          this.$Message.success('操作失败！');
+        }
+      } catch (e) {
+        this.$Message.error(e);
+      }
+    },
+
+    // 删除意见回复
+    async delSuggestionReply(id) {
+      try {
+        const res = await api.delSuggestionReply(id);
+        if(res.code === 200) {
+          this.listSuggestionAdmin();
+          this.$Message.success('删除成功！');
+        } else {
+          this.$Message.success('删除失败！');
+        }
+      } catch (e) {
+        console.error(e);
+        this.$Message.error(e);
+      }
+    },
+
+    // 翻页组件的页码改变回调函数
     pageChange(num) {
       this.$store.commit('SET_SUGGESTION_PAGE', num);
       this.listSuggestion();

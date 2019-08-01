@@ -16,9 +16,12 @@ import TextGenFunc from '@/datatypes/Text/Text';
 import RandomChoiceGenFunc from '@/datatypes/RandomChoice/RandomChoice';
 import TimeGenFunc from '@/datatypes/Time/Time';
 import DetailAddressGenFunc from '@/datatypes/DetailAddress/DetailAddress';
-import RandomFieldGenFunc from '@/datatypes/RandomField/RandomField'
-import GeographCoordinatesGenFunc from '@/datatypes/GeographCoordinates/GeographCoordinates'
-import OccupationGenFunc from '@/datatypes/Occupation/Occupation'
+import RandomFieldGenFunc from '@/datatypes/RandomField/RandomField';
+import GeographCoordinatesGenFunc from '@/datatypes/GeographCoordinates/GeographCoordinates';
+import OccupationGenFunc from '@/datatypes/Occupation/Occupation';
+import CarprefixGenFunc from '@/datatypes/Carprefix/Carprefix';
+import RegularExpressionGenFunc from '@/datatypes/RegularExpression/RegularExpression';
+
 export const DATA_TYPES = {
     Name: {
         alias: "姓名",
@@ -175,6 +178,7 @@ export const DATA_TYPES = {
             max: 10,
             fix: 10,
             lenType: OPTIONS_ENUM.Text.LEN_TYPE.FIX.EN,
+            letterType: 'RANDOM'
         },
         __unique: false, // 生成结果是否是唯一值
         __display: true, // 生成结果是否包含该字段
@@ -206,7 +210,7 @@ export const DATA_TYPES = {
             fieldNames: "",
             type: RELATION_ENUM.COR_RELATION.EN,
             expresion: '',
-            allowTypes: ["Counter", "Number"],
+            allowTypes: 'ALL',
         },
     },
     StrConcat: {
@@ -311,5 +315,37 @@ export const DATA_TYPES = {
             type: RELATION_ENUM.INDEPEND.EN,
             allowTypes: ["Number"],
         }
-    }
+    },
+    Carprefix: {
+        alias: "车牌前缀",
+        shortAlias: "车牌",
+        genFunc: CarprefixGenFunc,
+        options: {
+        },
+        __unique: false, // 生成结果是否是唯一值
+        __display: true, // 生成结果是否包含该字段
+        relation: {
+            fieldNames: "",
+            type: RELATION_ENUM.COR_RELATION.EN,
+            allowTypes: ["City"],
+        }
+    },
+
+    RegularExpression: {
+        alias: "正则表达式",
+        shortAlias: "正则",
+        genFunc: RegularExpressionGenFunc,
+        __unique: false,
+        __display: true,
+        options: {
+            expression: '',
+            outputTypes: '提取',
+            __fieldName: ""
+        },
+        relation: {
+            fieldNames: "",
+            type: RELATION_ENUM.COR_RELATION.EN,
+            allowTypes: "ALL",
+        },
+    },
 };

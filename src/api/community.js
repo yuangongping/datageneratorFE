@@ -1,7 +1,7 @@
 import request from '../utils/request.js';
 const querystring = require('querystring')
 
-
+// 意见api接口
 export function totalSuggestion() {
   return new Promise((resolve, reject) => {
     request({
@@ -15,17 +15,44 @@ export function totalSuggestion() {
   })
 }
 
-export function addCase(params) {
+export function totalSuggestionAdmin() {
   return new Promise((resolve, reject) => {
     request({
-      url: '/addcase',
+      url: '/totalsuggestionadmin',
+      method: 'get'
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+export function listSuggestion(params) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/listsuggestion',
       method: 'post',
       data: querystring.stringify({
-        nick_name: params.nick_name,
-        table_name: params.table_name,
-        quote_num: params.quote_num,
-        like_num: params.like_num,
-        configs: JSON.stringify(params.configs)
+        page: params.page,
+        num: params.num
+      })
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+export function listSuggestionAdmin(params) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/listsuggestionadmin',
+      method: 'post',
+      data: querystring.stringify({
+        page: params.page,
+        num: params.num
       })
     }).then((res) => {
       resolve(res)
@@ -52,15 +79,14 @@ export function addSuggestion(params) {
   })
 }
 
-export function listSuggestion(params) {
+export function adoptSuggestion(id) {
   return new Promise((resolve, reject) => {
     request({
-      url: '/listsuggestion',
-      method: 'post',
-      data: querystring.stringify({
-        page: params.page,
-        num: params.num
-      })
+      url: '/adoptsuggestion',
+      method: 'get',
+      params: {
+        id
+      }
     }).then((res) => {
       resolve(res)
     }).catch((e) => {
@@ -69,6 +95,25 @@ export function listSuggestion(params) {
   })
 }
 
+export function delSuggestion(id) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/delsuggestion',
+      method: 'get',
+      params: {
+        id
+      }
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+
+
+// 案例api接口
 export function totalCase() {
   return new Promise((resolve, reject) => {
     request({
@@ -108,6 +153,156 @@ export function updateCase(params) {
         id: params.id,
         type: params.type
       })
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+export function delCase(id) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/delcase',
+      method: 'get',
+      params: {
+        id
+      }
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+export function addCase(params) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/addcase',
+      method: 'post',
+      data: querystring.stringify({
+        nick_name: params.nick_name,
+        table_name: params.table_name,
+        quote_num: params.quote_num,
+        like_num: params.like_num,
+        configs: JSON.stringify(params.configs)
+      })
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+export function adoptCase(id) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/adoptcase',
+      method: 'get',
+      params: {
+        id
+      }
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+export function recommendCase(id, star) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/recommendcase',
+      method: 'get',
+      params: {
+        id,
+        star
+      }
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+export function listCaseAdmin(params) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/listcaseadmin',
+      method: 'post',
+      data: querystring.stringify({
+        page: params.page,
+        num: params.num,
+      })
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+export function totalCaseAdmin(){
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/totalcaseadmin',
+      method: 'get'
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+
+// 回复意见api
+export function replySuggestion(params) {
+  console.log(params)
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/replysuggestion',
+      method: 'post',
+      data: querystring.stringify(params)
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+// 审核意见回复
+export function adoptSuggestionReply(id){
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/adoptsuggestionreply',
+      method: 'get',
+      params: {
+        id
+      }
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+// 删除回复意见
+export function delSuggestionReply(id) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/delsuggestionreply',
+      method: 'get',
+      params: {
+        id
+      }
     }).then((res) => {
       resolve(res)
     }).catch((e) => {

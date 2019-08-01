@@ -1,13 +1,41 @@
-import { addCase, addSuggestion, listSuggestion, listCase, updateCase, totalCase, totalSuggestion } from './community.js';
+import { addCase, addSuggestion, listSuggestion, listCase, 
+         updateCase, totalCase, totalSuggestion, delCase,
+         adoptCase, recommendCase, listCaseAdmin, totalCaseAdmin,
+         totalSuggestionAdmin, listSuggestionAdmin, adoptSuggestion,
+         delSuggestion, replySuggestion,  adoptSuggestionReply, delSuggestionReply
+        } from './community.js';
 import { getFastConfigs } from './home.js';
+import { addUserRecord } from '../api/userRecord.js'
 
 export default {
+  // 案例api
   addCase,
-  addSuggestion,
   listCase,
-  listSuggestion,
   updateCase,
   totalCase,
+  getFastConfigs,
+  delCase,
+  adoptCase,
+  recommendCase,
+  listCaseAdmin,
+  totalCaseAdmin,
+
+  // 意见appi
   totalSuggestion,
-  getFastConfigs
+  totalSuggestionAdmin,
+  listSuggestion,
+  listSuggestionAdmin,
+  addSuggestion,
+  adoptSuggestion,
+  delSuggestion,
+
+  // 回复意见api
+  replySuggestion,
+
+  addUserRecord,
+  // 审核意见回复
+  adoptSuggestionReply,
+  // 删除回复意见
+  delSuggestionReply
+  
 }

@@ -17,6 +17,9 @@ import DetailAddressConfig from '@/components/datatypesconfig/DetailAddressConfi
 import RandomFieldConfig from '@/components/datatypesconfig/RandomFieldConfig/RandomFieldConfig.vue';
 import GeographCoordinatesConfig from '@/components/datatypesconfig/GeographCoordinatesConfig/GeographCoordinatesConfig.vue';
 import OccupationConfig from '@/components/datatypesconfig/OccupationConfig/OccupationConfig.vue';
+import CarprefixConfig from '@/components/datatypesconfig/CarprefixConfig/CarprefixConfig.vue';
+import RegularExpressionConfig from '@/components/datatypesconfig/RegularExpressionConfig/RegularExpressionConfig.vue';
+
 export {
   SexConfig,
   NameConfig,
@@ -36,5 +39,7 @@ export {
   DetailAddressConfig,
   RandomFieldConfig,
   GeographCoordinatesConfig,
-  OccupationConfig
+  OccupationConfig,
+  CarprefixConfig, 
+  RegularExpressionConfig
 }

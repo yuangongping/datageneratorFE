@@ -1,26 +1,12 @@
 <template>
   <div class="case">
-    <div class="filter">
-        <div v-if="filterFlag">
-          <a @click="filterFlag=false"><Icon type="ios-funnel-outline" />筛选工具</a>
-        </div>
-        <div v-else>
-          <Select v-model="filter" class="select" @on-change='listCase'>
-            <Option value="社区案例" >社区案例</Option>
-            <Option value="我的案例" >我的案例</Option>
-          </Select>
-          <a @click="filterFlag=true"><Icon type="ios-arrow-up" />收起工具</a>
-        </div>
-    </div>
-
-    <div class="communitycase" v-if="filter==='社区案例'">
       <div class="case-item" v-for="(caseItem, index) in caseList" :key="caseItem.id">
         <div class="content">
           <div class="title">
             {{ caseItem.table_name }}
-            <Tooltip v-if="caseItem.fast_config > 0" class="recommend" max-width="300" content="已被推荐为快捷配置, 在首页进行展示" theme="light" placement="top">
+            <Tooltip v-if="caseItem.stars > 0" class="recommend" max-width="300" content="已被推荐为快捷配置, 在首页进行展示" theme="light" placement="top">
               <Icon
-                v-for="i in caseItem.fast_config"
+                v-for="i in caseItem.stars"
                 :key="i"
                 type="ios-star"
               />
@@ -61,77 +47,50 @@
               {{ caseItem.likeNum }}
             </div>
 
+            <!-- 管理员操作框 -->
+            <div  style="margin-right:0px;">
+              <Icon type="ios-checkmark-circle" style="margin-right:5px;"/>
+              <Poptip
+                confirm
+                title="确定通过吗"
+                @on-ok="adoptCase(index)"
+                style="margin-right:5px;"
+              > 
+                <span v-if="caseItem.status > 0" class="passed" >已通过</span>
+                <span v-else>待审核</span>
+              </Poptip>
+            </div>
+
+            <div>
+              <Icon type="ios-star"  style="margin-right:5px;"/>
+              <InputNumber :min="1" v-model="caseItem.fast_config" size="small"  style="margin-right:5px;"></InputNumber>
+              <span @click="recommendCase(index)">推荐</span>
+            </div>
+            
+            <div>
+              <Icon type="md-trash"   style="margin-right:5px;"/>
+              <Poptip
+                  confirm
+                  title="确定删除吗"
+                  @on-ok="delCase(index)"
+                >
+                  <span>删除</span>
+                </Poptip>
+            </div>
             
           </div>
         </div>
-      </div>
-      <Page
+      
+    </div>
+   <Page
         class="page"
         size="small"
-        :page-size="storeNumPerPage"
+        :page-size="numPerPage"
         show-total
         :total="totalNum"
         :current="storeCasePage"
         @on-change="pageChange"
-      />
-    </div>
-
-    <!-- 我的案例 -->
-    <div v-else>
-      <div class="case-item" v-for="(caseItem, index) in mycaseList" :key="caseItem.id">
-        <div class="content">
-
-          <div class="title">
-            {{ caseItem.table_name }}
-            <Tooltip v-if="caseItem.fast_config > 0" class="recommend" max-width="300" content="已被推荐为快捷配置, 在首页进行展示" theme="light" placement="top">
-              <Icon
-                v-for="i in caseItem.fast_config"
-                :key="i"
-                type="ios-star"
-              />
-            </Tooltip>
-          </div>
-
-          <div class="fields-data">
-            <div class="flex-row">
-              <span
-                class="fields"
-                v-for="field in caseItem.fields"
-                :key="field.fieldName"
-              >{{ field.fieldName }}</span>
-            </div>
-
-            <div class="flex-row">
-              <span v-for="(value, name) in caseItem.data" :key="name">{{ value }}</span>
-            </div>
-          </div>
-
-          <div class="share-meta flex-row">
-            <div>
-              #来自
-              <span class="sharer"> {{ caseItem.nick_name }}</span>
-            </div>
-            <div class="share-time">{{ caseItem.shareTime | timeToAgo }}</div>
-            <div class="action-num" @click="myquote(index)"  :class="{picked: caseItem.quoted}">
-              <Icon type="md-share"/>
-              引用
-            </div>
-            <div class="action-num" :class="{picked: caseItem.liked}">
-              <Poptip
-                  confirm
-                  title="确定删除吗？"
-                  @on-ok="mydelete(index)"
-              >
-                  <Icon type="md-trash" />
-                  删除
-              </Poptip>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-    </div>
+    />
   </div>
 </template>
 
@@ -147,6 +106,10 @@
     border: 0px solid #dcdee2;
   }
 }
+.passed{
+    color: red;
+}
+
 .case {
   .case-item {
     border-bottom: 1px solid #eee;
@@ -154,7 +117,6 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-
     .content {
       padding-left: 5px;
       .title {
@@ -197,19 +159,9 @@
 
       .share-meta {
         color: #888;
-
-        div {
-          margin-right: 20px;
-        }
-
         .sharer {
           color: #1269db;
         }
-
-        .picked {
-          color: #ff3d3d;
-        }
-
         .action-num {
           display: flex;
           align-items: center;
@@ -226,35 +178,38 @@
     margin-top: 20px;
   }
 }
+.administrator{
+  display: flex;
+}
+
+.case .case-item .content .share-meta .acti {
+  margin-right: 0px;
+}
 </style>
 <script>
 import api from '@/api/index.js';
 import { Generator } from "@/generator/index";
-import { Icon, Page, Tooltip, Select, Option, Poptip  } from "iview";
+import { Icon, Page, Tooltip,  Poptip, InputNumber } from "iview";
 import { timeToAgo } from "@/utils/functions";
 import { mapGetters } from 'vuex';
-
 export default {
   data() {
     return {
-      filterFlag: false,
-      filter: '社区案例',
       totalNum: 0,
       caseList: [],
-      mycaseList: []
-      
+      mycaseList: [],
+      numPerPage: 5,
     };
   },
   components: {
     Icon,
-    Select,
-    Option,
     Page,
     Tooltip,
-    Poptip
+    Poptip,
+    InputNumber
   },
   computed: {
-    ...mapGetters(['storeCasePage', 'storeNumPerPage'])
+    ...mapGetters(['storeCasePage'])
   },
   filters: {
     timeToAgo
@@ -269,7 +224,7 @@ export default {
     // 获取数据总量
     async totalCase() {
       try {
-        const res = await api.totalCase();
+        const res = await api.totalCaseAdmin();
         if (res.code === 200) {
           this.totalNum = res.data;
         } else {
@@ -311,7 +266,6 @@ export default {
           this.caseList[index].quoteNum += 1;
           this.caseList[index].quoted = true;
           this.$store.commit('SET_QUOTE', this.caseList[index])
-          this.$Message.success("引用成功，请返回首页使用！");
         } else {
           console.error(res);
           this.$Message.error("数据更新错误，请检查！");
@@ -333,7 +287,7 @@ export default {
     },
     // 删除我的案例
     mydelete(index){
-       try {
+      try {
         localStorage.removeItem(this.mycaseList[index].id);
         this.listCase();
         this.$Message.success('删除成功！');
@@ -342,30 +296,62 @@ export default {
         this.$Message.error(e);
       }
     },
-
+    // 删除分享的案例
+    async delCase(index){
+      try {
+        const res = await api.delCase(this.caseList[index].id);
+        if(res.code === 200) {
+          this.listCase();
+          this.$Message.success('删除成功！');
+        } else {
+          this.$Message.success('删除失败！');
+        }
+      } catch (e) {
+        console.error(e);
+        this.$Message.error(e);
+      }
+    },
+    // 审核案例
+    async recommendCase(index){
+      try {
+        const res = await api.recommendCase(this.caseList[index].id,this.caseList[index].fast_config);
+        if(res.code === 200) {
+          this.listCase();
+          this.$Message.success('审核通过');
+        } else {
+          this.$Message.success('操作失败！');
+        }
+      } catch (e) {
+        console.error(e);
+        this.$Message.error(e);
+      }
+    },
+    // 通过审核
+    async adoptCase(index) {
+      try {
+        const res = await api.adoptCase(this.caseList[index].id);
+        if(res.code === 200) {
+          this.$Message.success('审核通过');
+          this.listCase();
+        } else {
+          this.$Message.success('操作失败！');
+        }
+      } catch (e) {
+        console.error(e);
+        this.$Message.error(e);
+      }
+    },
     async listCase() {
       try {
-        if(this.filter !== '社区案例'){
-          var tempList = [];
-          for(var i = 0; i < localStorage.length; i++){
-            if(localStorage.key(i).indexOf("case_") == 0){
-              let record = localStorage.getItem(localStorage.key(i));
-              tempList.push(JSON.parse(record))
-            }
-          }
-          this.mycaseList = this.parseCases(tempList);
-        }else{
-         const res = await api.listCase({
-          page: this.storeCasePage,
-          num: this.storeNumPerPage
+        const res = await api.listCaseAdmin({
+           page: this.storeCasePage,
+           num: this.numPerPage,
         });
         if (res.code === 200) {
           this.caseList = this.parseCases(res.data);
         } else {
           this.$Message.error("数据获取错误，请检查！");
         }
-        }
-        
       } catch (e) {
         console.log('e')
         this.$Message.error(e);
@@ -405,7 +391,9 @@ export default {
           shareTime: _case.date_created,
           likeNum: _case.like_num,
           quoteNum: _case.quote_num,
-          fast_config: _case.fast_config % 10,
+          fast_config: _case.fast_config,
+          status: _case.status,
+          stars: _case.fast_config % 10,
           liked: false,
           quoted: false,
           configs: configs,
