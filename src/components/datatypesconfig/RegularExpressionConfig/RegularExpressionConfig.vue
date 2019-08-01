@@ -85,7 +85,7 @@
 
 <script>
 import { RELATION_ENUM, ALLOW_RELATIONS } from '@/datatypes/CONST.js';
-import { Input, Select, Option, Tooltip, Tag, Radio, RadioGroup, Icon } from "iview";
+import { Input, Select, Option, Tooltip, Tag, Radio, RadioGroup } from "iview";
 import { DATA_TYPES } from '@/datatypes/index.js';
 export default {
   data() {
@@ -111,8 +111,7 @@ export default {
     Tooltip,
     Tag,
     Radio,
-    RadioGroup,
-    Icon
+    RadioGroup
   },
   props: {
     fieldName: String,
@@ -120,21 +119,12 @@ export default {
     options: String,
     relation: String,
   },
-  mounted(){
-      this.ss();
-  },
   methods: {
     chgOptions() {
       this.$emit('update:options', JSON.stringify(this.optionsValue));
     },
     chgRelation() {
       this.$emit('update:relation', JSON.stringify(this.relationValue));
-    },
-    ss(){
-        var patt1 = new RegExp('\\d+','g');
-        var st = "The best 23 things in 22 life are free";
-        const rs = st.match(patt1);
-        console.log('22222222222222222', rs)
     }
   }
     

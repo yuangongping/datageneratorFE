@@ -19,6 +19,8 @@ import GeographCoordinatesConfig from '@/components/datatypesconfig/GeographCoor
 import OccupationConfig from '@/components/datatypesconfig/OccupationConfig/OccupationConfig.vue';
 import CarprefixConfig from '@/components/datatypesconfig/CarprefixConfig/CarprefixConfig.vue';
 import RegularExpressionConfig from '@/components/datatypesconfig/RegularExpressionConfig/RegularExpressionConfig.vue';
+import ConditionJudgeConfig from '@/components/datatypesconfig/ConditionJudgeConfig/ConditionJudgeConfig.vue';
+
 
 export {
   SexConfig,
@@ -41,5 +43,6 @@ export {
   GeographCoordinatesConfig,
   OccupationConfig,
   CarprefixConfig, 
-  RegularExpressionConfig
+  RegularExpressionConfig,
+  ConditionJudgeConfig
 }
