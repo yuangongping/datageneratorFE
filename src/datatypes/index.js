@@ -340,7 +340,8 @@ export const DATA_TYPES = {
         options: {
             expression: '',
             outputTypes: '提取',
-            __fieldName: ""
+            replaceValue: '',
+            __fieldName: ''
         },
         relation: {
             fieldNames: "",
