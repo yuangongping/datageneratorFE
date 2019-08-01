@@ -263,7 +263,6 @@
 
 <script>
 // @ is an alias to /src
-import Vue from 'vue'
 import { mapGetters } from 'vuex';
 import deepcopy from 'deepcopy';
 import { Progress, Button, Input, Select, Option, Icon, Tag, Poptip,
@@ -279,7 +278,7 @@ import { SexConfig, NameConfig, CounterConfig,
          TextConfig, TimeConfig, ProvinceConfig, 
          CityConfig, DistrictConfig, DistrictCodeConfig, 
          RandomFieldConfig, DetailAddressConfig, GeographCoordinatesConfig,
-         OccupationConfig, CarprefixConfig, RegularExpressionConfig} from '@/components/datatypesconfig/index.js';  
+         OccupationConfig, CarprefixConfig, RegularExpressionConfig, ConditionJudgeConfig} from '@/components/datatypesconfig/index.js';  
 import { DATA_TYPES } from '@/datatypes/index.js';
 
 import { Generator } from '@/generator/index';
@@ -346,7 +345,6 @@ export default {
     Modal,
     Table,
     Poptip,
-    Progress,
     draggable,
     
     // 字段配置组件
@@ -372,7 +370,9 @@ export default {
     GeographCoordinatesConfig,
     OccupationConfig,
     CarprefixConfig,
-    RegularExpressionConfig
+    RegularExpressionConfig,
+    ConditionJudgeConfig
+    
   },
   computed: {
     ...mapGetters(['storeConfigs'])
@@ -508,7 +508,6 @@ export default {
       try{
         if (!data) {
           throw new Error("没有可导出的数据！");
-          return;
         }
         // 以及数据格式生成对应文件
         switch(filetype){
@@ -624,7 +623,7 @@ export default {
         };
         if (!this.saveForm.wantShare) {  
           /*    仅保存至localstore        */
-          var key = 'case_' + Date.parse(new Date());
+          let key = 'case_' + Date.parse(new Date());
           form.configs = JSON.stringify(form.configs);
           form['date_created'] = this.getNowFormatDate();
           form['id'] = key;
@@ -637,7 +636,7 @@ export default {
           if (res.code === 200){
             this.$Message.success('分享成功，等待后台审核！');
             // 数据保存至localshore
-            var key = 'case_' + Date.parse(new Date());
+            let key = 'case_' + Date.parse(new Date());
             form.configs = JSON.stringify(form.configs);
             form['date_created'] = this.getNowFormatDate();
             form['id'] = key;
@@ -917,7 +916,6 @@ label {
   display:inline-block;
   .config-title {
     padding: 4px;
-    pointer-events: none;
     position:absolute;
     left:0;
     top: -22px;
