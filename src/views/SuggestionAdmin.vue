@@ -52,7 +52,7 @@
 
                 <div class="body">
                   <div class="sub-content_first">
-                    {{ replyItem.content }}
+                    @<span class="reply_target">{{ replyItem.reply_target }} </span>{{ replyItem.content }}
                   </div>
 
                   <div class="opinion-meta">
@@ -173,6 +173,9 @@ $nick_name_color: #1269db;
 }
 .page {
   margin-top: 20px;
+}
+.reply_target {
+  color: #1269db;
 }
 </style>
 <script>

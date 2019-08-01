@@ -21,7 +21,7 @@
                 {{ suggestionItem.date_created | timeToAgo}}
               </div>
 
-              <div class="reply" @click="replySuggestionFlag=true; replyForm.suggestion_id=suggestionItem.id">
+              <div class="reply" @click="replySuggestionFlag=true; replyForm.suggestion_id=suggestionItem.id; replyForm.reply_target=suggestionItem.nick_name; reply_title='回复'+suggestionItem.nick_name">
                 <Icon type="md-chatboxes" />
                 回复
               </div>
@@ -36,19 +36,19 @@
 
                 <div class="body">
                   <div class="sub-content_first">
-                    {{ replyItem.content }}
+                    @<span class="reply_target">{{ replyItem.reply_target }} </span>{{ replyItem.content }}
                   </div>
 
                   <div class="opinion-meta">
                     <div class="opinion">
-                      来自 <span class="nick_name">{{ replyItem.nick_name }}</span>
+                      来自<span class="nick_name">{{ replyItem.nick_name }}</span>
                     </div>
                     
                     <div class="publish-time">
                       {{ replyItem.date_created | timeToAgo}}
                     </div>
 
-                    <div class="reply" @click="replySuggestionFlag=true; replyForm.suggestion_id=suggestionItem.id">
+                    <div class="reply" @click="replySuggestionFlag=true; replyForm.suggestion_id=suggestionItem.id; replyForm.reply_target=replyItem.nick_name; reply_title='回复'+replyForm.reply_target">
                       <Icon type="md-chatboxes" />
                       回复
                     </div>
@@ -64,7 +64,7 @@
       <!-- 回复 -->
       <div class="add-reply" >  
         <Modal
-          title="回复"
+          :title= reply_title
           v-model="replySuggestionFlag"
           :mask-closable="false"
           @on-ok="replySuggestion"
@@ -162,6 +162,9 @@ $nick_name_color: #1269db;
 .page {
   margin-top: 20px;
 }
+.reply_target {
+  color: #1269db;
+}
 </style>
 <script>
 import { Modal, Input, Button, Page, Icon } from 'iview';
@@ -178,9 +181,11 @@ export default {
       replySuggestionFlag: false,
       replyForm: {
         nick_name: '',
+        reply_target: '',
         content: '',
         suggestion_id: ''
-      }
+      },
+      reply_title: ''
     }
   },
   components: {
