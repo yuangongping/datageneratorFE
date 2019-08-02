@@ -10,6 +10,10 @@
                 <Icon type="ios-chatbubbles" />
                 意见            
             </MenuItem>
+            <MenuItem name="visual"  > 
+              <Icon type="ios-create" />
+              记录            
+            </MenuItem>
             </Menu>
             <router-view class="router-view"/>  
         </div> 

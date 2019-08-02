@@ -7,7 +7,7 @@
             {{ suggestionItem.nick_name | headText }}
           </div>
 
-          <div class="body">
+          <div class="content">
             <div class="content_first">
               {{ suggestionItem.content }}
             </div>
@@ -34,7 +34,7 @@
                   {{ replyItem.nick_name | headText }}
                 </div>
 
-                <div class="body">
+                <div class="content">
                   <div class="sub-content_first">
                     @<span class="reply_target">{{ replyItem.reply_target }} </span>{{ replyItem.content }}
                   </div>
@@ -118,7 +118,7 @@ $nick_name_color: #1269db;
     border-radius: 50px;
     font-size: 20px;
   }
-  .body{
+  .content{
     flex-direction: column;
     .content_first {
       margin: 15px 0px 0px 10px;

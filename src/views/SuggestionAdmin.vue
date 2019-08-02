@@ -6,7 +6,7 @@
             {{ suggestionItem.nick_name | headText }}
           </div>
 
-          <div class="body">
+          <div class="content">
             <div class="content_first">
               {{ suggestionItem.content }}
             </div>
@@ -50,7 +50,7 @@
                   {{ replyItem.nick_name | headText }}
                 </div>
 
-                <div class="body">
+                <div class="content">
                   <div class="sub-content_first">
                     @<span class="reply_target">{{ replyItem.reply_target }} </span>{{ replyItem.content }}
                   </div>

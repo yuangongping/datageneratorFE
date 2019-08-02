@@ -11,7 +11,7 @@ Vue.config.productionTip = false;
 Vue.prototype.$Message = Message;
 
 const routerWhiteList = ['/responsibility'];
-const routerBlackList = ['/community_admin/case_admin', '/community_admin/suggestion_admin'];
+const routerBlackList = ['/community_admin/case_admin', '/community_admin/suggestion_admin', '/visual'];
 router.beforeEach((to, from, next) => {
     // 记录路由，登录后从哪来让他到哪去
     window.sessionStorage.formQuery = from.path

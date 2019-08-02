@@ -1,34 +1,38 @@
 <template>
-    <div class="visual">
-      <div>
-        <span>ip筛选： </span>
+  <div class="visual">
+    <div class="filter">
+      
+      <div class="item">
+        <label>IP筛选：</label>
         <Select v-model="ipchoice" 
-         filterable
-         :max-tag-count="1"
-         style="width:100px" >
-          <Option value="ALL">全部</Option>
-          <Option v-for="ip in ipfilter" :value="ip" :key="ip">{{ip}}</Option>
+          filterable
+          :max-tag-count="1"
+          class="select"
+          >
+            <Option value="ALL">全部</Option>
+            <Option v-for="ip in ipfilter" :value="ip" :key="ip">{{ip}}</Option>
         </Select>
       </div>
-      <div>
-        <span>时间筛选： </span>
-        <Select v-model="timefilter" style="width:60px">
+
+      <div class="item">
+        <label>时间筛选： </label>
+        <Select 
+          v-model="timefilter"
+          class="select">
             <Option value="ALL">全部</Option>
             <Option value="自定义">自定义</Option>
         </Select>
-        <div v-if="timefilter=='自定义'">
-          <DatePicker v-model="starttime" type="date" placeholder="Select date" style="width: 200px"></DatePicker>
-          <span>   至：  </span>
-          <DatePicker v-model="endtime" type="date" placeholder="Select date" style="width: 200px"></DatePicker>
+        <div class="selfDefine" v-if="timefilter=='自定义'" >
+          <DatePicker v-model="starttime" type="date" placeholder="Select date"></DatePicker>
+          <label class="connectLabel"> 至</label>
+          <DatePicker v-model="endtime" type="date" placeholder="Select date" ></DatePicker>
         </div>
-
       </div>
-      <div>
-        <Button @click="getinfo">筛选</Button>
+      <div class="item">
+        <Button type="primary" icon="ios-funnel" @click="getinfo">筛选</Button>
       </div>
 
-
-
+    </div>
     <Table size="large" :columns="title" :data="content"></Table>
     <div>
       <Page
@@ -41,10 +45,30 @@
         @on-change="pageChange"
       />
     </div>
-    </div>
-
+  </div>
 </template>
-<style >
+<style lang="scss">
+.filter{
+  display: flex;
+  .item {
+    display:inline-flex;
+    align-items: center;
+    height: 50px;
+    margin-right: 20px;
+    .select{
+      border: 1px solid rgb(240, 236, 236);
+      border-radius: 4px;
+    }
+  }
+}
+.selfDefine{
+  margin-left: 10px;
+  .connectLabel{
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}
+
 </style>
 
 <script>

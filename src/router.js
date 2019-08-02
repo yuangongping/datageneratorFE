@@ -7,8 +7,10 @@ import CaseAdmin from './views/CaseAdmin.vue';
 import SuggestionAdmin from './views/SuggestionAdmin.vue';
 import CommunityAdmin from './views/CommunityAdmin.vue';
 import Visual from './views/Visual.vue';
-
-
+import Community from './views/Community.vue';
+import Help from './views/Help.vue';
+import Admin from './views/Admin.vue';
+import ResponsibilityStatement from './views/ResponsibilityStatement.vue';
 
 Vue.use(Router)
 
@@ -22,16 +24,10 @@ export default new Router({
       component: Home,
     },
     {
-      path: '/visual',
-      name: 'Visual',
-      component: Visual,
-    },
-    
-    {
       path: '/community',
       name: 'community',
       redirect: '/community/case',
-      component: () => import(/* webpackChunkName: "community" */ './views/Community.vue'),
+      component: Community,
       children: [
         {
           path: 'case',
@@ -45,16 +41,15 @@ export default new Router({
         }
       ]
     },
-
     {
       path: '/help',
       name: 'help',
-      component: () => import(/* webpackChunkName: "help" */ './views/Help.vue'),
+      component: Help,
     },
     {
       path: '/admin',
       name: 'admin',
-      component: () => import(/* webpackChunkName: "community" */ './views/Admin.vue'),
+      component: Admin,
     },
     {
       path: '/community_admin',
@@ -71,13 +66,18 @@ export default new Router({
           path: 'suggestion_admin',
           name: 'suggestion_admin',
           component: SuggestionAdmin
+        },
+        {
+          path: 'visual',
+          name: 'visual',
+          component: Visual
         }
       ]
     },
     {
       path: '/responsibility',
       name: 'responsibility',
-      component: () => import(/* webpackChunkName: "responsibility" */ './views/ResponsibilityStatement.vue'),
+      component: ResponsibilityStatement,
     }
   ]
 })
