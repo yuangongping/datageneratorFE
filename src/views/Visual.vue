@@ -91,7 +91,7 @@ export default{
       endtime:'',
       totalNum: 0,
       firstvisit: '0',
-      pagesize: 1
+      pagesize: 10
     };
   },
   components:{

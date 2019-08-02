@@ -67,37 +67,40 @@ export class Generator {
         for (let config of this.configArr) {
             if (fieldName == config.fieldName) {
                 hasField = true;
-
                 if (config.relation && config.relation.type != RELATION_ENUM.INDEPEND.EN) {
                     if (config.relation.fieldNames.trim() == '') {
                         throw new Error(`字段 ${config.fieldName} 存在空的关联关系！请添加正确的关联关系或改为独立字段！`)
                     }
                     const relateFieldNames = config.relation.fieldNames.split(',')
-                        // 遍历关联字段
+                    // 遍历关联字段
+                    let relateAllHandled = true;
                     for (let relateField of relateFieldNames) {
                         // 如果关联字段不在排序数组里面，继续递归处理关联字段
                         if (sortedFields.indexOf(relateField) < 0) {
                             try {
                                 this.handleField(sortedFields, relateField)
                             } catch (e) {
-                                throw new Error(`处理关联字段：${relateField} 出错！请仔细检查关联关系！是否存在循环引用或不相关的字段？`)
+                                throw new Error(`处理关联字段：${relateField} 出错！请仔细检查关联关系！是否存在【循环引用】或【不相关的字段】或者【字段名前后有空格】？`)
                             }
                         } else {
-                            // 如果关联字段在排序数组里面, 将本字段放入排序数组
-                            if (sortedFields.indexOf(fieldName) < 0) {
-                                sortedFields.push(fieldName)
-                            }
-                        }
-                        // 对字段的关联字段 及 关联字段的关联字段进行递归处理之后
-                        // 别忘了对字段本身再做一次处理
-                        if (sortedFields.indexOf(fieldName) < 0) {
-                            try {
-                                this.handleField(sortedFields, fieldName);
-                            } catch (e) {
-                                throw new Error(`处理字段：${fieldName} 出错！请仔细检查关联关系！`)
-                            }
+                            
                         }
                     }
+
+                    // 对字段的关联字段 及 关联字段的关联字段进行递归处理之后
+                    // 别忘了对字段本身再做一次处理
+                    if (relateAllHandled) {
+                        if (sortedFields.indexOf(fieldName) < 0) {
+                            sortedFields.push(fieldName)
+                        }
+                    } else {
+                        try {
+                            this.handleField(sortedFields, fieldName);
+                        } catch (e) {
+                            throw new Error(`处理字段：${fieldName} 出错！请仔细检查关联关系！`)
+                        }
+                    }
+                    
                 } else {
                     // 如果没有关联字段, 直接放在排序数组的最前方
                     if (sortedFields.indexOf(fieldName) < 0) {
