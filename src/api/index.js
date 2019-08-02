@@ -2,11 +2,13 @@ import { addCase, addSuggestion, listSuggestion, listCase,
          updateCase, totalCase, totalSuggestion, delCase,
          adoptCase, recommendCase, listCaseAdmin, totalCaseAdmin,
          totalSuggestionAdmin, listSuggestionAdmin, adoptSuggestion,
-         delSuggestion
+         delSuggestion, replySuggestion,getUserRecord, totalRecord
         } from './community.js';
 import { getFastConfigs } from './home.js';
+import { addUserRecord } from '../api/userRecord.js'
 
 export default {
+  // 案例api
   addCase,
   listCase,
   updateCase,
@@ -18,12 +20,21 @@ export default {
   listCaseAdmin,
   totalCaseAdmin,
 
+  // 意见appi
   totalSuggestion,
   totalSuggestionAdmin,
   listSuggestion,
   listSuggestionAdmin,
   addSuggestion,
   adoptSuggestion,
-  delSuggestion
+  delSuggestion,
+
+  // 回复意见api
+  replySuggestion,
+
+  addUserRecord,
+  // 用户记录表
+  getUserRecord,
+  totalRecord
   
 }

@@ -259,3 +259,48 @@ export function totalCaseAdmin(){
     })
   })
 }
+
+
+// 回复意见api
+export function replySuggestion(params) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/replysuggestion',
+      method: 'post',
+      data: querystring.stringify(params)
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+// 用户记录表展示
+export function getUserRecord(params) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/getuserrecord',
+      method: 'get',
+      params:  params
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+// 获取总记录数
+export function totalRecord() {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/totalRecord',
+      method: 'get'
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
