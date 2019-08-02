@@ -250,6 +250,7 @@ export default {
         });
         if (res.code === 200){
           this.suggestionList = res.data
+          console.log(res.data)
         } else {
           console.error(res);
           this.$Message.error("数据获取错误，请检查！"); 

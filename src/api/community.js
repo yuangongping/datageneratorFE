@@ -277,6 +277,20 @@ export function replySuggestion(params) {
   })
 }
 
+// 用户记录表展示
+export function getUserRecord(params) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/getuserrecord',
+      method: 'get',
+      params:  params
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
 // 审核意见回复
 export function adoptSuggestionReply(id){
   return new Promise((resolve, reject) => {
@@ -286,6 +300,20 @@ export function adoptSuggestionReply(id){
       params: {
         id
       }
+    }).then((res) => {
+      resolve(res)
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+// 获取总记录数
+export function totalRecord() {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/totalRecord',
+      method: 'get'
     }).then((res) => {
       resolve(res)
     }).catch((e) => {

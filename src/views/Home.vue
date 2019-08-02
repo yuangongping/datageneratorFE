@@ -494,7 +494,7 @@ export default {
               key:  keys[i]
             }
           )
-        }
+        };
       } catch (e) {
         this.$Message.error({
           content: e.toString(),

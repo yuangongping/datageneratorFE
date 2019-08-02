@@ -6,6 +6,8 @@ import Suggestion from './views/Suggestion.vue';
 import CaseAdmin from './views/CaseAdmin.vue';
 import SuggestionAdmin from './views/SuggestionAdmin.vue';
 import CommunityAdmin from './views/CommunityAdmin.vue';
+import Visual from './views/Visual.vue';
+
 
 
 Vue.use(Router)
@@ -18,6 +20,11 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home,
+    },
+    {
+      path: '/visual',
+      name: 'Visual',
+      component: Visual,
     },
     
     {
